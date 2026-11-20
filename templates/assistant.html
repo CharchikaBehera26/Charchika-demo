@@ -1,2 +1,68 @@
-{% extends "base.html" %}{% block title %}Srujan AI Assistant — SrujanSetu{% endblock %}{% block content %}
-<section class="page-hero"><span class="eyebrow">YOUR DIGITAL SAATHI</span><h1>Namaskar, I’m <em>Srujan AI</em></h1><p>Ask a question about Odisha crafts, artisan discovery, marketplace listings or scheme information.</p></section><section class="content-wrap assistant-wrap"><div class="chat-panel"><div class="chat-head"><span class="bot-avatar">🤖</span><div><b>Srujan AI</b><small>Educational demo assistant · Rule-based answers</small></div><span class="online-dot">● Online</span></div><div class="chat-message bot">Namaskar! 🙏 I’m Srujan AI. How can I help you explore Odisha’s creative heritage today?</div>{% if answer %}<div class="chat-message user">{{ request.form.get('message') }}</div><div class="chat-message bot">{{ answer }}</div>{% endif %}<form method="post" class="chat-input"><input name="message" required placeholder="Ask about Pattachitra, artisans, schemes…"><button class="btn btn-green">Send →</button></form><div class="suggestions"><a href="{{ url_for('assistant') }}?topic=crafts">Explore handcrafts</a><a href="{{ url_for('artisans') }}">Find artisans</a><a href="{{ url_for('schemes') }}">Know about schemes</a></div></div><p class="demo-note">This is a keyword-based educational chatbot, not a generative AI service. It does not send messages to an external AI provider.</p></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}SrujanSetu Guide{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">YOUR DIGITAL SAATHI</span>
+  <h1>Ask the <em>SrujanSetu Guide</em></h1>
+  <p>Ask about crafts, artisans, the map or marketplace. The guide can answer from site information and take you to the right page.</p>
+</section>
+
+<section class="content-wrap assistant-wrap">
+  <div class="chat-panel">
+    <div class="chat-head">
+      <span class="bot-avatar" aria-hidden="true">🤖</span>
+      <div>
+        <b>SrujanSetu Guide</b>
+        <small>Site information · No external AI service</small>
+      </div>
+      <span class="online-dot"><span aria-hidden="true">●</span> Ready to help</span>
+    </div>
+
+    <div class="chat-transcript" aria-live="polite">
+      <div class="chat-message bot">
+        Namaskar! Ask me about a craft such as Pattachitra, or tell me what you would like to do—find a maker, shop, join the marketplace or learn about support schemes.
+      </div>
+      {% if answer %}
+      <div class="chat-message user">{{ message }}</div>
+      <div class="chat-message bot">{{ answer }}</div>
+      {% if actions %}
+      <nav class="chat-actions" aria-label="Suggested pages">
+        {% for action in actions %}
+        <a class="btn btn-green" href="{{ action.url }}">{{ action.label }} →</a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+      {% endif %}
+    </div>
+
+    <form method="post" class="chat-input" action="{{ url_for('public.assistant') }}">
+      <label class="sr-only" for="assistantMessage">Your question</label>
+      <input
+        id="assistantMessage"
+        name="message"
+        required
+        maxlength="500"
+        autocomplete="off"
+        value="{{ message if not answer else '' }}"
+        placeholder="For example: What is Pattachitra?"
+      >
+      <button class="btn btn-green" type="submit">Send</button>
+    </form>
+
+    <details class="faq-list">
+      <summary>Frequently asked questions</summary>
+      <div class="faq-questions">
+        {% for faq in faq_items %}
+        <button type="button" data-assistant-prompt="{{ faq.question }}">{{ faq.question }}</button>
+        {% endfor %}
+      </div>
+    </details>
+  </div>
+
+  <p class="assistant-disclaimer">
+    The guide uses the project’s craft information and predefined navigation help. It is not a generative AI service; do not enter passwords or private information.
+  </p>
+</section>
+{% endblock %}

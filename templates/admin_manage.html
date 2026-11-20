@@ -1,4 +1,90 @@
-{% extends "admin_base.html" %}{% block title %}Manage {{ config.title }} — SrujanSetu{% endblock %}{% block admin_content %}
-<div class="admin-layout"><aside class="admin-sidebar"><span class="eyebrow light">WORKSPACE</span><h3>Management</h3><a href="{{ url_for('admin_dashboard') }}">▦ Overview</a>{% for key,cfg in {'artisans':{'title':'Artisans'},'crafts':{'title':'Crafts'},'products':{'title':'Products'},'schemes':{'title':'Schemes'},'community':{'title':'Community posts'}}.items() %}<a class="{% if key==kind %}active{% endif %}" href="{{ url_for('admin_manage',kind=key) }}">✦ {{ cfg.title }}</a>{% endfor %}</aside>
-<section class="admin-main"><div class="admin-page-head"><div><span class="eyebrow">CONTENT MANAGEMENT</span><h1>{{ config.title }}</h1><p>{{ items|length }} record(s) stored in <code>data/{{ kind }}.json</code>.</p></div><a class="btn btn-green" href="{{ url_for('admin_new',kind=kind) }}">+ Add {{ config.singular }}</a></div>
-<div class="admin-table-wrap"><table class="admin-table"><thead><tr><th>Record</th>{% if kind!='community' %}<th>Details</th>{% endif %}<th>ID</th><th>Actions</th></tr></thead><tbody>{% for item in items %}<tr><td><div class="admin-record">{% if item.get('image','').startswith('/static/uploads/') %}<img src="{{ item.image }}" alt="">{% elif item.get('image','').startswith('http') %}<img src="{{ item.image }}" alt="">{% else %}<span class="record-emoji">{{ item.get('emoji','✦') }}</span>{% endif %}<div><b>{{ item.get('name',item.get('title','Community post')) }}</b><small>{{ item.get('craft',item.get('district',item.get('date',''))) }}</small></div></div></td>{% if kind!='community' %}<td class="table-detail">{{ item.get('description',item.get('bio',item.get('region',item.get('audience',item.get('price','—')))))|truncate(90) }}</td>{% endif %}<td>#{{ item.get('id','—') }}</td><td><div class="table-actions"><a href="{{ url_for('admin_edit',kind=kind,item_id=item.get('id',0)) }}">Edit</a><form method="post" action="{{ url_for('admin_delete',kind=kind,item_id=item.get('id',0)) }}" onsubmit="return confirm('Delete this record permanently?')"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button>Delete</button></form></div></td></tr>{% else %}<tr><td colspan="4" class="empty-table">No records yet. Add your first {{ config.singular|lower }}.</td></tr>{% endfor %}</tbody></table></div></section></div>{% endblock %}
+{% extends "admin_base.html" %}
+
+{% block title %}Manage {{ config.title }} — SrujanSetu{% endblock %}
+
+{% block admin_content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <span class="eyebrow light">WORKSPACE</span>
+    <h2>Management</h2>
+    <a href="{{ url_for('admin.admin_dashboard') }}">▦ Overview</a>
+    {% for key, section in {
+      'artisans': {'title': 'Artisans'},
+      'crafts': {'title': 'Crafts'},
+      'products': {'title': 'Products'},
+      'schemes': {'title': 'Schemes'},
+      'community': {'title': 'Community posts'}
+    }.items() %}
+    <a class="{% if key == kind %}active{% endif %}" href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ section.title }}</a>
+    {% endfor %}
+  </aside>
+
+  <section class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">CONTENT MANAGEMENT</span>
+        <h1>{{ config.title }}</h1>
+        <p>{{ items|length }} record(s) in the database.</p>
+      </div>
+      <a class="btn btn-green" href="{{ url_for('admin.admin_new', kind=kind) }}">+ Add {{ config.singular }}</a>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Record</th>
+            {% if kind != 'community' %}<th scope="col">Details</th>{% endif %}
+            <th scope="col">ID</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>
+              <div class="admin-record">
+                {% if item.get('image', '').startswith('/static/uploads/') or item.get('image', '').startswith('http') %}
+                <img src="{{ item.image }}" alt="">
+                {% else %}
+                <span class="record-emoji">{{ item.get('emoji', '✦') }}</span>
+                {% endif %}
+                <div>
+                  <b>{{ item.get('name', item.get('title', 'Community post')) }}</b>
+                  <small>{{ item.get('craft', item.get('district', item.get('date', ''))) }}</small>
+                </div>
+              </div>
+            </td>
+            {% if kind != 'community' %}
+            <td class="table-detail">
+              {{ item.get('description', item.get('bio', item.get('region', item.get('audience', item.get('price', '—')))))|truncate(90) }}
+            </td>
+            {% endif %}
+            <td>#{{ item.get('id', '—') }}</td>
+            <td>
+              <div class="table-actions">
+                <a href="{{ url_for('admin.admin_edit', kind=kind, item_id=item.get('id', 0)) }}">Edit</a>
+                <form
+                  method="post"
+                  action="{{ url_for('admin.admin_delete', kind=kind, item_id=item.get('id', 0)) }}"
+                  onsubmit="return confirm('Delete this record permanently?')"
+                >
+                  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+                  <button type="submit">Delete</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="{% if kind == 'community' %}3{% else %}4{% endif %}" class="empty-table">
+              No records yet. Add your first {{ config.singular|lower }}.
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

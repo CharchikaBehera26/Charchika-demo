@@ -1,2 +1,89 @@
-{% extends "base.html" %}{% block title %}Visit Planner — SrujanSetu{% endblock %}{% block content %}
-<section class="page-hero"><span class="eyebrow">MEET THE MAKERS WHERE THEY WORK</span><h1>Odisha Craft <em>Explorer</em></h1><p>Choose a district to discover sample artisan profiles for your learning visit plan.</p></section><section class="content-wrap"><div class="planner-panel"><div class="planner-map">🗺️<span>ODISHA</span><small>Craft routes & creative communities</small></div><form method="post" class="planner-form"><label>Select a district<select name="district">{% for d in districts %}<option {% if d==selected %}selected{% endif %}>{{ d }}</option>{% endfor %}</select></label><button class="btn btn-green">Find artisans →</button></form></div><h2 class="subheading">Artisans in {{ selected }}</h2><div class="card-grid">{% for a in artisans %}<article class="content-card"><div class="craft-icon green">{{ a.emoji }}</div><div class="card-body"><h3>{{ a.name }}</h3><p>{{ a.craft }} · {{ a.district }}</p></div></article>{% else %}<p>No sample artisan entries for this district yet. Try Puri, Cuttack or Sambalpur.</p>{% endfor %}</div></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Artisan &amp; SHG Map — SrujanSetu{% endblock %}
+
+{% block page_head %}
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+  crossorigin=""
+>
+{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">MEET THE MAKERS WHERE THEY WORK</span>
+  <h1>Odisha Artisan <em>&amp; SHG Map</em></h1>
+  <p>Find makers who have chosen to publish the exact location of their workshop or public business.</p>
+</section>
+
+<section class="content-wrap">
+  <form class="map-filter" method="get" action="{{ url_for('public.planner') }}">
+    <label for="district">Filter by district</label>
+    <select id="district" name="district">
+      {% for district in districts %}
+      <option value="{{ district }}" {% if district == selected %}selected{% endif %}>{{ district }}</option>
+      {% endfor %}
+    </select>
+    <button class="btn btn-green" type="submit">Show locations</button>
+  </form>
+
+  <p class="location-privacy">
+    Map pins are exact and public. Only artisans who add coordinates to their profile appear on the map.
+  </p>
+
+  <div class="map-layout">
+    <div class="map-canvas-wrap">
+      <div id="artisanMap" class="artisan-map" role="application" aria-label="Map of artisan and SHG locations in Odisha"></div>
+      <p id="mapLoadNotice" class="map-load-notice" role="status">Loading interactive map…</p>
+    </div>
+    <aside class="map-results" aria-live="polite">
+      <h2>Public map pins <span>{{ map_artisans|length }}</span></h2>
+      {% if map_artisans %}
+      <ul>
+        {% for artisan in map_artisans %}
+        <li>
+          <strong>{{ artisan.name }}</strong>
+          <small>{{ artisan.craft }} · {{ artisan.district }}</small>
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No exact map locations have been shared for this filter yet. The map is centered on Odisha.</p>
+      {% endif %}
+    </aside>
+  </div>
+  <script id="artisanMapData" type="application/json">{{ map_artisans|tojson }}</script>
+
+  <h2 class="subheading">
+    {% if selected == "All districts" %}Artisans across Odisha{% else %}Artisans in {{ selected }}{% endif %}
+  </h2>
+  <div class="card-grid">
+    {% for artisan in artisans %}
+    <article class="content-card">
+      <div class="craft-icon green">{{ artisan.emoji }}</div>
+      <div class="card-body">
+        <h3>{{ artisan.name }}</h3>
+        <p>{{ artisan.craft }} · {{ artisan.district }}</p>
+        {% if artisan.latitude is defined and artisan.longitude is defined %}
+        <small>Exact public location is pinned on the map.</small>
+        {% else %}
+        <small>Location not shared on map.</small>
+        {% endif %}
+      </div>
+    </article>
+    {% else %}
+    <p class="empty-state">No artisan profiles match this district yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+
+{% block page_scripts %}
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+  crossorigin=""
+></script>
+{% endblock %}

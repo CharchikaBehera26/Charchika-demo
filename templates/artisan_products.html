@@ -1,3 +1,55 @@
-{% extends "base.html" %}{% block title %}My Products — SrujanSetu{% endblock %}{% block content %}
-<section class="page-hero"><span class="eyebrow">YOUR MARKETPLACE LISTINGS</span><h1>My <em>Products</em></h1><p>Only you can edit or delete the products attached to your artisan account.</p></section>
-<section class="content-wrap"><div class="portal-toolbar"><a class="btn btn-green" href="{{ url_for('artisan_product_new') }}">+ Add product</a><a class="text-link" href="{{ url_for('artisan_dashboard') }}">← Dashboard</a></div><div class="card-grid product-grid">{% for p in products %}<article class="content-card product-card"><div class="product-art">{% if p.get('image') %}<img src="{{ p.image }}" alt="{{ p.name }}" style="width:100%;height:100%;object-fit:cover">{% else %}{{ p.get('emoji','🧵') }}{% endif %}</div><div class="card-body"><span class="eyebrow">{{ p.get('craft','Handmade') }}</span><h3>{{ p.name }}</h3><p>{{ p.get('description','') }}</p><strong class="price">{{ p.price }}</strong><div class="portal-actions"><a href="{{ url_for('artisan_product_edit',product_id=p.id) }}">Edit</a><form method="post" action="{{ url_for('artisan_product_delete',product_id=p.id) }}" onsubmit="return confirm('Delete this product?')"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><button>Delete</button></form></div></div></article>{% else %}<p>You haven't added any products yet. Start with your first listing.</p>{% endfor %}</div></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}My Products — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">YOUR MARKETPLACE LISTINGS</span>
+  <h1>My <em>Products</em></h1>
+  <p>Only you can edit or delete the products attached to your maker account.</p>
+</section>
+
+<section class="content-wrap">
+  <div class="portal-toolbar">
+    <a class="btn btn-green" href="{{ url_for('artisan.artisan_product_new') }}">+ Add product</a>
+    <a class="text-link" href="{{ url_for('artisan.artisan_dashboard') }}">← Dashboard</a>
+  </div>
+
+  <div class="card-grid product-grid">
+    {% for product in products %}
+    <article class="content-card product-card">
+      <div class="product-art">
+        {% if product.get('image') %}
+        <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+        {% else %}
+        <span aria-hidden="true">{{ product.get('emoji', '🧵') }}</span>
+        {% endif %}
+      </div>
+      <div class="card-body">
+        <span class="eyebrow">{{ product.get('craft', 'Handmade') }}</span>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.get('description', '') }}</p>
+        <strong class="price">{{ product.price }}</strong>
+        <div class="portal-actions">
+          <a href="{{ url_for('artisan.artisan_product_edit', product_id=product.id) }}">Edit</a>
+          <form
+            method="post"
+            action="{{ url_for('artisan.artisan_product_delete', product_id=product.id) }}"
+            onsubmit="return confirm('Delete this product?')"
+          >
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button type="submit">Delete</button>
+          </form>
+        </div>
+      </div>
+    </article>
+    {% else %}
+    <div class="empty-state">
+      <h2>No products yet</h2>
+      <p>Start with your first listing to showcase your work.</p>
+      <a class="btn btn-green" href="{{ url_for('artisan.artisan_product_new') }}">Add a product</a>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

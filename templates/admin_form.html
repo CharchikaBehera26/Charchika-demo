@@ -1,6 +1,67 @@
-{% extends "admin_base.html" %}{% block title %}{{ mode }} {{ config.singular }} — SrujanSetu{% endblock %}{% block admin_content %}
-<div class="admin-layout"><aside class="admin-sidebar"><span class="eyebrow light">WORKSPACE</span><h3>Management</h3><a href="{{ url_for('admin_dashboard') }}">▦ Overview</a>{% for key,cfg in {'artisans':{'title':'Artisans'},'crafts':{'title':'Crafts'},'products':{'title':'Products'},'schemes':{'title':'Schemes'},'community':{'title':'Community posts'}}.items() %}<a class="{% if key==kind %}active{% endif %}" href="{{ url_for('admin_manage',kind=key) }}">✦ {{ cfg.title }}</a>{% endfor %}</aside>
-<section class="admin-main"><div class="admin-page-head"><div><span class="eyebrow">{{ mode|upper }} RECORD</span><h1>{{ mode }} {{ config.singular }}</h1><p>Fields marked with * are required.</p></div><a class="btn btn-outline" href="{{ url_for('admin_manage',kind=kind) }}">← Back to list</a></div>
-<div class="admin-form-card"><form method="post" enctype="multipart/form-data" class="stack-form admin-fields"><input type="hidden" name="_csrf" value="{{ csrf_token() }}">{% for key,label,field_type,required in config.fields %}<label>{{ label }}{% if required %} *{% endif %}{% if field_type=='textarea' %}<textarea name="{{ key }}" rows="4" {% if required %}required{% endif %}>{{ item.get(key,'') }}</textarea>{% else %}<input name="{{ key }}" value="{{ item.get(key,'') }}" {% if required %}required{% endif %}>{% endif %}</label>{% endfor %}
-{% if config.image %}<label>Upload image <small>PNG, JPG, JPEG, GIF or WEBP · maximum 5 MB</small><input type="file" name="image_file" accept=".png,.jpg,.jpeg,.gif,.webp,image/png,image/jpeg,image/gif,image/webp"></label>{% if item.get('image') %}<div class="current-image"><span>Current image</span><img src="{{ item.image }}" alt="Current record image"></div>{% endif %}{% endif %}
-<div class="admin-form-actions"><button class="btn btn-green">{{ mode }} {{ config.singular }} →</button><a class="btn btn-outline" href="{{ url_for('admin_manage',kind=kind) }}">Cancel</a></div></form></div></section></div>{% endblock %}
+{% extends "admin_base.html" %}
+
+{% block title %}{{ mode }} {{ config.singular }} — SrujanSetu{% endblock %}
+
+{% block admin_content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <span class="eyebrow light">WORKSPACE</span>
+    <h2>Management</h2>
+    <a href="{{ url_for('admin.admin_dashboard') }}">▦ Overview</a>
+    {% for key, section in {
+      'artisans': {'title': 'Artisans'},
+      'crafts': {'title': 'Crafts'},
+      'products': {'title': 'Products'},
+      'schemes': {'title': 'Schemes'},
+      'community': {'title': 'Community posts'}
+    }.items() %}
+    <a class="{% if key == kind %}active{% endif %}" href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ section.title }}</a>
+    {% endfor %}
+  </aside>
+
+  <section class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">{{ mode|upper }} RECORD</span>
+        <h1>{{ mode }} {{ config.singular }}</h1>
+        <p>Fields marked with * are required.</p>
+      </div>
+      <a class="btn btn-outline" href="{{ url_for('admin.admin_manage', kind=kind) }}">← Back to list</a>
+    </div>
+
+    <div class="admin-form-card">
+      <form method="post" enctype="multipart/form-data" class="stack-form admin-fields">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        {% for key, label, field_type, required in config.fields %}
+        <label>
+          {{ label }}{% if required %} *{% endif %}
+          {% if field_type == 'textarea' %}
+          <textarea name="{{ key }}" rows="4" {% if required %}required{% endif %}>{{ item.get(key, '') }}</textarea>
+          {% else %}
+          <input name="{{ key }}" value="{{ item.get(key, '') }}" {% if required %}required{% endif %}>
+          {% endif %}
+        </label>
+        {% endfor %}
+
+        {% if config.image %}
+        <label>
+          Upload image <small>PNG, JPG, JPEG, GIF or WEBP · maximum 5 MB</small>
+          <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.gif,.webp,image/png,image/jpeg,image/gif,image/webp">
+        </label>
+        {% if item.get('image') %}
+        <div class="current-image">
+          <span>Current image</span>
+          <img src="{{ item.image }}" alt="Current record image">
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <div class="admin-form-actions">
+          <button class="btn btn-green" type="submit">{{ mode }} {{ config.singular }} →</button>
+          <a class="btn btn-outline" href="{{ url_for('admin.admin_manage', kind=kind) }}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

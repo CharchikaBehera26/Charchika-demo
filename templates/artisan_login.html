@@ -1,3 +1,30 @@
-{% extends "base.html" %}{% block title %}Artisan Login — SrujanSetu{% endblock %}{% block content %}
-<section class="page-hero"><span class="eyebrow">MAKER WORKSPACE</span><h1>Artisan <em>Login</em></h1><p>Sign in to update your profile and manage your product listings.</p></section>
-<section class="content-wrap auth-content"><div class="auth-card"><h2>Welcome back</h2><form method="post" class="stack-form"><input type="hidden" name="_csrf" value="{{ csrf_token() }}"><label>Email address<input type="email" name="email" required autocomplete="username"></label><label>Password<input type="password" name="password" required autocomplete="current-password"></label><button class="btn btn-green">Sign in →</button></form><p class="auth-foot">New to SrujanSetu? <a href="{{ url_for('artisan_register') }}">Register as an artisan</a></p></div></section>{% endblock %}
+{% extends "base.html" %}
+
+{% block title %}Artisan &amp; SHG Login — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">MAKER WORKSPACE</span>
+  <h1>Artisan &amp; SHG <em>Login</em></h1>
+  <p>Sign in to update your public profile and manage your product listings.</p>
+</section>
+
+<section class="content-wrap auth-content">
+  <div class="auth-card">
+    <h2>Welcome back</h2>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label>
+        Email address
+        <input type="email" name="email" required autocomplete="username">
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button class="btn btn-green" type="submit">Sign in →</button>
+    </form>
+    <p class="auth-foot">New to SrujanSetu? <a href="{{ url_for('artisan.artisan_register') }}">Create an artisan or SHG account</a></p>
+  </div>
+</section>
+{% endblock %}

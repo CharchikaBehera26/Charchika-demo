@@ -1,27 +1,96 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}SrujanSetu — Empowering Local Hands{% endblock %}</title>
   <meta name="description" content="Discover Odisha crafts, meet local artisans and celebrate living heritage with SrujanSetu.">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block page_head %}{% endblock %}
 </head>
 <body>
 <header class="topbar">
-  <a class="brand" href="{{ url_for('home') }}"><span class="brand-mark">✺</span><span><b>SrujanSetu</b><small>Empowering Local Hands</small></span></a>
-  <button class="menu-toggle" id="menuToggle" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="{{ url_for('public.home') }}"><span class="brand-mark">✺</span><span><b>SrujanSetu</b><small>Empowering Local Hands</small></span></a>
+  <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle navigation" aria-controls="navLinks" aria-expanded="false">☰</button>
   <nav class="nav-links" id="navLinks">
-    <a href="{{ url_for('home') }}">Home</a><a href="{{ url_for('crafts') }}">Explore Crafts</a>
-    <a href="{{ url_for('artisans') }}">Find Artisans</a><a href="{{ url_for('marketplace') }}">SHG Marketplace</a>
-    <a href="{{ url_for('stories') }}">Craft Stories</a><a href="{{ url_for('schemes') }}">Schemes & Support</a><a href="{{ url_for('about') }}">About Us</a>
+    <a href="{{ url_for('public.home') }}">Home</a>
+    <a href="{{ url_for('public.crafts') }}">Explore Crafts</a>
+    <a href="{{ url_for('public.artisans') }}">Find Artisans</a>
+    <a href="{{ url_for('public.planner') }}">Explore Map</a>
+    <a href="{{ url_for('public.marketplace') }}">SHG Marketplace</a>
+    <a href="{{ url_for('public.stories') }}">Craft Stories</a>
+    <a href="{{ url_for('public.schemes') }}">Schemes &amp; Support</a>
+    <a href="{{ url_for('public.about') }}">About Us</a>
   </nav>
-  <div class="top-actions"><a class="admin-shortcut" href="{{ url_for('artisan_login') }}">Artisan Portal</a><a class="admin-shortcut" href="{{ url_for('admin_index') }}">Admin</a><span class="language">◎ EN</span><a class="avatar" href="{{ url_for('community') }}" title="Community">S</a></div>
+  <div class="top-actions">
+    <a class="admin-shortcut" href="{{ url_for('artisan.artisan_login') }}">Artisan Portal</a>
+    <a class="admin-shortcut" href="{{ url_for('admin.admin_index') }}">Admin</a>
+    <span class="language">◎ EN</span>
+    <a class="avatar" href="{{ url_for('public.community') }}" title="Community">S</a>
+  </div>
 </header>
-{% with messages = get_flashed_messages(with_categories=true) %}{% if messages %}<div class="flash-wrap">{% for category, message in messages %}<div class="flash {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
-<main>{% block content %}{% endblock %}</main>
-<footer class="footer"><div class="footer-pattern">✦　❖　✦　❖　✦　❖　✦</div><div><b>Support Local · Empower Communities · Celebrate Odisha</b><p>© {{ current_year }} SrujanSetu AI · An educational project celebrating Odisha's creative heritage.</p></div><a class="btn btn-gold" href="{{ url_for('about') }}">Be a Part of SrujanSetu →</a></footer>
-<a class="help-bubble" href="{{ url_for('assistant') }}"><span>🤖</span><span><b>Need Help?</b><small>Chat with Srujan AI</small></span><strong>→</strong></a>
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="flash-wrap">
+    {% for category, message in messages %}
+    <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+{% endwith %}
+<main>
+  {% block content %}{% endblock %}
+</main>
+<footer class="site-footer">
+  <div class="footer-main">
+    <div class="footer-intro">
+      <a class="brand footer-brand" href="{{ url_for('public.home') }}">
+        <span class="brand-mark">✺</span>
+        <span>
+          <b>SrujanSetu</b>
+          <small>Empowering Local Hands</small>
+        </span>
+      </a>
+      <p>Discover Odisha’s living crafts, meet the makers and support artisan and SHG communities.</p>
+      <a class="footer-help-link" href="{{ url_for('public.assistant') }}">Need help finding something? Ask SrujanSetu Guide →</a>
+    </div>
+    <nav class="footer-navigation" aria-label="Footer navigation">
+      <div>
+        <h2>Discover</h2>
+        <a href="{{ url_for('public.crafts') }}">Traditional crafts</a>
+        <a href="{{ url_for('public.artisans') }}">Find artisans</a>
+        <a href="{{ url_for('public.planner') }}">Explore the map</a>
+        <a href="{{ url_for('public.stories') }}">Craft stories</a>
+      </div>
+      <div>
+        <h2>Marketplace</h2>
+        <a href="{{ url_for('public.marketplace') }}">Shop local</a>
+        <a href="{{ url_for('artisan.artisan_register') }}">Join as an artisan or SHG</a>
+        <a href="{{ url_for('public.business') }}">Business tips</a>
+        <a href="{{ url_for('artisan.artisan_login') }}">Maker sign in</a>
+      </div>
+      <div>
+        <h2>Information</h2>
+        <a href="{{ url_for('public.schemes') }}">Schemes and support</a>
+        <a href="{{ url_for('public.community') }}">Community</a>
+        <a href="{{ url_for('public.about') }}">About SrujanSetu</a>
+      </div>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <p>© {{ current_year }} SrujanSetu. Educational demonstration; sample listings and scheme information are illustrative.</p>
+    <a href="{{ url_for('admin.admin_index') }}">Admin portal</a>
+  </div>
+</footer>
+<a class="help-bubble" href="{{ url_for('public.assistant') }}">
+  <span>🤖</span>
+  <span><b>Need Help?</b><small>Chat with the Guide</small></span>
+  <strong>→</strong>
+</a>
+{% block page_scripts %}{% endblock %}
 <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-</body></html>
+</body>
+</html>
