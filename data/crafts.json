@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "name": "Pattachitra",
+    "region": "Raghurajpur, Puri",
+    "description": "Intricate cloth-based scroll painting featuring mythological themes, fine lines and natural colours.",
+    "emoji": "🎨",
+    "tone": "orange"
+  },
+  {
+    "id": 2,
+    "name": "Sambalpuri Ikat",
+    "region": "Sambalpur & Bargarh",
+    "description": "A celebrated textile tradition using resist-dyeing of yarns before weaving.",
+    "emoji": "🧵",
+    "tone": "green"
+  },
+  {
+    "id": 3,
+    "name": "Pipili Appliqué",
+    "region": "Pipili, Puri",
+    "description": "Bright fabric shapes stitched onto colourful cloth for canopies, umbrellas and decor.",
+    "emoji": "☂️",
+    "tone": "pink"
+  },
+  {
+    "id": 4,
+    "name": "Silver Filigree",
+    "region": "Cuttack",
+    "description": "Fine silver wires shaped into delicate ornaments and decorative objects.",
+    "emoji": "✨",
+    "tone": "blue"
+  },
+  {
+    "id": 5,
+    "name": "Terracotta",
+    "region": "Across Odisha",
+    "description": "Hand-shaped and fired clay objects reflecting everyday life, ritual and folk imagination.",
+    "emoji": "🏺",
+    "tone": "terracotta"
+  },
+  {
+    "id": 6,
+    "name": "Dhokra Metal Craft",
+    "region": "Dhenkanal & Mayurbhanj",
+    "description": "Traditional lost-wax metal casting used to create distinctive figures and objects.",
+    "emoji": "🪔",
+    "tone": "gold"
+  }
+]

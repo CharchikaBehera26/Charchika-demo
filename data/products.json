@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "name": "Jagannath Pattachitra Panel",
+    "craft": "Pattachitra",
+    "price": "₹1,800",
+    "artisan": "Sasmita Das",
+    "district": "Puri",
+    "description": "Hand-painted sample artwork on treated cloth.",
+    "emoji": "🖼️"
+  },
+  {
+    "id": 2,
+    "name": "Sambalpuri Stole",
+    "craft": "Sambalpuri Ikat",
+    "price": "₹1,250",
+    "artisan": "Ramesh Meher",
+    "district": "Sambalpur",
+    "description": "A sample handloom stole with traditional ikat motifs.",
+    "emoji": "🧣"
+  },
+  {
+    "id": 3,
+    "name": "Pipili Decorative Umbrella",
+    "craft": "Pipili Appliqué",
+    "price": "₹950",
+    "artisan": "Priyanka Sahoo",
+    "district": "Puri",
+    "description": "Colourful appliqué-inspired decorative umbrella.",
+    "emoji": "☂️"
+  }
+]

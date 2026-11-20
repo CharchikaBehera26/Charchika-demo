@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+ <div class="hero-copy"><span class="eyebrow">THE HERITAGE OF ODISHA</span><h1>From the Hands of Odisha,<br>to the <em>Heart</em> of the World.</h1>
+ <p>Discover authentic crafts, support local artisans<br class="desktop"> and be a part of Odisha’s rich heritage.</p>
+ <div class="hero-actions"><a class="btn btn-green" href="{{ url_for('crafts') }}">Explore Crafts <span>→</span></a><a class="btn btn-outline" href="{{ url_for('planner') }}">⌖ &nbsp;Find Nearby Artisans</a></div></div>
+ <div class="hero-art"><div class="sun-disc"></div><div class="temple">♜</div><div class="artisan-illustration">👩🏽‍🎨</div><div class="hero-caption">Rooted in tradition. Made by hand.</div></div>
+</section>
+<section class="quick-links">
+ <a href="{{ url_for('marketplace') }}"><span>🧺</span><b>Shop Local</b><small>Support Artisans</small></a><a href="{{ url_for('planner') }}"><span>📍</span><b>Discover Nearby</b><small>Artisans & SHGs</small></a><a href="{{ url_for('stories') }}"><span>📖</span><b>Learn & Explore</b><small>Craft Stories</small></a><a href="{{ url_for('schemes') }}"><span>🏛️</span><b>Find Government</b><small>Schemes</small></a><a href="{{ url_for('community') }}"><span>👥</span><b>Join Community</b><small>Share & Connect</small></a>
+</section>
+<section class="feature-grid">
+ <article class="map-card"><div><span class="eyebrow light">EXPLORE THE STATE</span><h2>Explore Odisha<br>on the Map</h2><p>Find artisans, SHGs and traditional markets near you.</p><a class="btn btn-gold" href="{{ url_for('planner') }}">Open Explorer →</a></div><div class="odisha-shape">🗺️<span>✦</span><span>✦</span><span>✦</span></div></article>
+ <article class="panel artisans-panel"><div class="section-heading"><div><span class="eyebrow">REAL PEOPLE. REAL STORIES.</span><h2>Meet Our Artisans</h2></div><a href="{{ url_for('artisans') }}">View All →</a></div><div class="mini-artisans">{% for a in artisans %}<a class="mini-card" href="{{ url_for('artisans') }}"><div class="mini-photo">{{ a.emoji }}</div><b>{{ a.name }}</b><small>⌖ {{ a.district }}</small><span>{{ a.craft }}</span></a>{% endfor %}</div></article>
+ <article class="craft-feature"><span class="eyebrow light">MADE WITH MEANING</span><h2>Discover Our<br>Traditional Crafts</h2><p>Pattachitra, Sambalpuri, Pipili Appliqué and more…</p><div class="craft-big-icon">🎨</div><a class="btn btn-gold" href="{{ url_for('crafts') }}">Explore Crafts →</a></article>
+</section>
+<section class="impact"><div><span class="eyebrow">A SHARED LEGACY</span><h2>Our Impact Together</h2></div><div class="impact-stat"><b>👥</b><strong>50K+</strong><small>Happy Users</small></div><div class="impact-stat"><b>🧺</b><strong>{{ artisan_count }}+</strong><small>Artisans & SHGs*</small></div><div class="impact-stat"><b>🤝</b><strong>{{ product_count }}+</strong><small>Products Showcased*</small></div><div class="impact-stat"><b>📍</b><strong>15+</strong><small>Districts Covered*</small></div><small class="demo-note">*Sample project data; figures are illustrative.</small></section>
+{% endblock %}

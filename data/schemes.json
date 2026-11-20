@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "name": "Artisan Identity & Registration Support",
+    "audience": "Individual artisans",
+    "description": "A demo information card reminding artisans to check official identity, registration and documentation requirements.",
+    "note": "Illustrative project content. Verify current eligibility and application details on official government portals."
+  },
+  {
+    "id": 2,
+    "name": "Handloom & Handicraft Training",
+    "audience": "Artisans and producer groups",
+    "description": "Training and skill-development information for traditional craft and handloom communities.",
+    "note": "Illustrative project content. Programme availability varies by department and location."
+  },
+  {
+    "id": 3,
+    "name": "SHG Enterprise Support",
+    "audience": "Self-help groups",
+    "description": "A starting point for exploring enterprise development, market access and group-based livelihood support.",
+    "note": "Illustrative project content. Check the relevant Odisha department or mission for current details."
+  }
+]

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Sasmita Das",
+    "craft": "Pattachitra",
+    "district": "Puri",
+    "bio": "A traditional artist keeping the stories of Odisha alive through detailed painting.",
+    "experience": "18 years",
+    "emoji": "🎨",
+    "image": "https://images.unsplash.com/photo-1590736969955-71cc94901144?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    "id": 2,
+    "name": "Ramesh Meher",
+    "craft": "Sambalpuri Ikat",
+    "district": "Sambalpur",
+    "bio": "A handloom artisan working with the distinctive tie-and-dye ikat tradition.",
+    "experience": "22 years",
+    "emoji": "🧵",
+    "image": "https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    "id": 3,
+    "name": "Priyanka Sahoo",
+    "craft": "Pipili Appliqué",
+    "district": "Puri",
+    "bio": "Creates colourful appliqué work inspired by local festivals and traditions.",
+    "experience": "11 years",
+    "emoji": "🪡",
+    "image": "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    "id": 4,
+    "name": "Bikash Mohanty",
+    "craft": "Silver Filigree",
+    "district": "Cuttack",
+    "bio": "Practises delicate silver filigree work, locally known as Tarakasi.",
+    "experience": "15 years",
+    "emoji": "✨",
+    "image": "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=800&q=85"
+  }
+]
