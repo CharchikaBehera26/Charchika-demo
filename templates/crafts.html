@@ -4,16 +4,16 @@
 
 {% block content %}
 <section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'crafts') }}')">
-  <span class="eyebrow">A TAPESTRY OF TRADITION</span>
-  <h1>Explore Odisha’s <em>Living Crafts</em></h1>
-  <p>Every craft carries a story. Discover the skills, places and people behind them.</p>
+  <span class="eyebrow">{{ tr('A TAPESTRY OF TRADITION') }}</span>
+  <h1>{{ tr('Explore Odisha’s <em>Living Crafts</em>')|safe }}</h1>
+  <p>{{ tr('Every craft carries a story. Discover the skills, places and people behind them.') }}</p>
 </section>
 
 <section class="content-wrap">
   <form class="search-form" method="get" action="{{ url_for('public.crafts') }}">
-    <label class="sr-only" for="craftSearch">Search crafts or regions</label>
-    <input id="craftSearch" name="q" value="{{ query }}" placeholder="Search craft or region…">
-    <button class="btn btn-green" type="submit">Search</button>
+    <label class="sr-only" for="craftSearch">{{ tr('Search crafts or regions') }}</label>
+    <input id="craftSearch" name="q" value="{{ query }}" placeholder="{{ tr('Search craft or region…') }}">
+    <button class="btn btn-green" type="submit">{{ tr('Search') }}</button>
   </form>
 
   <div class="card-grid">
@@ -21,14 +21,14 @@
     <article class="content-card">
       <div class="craft-icon photo-frame {{ craft.tone }}"><img src="{{ media('craft', craft.name) }}" alt="{{ craft.name }}"></div>
       <div class="card-body">
-        <span class="eyebrow">{{ craft.region }}</span>
-        <h2>{{ craft.name }}</h2>
-        <p>{{ craft.description }}</p>
-        <a class="text-link" href="{{ url_for('public.artisans', q=craft.name) }}">Meet artisans →</a>
+        <span class="eyebrow">{{ tr(craft.region) }}</span>
+        <h2>{{ tr(craft.name) }}</h2>
+        <p>{{ craft_description(craft.name, craft.description) }}</p>
+        <a class="text-link" href="{{ url_for('public.artisans', q=craft.name) }}">{{ tr('Meet artisans →') }}</a>
       </div>
     </article>
     {% else %}
-    <p class="empty-state">No crafts found. Try another search.</p>
+    <p class="empty-state">{{ tr('No crafts found. Try another search.') }}</p>
     {% endfor %}
   </div>
 </section>

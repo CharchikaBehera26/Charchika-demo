@@ -1,3 +1,4 @@
+import json
 import secrets
 from datetime import datetime
 
@@ -11,12 +12,16 @@ from flask import (
     session,
     url_for,
 )
+from sqlalchemy import func, select
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..constants import ADMIN_SECTIONS
+from ..extensions import db
+from ..models import CustomerOrder
 from ..services.accounts import admin_record, save_admin_record
 from ..services.data_store import read_data, write_data
 from ..services.media import save_uploaded_image
+from ..services.pricing import has_valid_deal
 from ..services.security import (
     admin_required,
     csrf_value,
@@ -122,6 +127,26 @@ def admin_dashboard():
         "admin_dashboard.html",
         counts=admin_counts(),
         sections=ADMIN_SECTIONS,
+        order_count=db.session.scalar(
+            select(func.count()).select_from(CustomerOrder)
+        ),
+    )
+
+
+@admin_bp.route("/orders")
+@admin_required
+def admin_orders():
+    records = db.session.scalars(
+        select(CustomerOrder).order_by(CustomerOrder.created_at.desc())
+    ).all()
+    orders = [
+        {"order": order, "items": json.loads(order.items_json)}
+        for order in records
+    ]
+    return render_template(
+        "admin_orders.html",
+        orders=orders,
+        sections=ADMIN_SECTIONS,
     )
 
 
@@ -148,8 +173,10 @@ def admin_new(kind):
     if request.method == "POST":
         verify_csrf()
         item = {"id": next_id(read_data(kind))}
-        for key, _label, _field_type, _required in config["fields"]:
-            item[key] = request.form.get(key, "").strip()
+        for key, _label, field_type, _required in config["fields"]:
+            item[key] = key in request.form if field_type == "checkbox" else request.form.get(key, "").strip()
+        if kind == "products":
+            item["category"] = item.get("category") or item.get("craft", "")
         if kind == "community" and not item.get("date"):
             item["date"] = datetime.now().strftime("%d %b %Y")
 
@@ -175,6 +202,16 @@ def admin_new(kind):
             for key, _label, _field_type, required in config["fields"]
         ):
             flash("Please complete all required fields.", "error")
+            return render_template(
+                "admin_form.html",
+                kind=kind,
+                config=config,
+                item=item,
+                mode="Add",
+            )
+
+        if kind == "products" and not has_valid_deal(item):
+            flash("A deal price must be a valid amount below the regular price.", "error")
             return render_template(
                 "admin_form.html",
                 kind=kind,
@@ -215,8 +252,10 @@ def admin_edit(kind, item_id):
     if request.method == "POST":
         verify_csrf()
         updated = dict(item)
-        for key, _label, _field_type, _required in config["fields"]:
-            updated[key] = request.form.get(key, "").strip()
+        for key, _label, field_type, _required in config["fields"]:
+            updated[key] = key in request.form if field_type == "checkbox" else request.form.get(key, "").strip()
+        if kind == "products":
+            updated["category"] = updated.get("category") or updated.get("craft", "")
         try:
             uploaded = (
                 save_uploaded_image(request.files.get("image_file"))
@@ -239,6 +278,16 @@ def admin_edit(kind, item_id):
             for key, _label, _field_type, required in config["fields"]
         ):
             flash("Please complete all required fields.", "error")
+            return render_template(
+                "admin_form.html",
+                kind=kind,
+                config=config,
+                item=updated,
+                mode="Edit",
+            )
+
+        if kind == "products" and not has_valid_deal(updated):
+            flash("A deal price must be a valid amount below the regular price.", "error")
             return render_template(
                 "admin_form.html",
                 kind=kind,

@@ -1,12 +1,18 @@
+import json
 import re
+from collections import Counter
 from datetime import datetime
 
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
+from sqlalchemy import select
 
+from ..extensions import db
+from ..models import CustomerOrder
 from ..services.agents import generate_story, sell_reply
 from ..services.data_store import read_data, write_data
 from ..services.faq import cached_faqs, find_faq, normalize_question
-from ..services.i18n import EN, language_from_message, localize_guide, normalize_lang, page_copy
+from ..services.i18n import EN, localize_guide, normalize_lang, page_copy
+from ..services.pricing import effective_product_price
 from ..services.security import next_id, parse_optional_coordinates
 
 
@@ -75,22 +81,97 @@ def artisans():
 
 @public_bp.route("/marketplace")
 def marketplace():
-    return render_template("marketplace.html", products=read_data("products"))
+    all_products = read_data("products")
+    categories = sorted({
+        product.get("category") or product.get("craft") or "Other"
+        for product in all_products
+    })
+    selected_category = request.args.get("category", "").strip()
+    products = [
+        product for product in all_products
+        if not selected_category
+        or (product.get("category") or product.get("craft") or "Other") == selected_category
+    ]
+
+    for product in all_products:
+        product["current_price"] = effective_product_price(product)
+        product["has_valid_deal"] = bool(
+            product.get("deal_price") and product["current_price"] is not None
+        )
+        product["current_price_label"] = (
+            f"₹{product['current_price']:,.2f}"
+            if product["current_price"] is not None
+            else ""
+        )
+        product["deal_price_label"] = (
+            f"₹{product['current_price']:,.2f}"
+            if product["has_valid_deal"]
+            else ""
+        )
+
+    request_counts = Counter()
+    for items_json in db.session.scalars(select(CustomerOrder.items_json)):
+        for item in json.loads(items_json):
+            name = item.get("name")
+            quantity = item.get("quantity", 0)
+            if name and isinstance(quantity, int) and quantity > 0:
+                request_counts[name] += quantity
+    most_requested = sorted(
+        (
+            (product, request_counts[product.get("name", "")])
+            for product in all_products
+            if request_counts[product.get("name", "")] > 0
+        ),
+        key=lambda item: (-item[1], item[0].get("name", "")),
+    )[:4]
+
+    featured = [product for product in all_products if product.get("is_featured")]
+    featured = (featured or all_products)[:4]
+    deals = [product for product in all_products if product["has_valid_deal"]]
+
+    seller_counts = Counter(
+        product.get("artisan", "")
+        for product in all_products
+        if product.get("artisan")
+    )
+    artisans = {
+        artisan.get("name"): artisan
+        for artisan in read_data("artisans")
+    }
+    sellers = [
+        {
+            "name": name,
+            "listing_count": count,
+            "profile": artisans.get(name),
+        }
+        for name, count in seller_counts.most_common(4)
+    ]
+
+    return render_template(
+        "marketplace.html",
+        products=products,
+        categories=categories,
+        selected_category=selected_category,
+        featured=featured,
+        most_requested=most_requested,
+        deals=deals,
+        sellers=sellers,
+    )
 
 
 @public_bp.route("/stories", methods=["GET", "POST"])
 def stories():
     lang = normalize_lang(session.get("lang"))
+    story_lang = lang
     generated = None
     selected_craft = request.form.get("craft", "") if request.method == "POST" else ""
     focus = request.form.get("focus", "making") if request.method == "POST" else "making"
     if request.method == "POST":
-        lang = normalize_lang(request.form.get("lang") or lang)
-        session["lang"] = lang
+        story_lang = normalize_lang(request.form.get("story_lang") or lang)
         if not selected_craft:
             flash("Choose a craft before weaving a story.", "error")
         else:
-            generated = generate_story(selected_craft, lang, focus)
+            generated = generate_story(selected_craft, story_lang, focus)
             if generated is None:
                 flash("That craft is not in the catalog.", "error")
     return render_template(
@@ -101,6 +182,7 @@ def stories():
         selected_craft=selected_craft,
         focus=focus,
         copy=page_copy(lang),
+        story_lang=story_lang,
     )
 
 
@@ -335,14 +417,26 @@ def assistant():
     lang = normalize_lang(session.get("lang"))
     if request.method == "POST":
         message = request.form.get("message", "").strip()
-        lang = language_from_message(message, request.form.get("lang") or lang)
+        lang = normalize_lang(request.form.get("lang") or lang)
         session["lang"] = lang
+        is_async = request.headers.get("X-Requested-With") == "XMLHttpRequest"
         if not message:
+            if is_async:
+                return jsonify(error="Enter a question before sending it."), 400
             flash("Enter a question before sending it.", "error")
         elif len(message) > 500:
+            if is_async:
+                return jsonify(error="Please keep your question under 500 characters."), 400
             flash("Please keep your question under 500 characters.", "error")
         else:
             answer, actions = localize_guide(*assistant_reply(message), lang)
+            if is_async:
+                return jsonify(
+                    answer=answer,
+                    actions=actions,
+                    message=message,
+                    lang=lang,
+                )
     return render_template(
         "assistant.html",
         message=message,
@@ -362,7 +456,7 @@ def sell():
     lang = normalize_lang(session.get("lang"))
     if request.method == "POST":
         message = request.form.get("message", "").strip()
-        lang = language_from_message(message, request.form.get("lang") or lang)
+        lang = normalize_lang(request.form.get("lang") or lang)
         session["lang"] = lang
         if not message:
             flash("Tell the sell assistant what you are looking for.", "error")

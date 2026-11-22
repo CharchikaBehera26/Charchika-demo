@@ -2,7 +2,7 @@ import base64
 import hashlib
 import json
 import secrets
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from functools import wraps
 
 from flask import (
@@ -20,8 +20,10 @@ from sqlalchemy import select
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..extensions import db
-from ..models import CustomerAccount, CustomerOrder
+from ..models import ArtisanAccount, CustomerAccount, CustomerOrder
+from ..services.accounts import admin_record
 from ..services.data_store import read_data
+from ..services.pricing import effective_product_price, product_price
 from ..services.security import csrf_value, login_redirect_target, verify_csrf
 from ..services.supabase_auth import (
     SupabaseAuthError,
@@ -68,22 +70,6 @@ def google_callback_url():
     return url_for("shop.google_callback", _external=True)
 
 
-def product_price(value):
-    cleaned = str(value).replace("₹", "").replace("INR", "").replace(",", "").strip()
-    try:
-        amount = Decimal(cleaned)
-    except InvalidOperation:
-        return None
-    if (
-        not amount.is_finite()
-        or amount <= 0
-        or amount > Decimal("9999999999.99")
-        or amount.as_tuple().exponent < -2
-    ):
-        return None
-    return amount.quantize(Decimal("0.01"))
-
-
 def format_price(amount):
     return f"₹{amount:,.2f}"
 
@@ -109,7 +95,7 @@ def cart_contents():
             continue
         if not product or not 1 <= quantity <= 99:
             continue
-        price = product_price(product.get("price", ""))
+        price = effective_product_price(product)
         line_total = price * quantity if price is not None else None
         if line_total is not None:
             total += line_total
@@ -187,12 +173,26 @@ def customer_login():
 
 @shop_bp.route("/google/login")
 def google_login():
+    role = request.args.get("role", "customer")
+    if role not in {"customer", "artisan", "admin"}:
+        abort(400)
+    login_endpoint = {
+        "customer": "shop.customer_login",
+        "artisan": "artisan.artisan_login",
+        "admin": "admin.admin_login",
+    }[role]
+    default_endpoint = {
+        "customer": "public.marketplace",
+        "artisan": "artisan.artisan_dashboard",
+        "admin": "admin.admin_dashboard",
+    }[role]
     verifier = secrets.token_urlsafe(64)
     challenge = base64.urlsafe_b64encode(
         hashlib.sha256(verifier.encode("ascii")).digest()
     ).rstrip(b"=").decode("ascii")
     session["supabase_oauth_verifier"] = verifier
-    session["supabase_oauth_next"] = login_redirect_target("public.marketplace")
+    session["supabase_oauth_role"] = role
+    session["supabase_oauth_next"] = login_redirect_target(default_endpoint)
     try:
         authorization_url = google_authorization_url(
             google_callback_url(),
@@ -201,24 +201,38 @@ def google_login():
     except SupabaseAuthError:
         current_app.logger.exception("Google sign-in is not configured.")
         session.pop("supabase_oauth_verifier", None)
+        session.pop("supabase_oauth_role", None)
         session.pop("supabase_oauth_next", None)
         flash("Google sign-in is not configured yet.", "error")
-        return redirect(url_for("shop.customer_login"))
+        return redirect(url_for(login_endpoint))
     return redirect(authorization_url)
 
 
 @shop_bp.route("/google/callback")
 def google_callback():
     verifier = session.pop("supabase_oauth_verifier", None)
-    next_url = session.pop("supabase_oauth_next", url_for("public.marketplace"))
+    role = session.pop("supabase_oauth_role", "customer")
+    if role not in {"customer", "artisan", "admin"}:
+        role = "customer"
+    login_endpoint = {
+        "customer": "shop.customer_login",
+        "artisan": "artisan.artisan_login",
+        "admin": "admin.admin_login",
+    }[role]
+    next_endpoint = {
+        "customer": "public.marketplace",
+        "artisan": "artisan.artisan_dashboard",
+        "admin": "admin.admin_dashboard",
+    }[role]
+    next_url = session.pop("supabase_oauth_next", url_for(next_endpoint))
     if request.args.get("error") or not verifier:
         flash("Google sign-in was cancelled or expired. Please try again.", "error")
-        return redirect(url_for("shop.customer_login"))
+        return redirect(url_for(login_endpoint))
 
     auth_code = request.args.get("code", "")
     if not auth_code:
         flash("Google sign-in could not be completed. Please try again.", "error")
-        return redirect(url_for("shop.customer_login"))
+        return redirect(url_for(login_endpoint))
 
     try:
         auth_result = exchange_google_code(auth_code, verifier)
@@ -233,7 +247,7 @@ def google_callback():
     except SupabaseAuthError:
         current_app.logger.exception("Supabase Google sign-in failed.")
         flash("Google sign-in could not be completed. Please try again.", "error")
-        return redirect(url_for("shop.customer_login"))
+        return redirect(url_for(login_endpoint))
 
     email = str(user.get("email", "")).strip().lower()
     user_id = str(user.get("id", "")).strip()
@@ -248,7 +262,49 @@ def google_callback():
     )
     if not email or not user_id or len(user_id) > 64 or not confirmed:
         flash("Google did not provide a verified email address.", "error")
-        return redirect(url_for("shop.customer_login"))
+        return redirect(url_for(login_endpoint))
+
+    if role == "artisan":
+        account = db.session.scalar(
+            select(ArtisanAccount).where(ArtisanAccount.supabase_user_id == user_id)
+        )
+        if account is None:
+            account = db.session.scalar(
+                select(ArtisanAccount).where(ArtisanAccount.email == email)
+            )
+        if account is None:
+            flash(
+                "Create your artisan account with this email before using Google sign-in.",
+                "error",
+            )
+            return redirect(url_for("artisan.artisan_login"))
+        if account.supabase_user_id not in (None, user_id):
+            flash("This email is already linked to another Google account.", "error")
+            return redirect(url_for("artisan.artisan_login"))
+        account.supabase_user_id = user_id
+        db.session.commit()
+        session.clear()
+        session["role"] = "artisan"
+        session["artisan_user_id"] = account.id
+        csrf_value()
+        flash("You are now signed in with Google.", "success")
+        return redirect(next_url)
+
+    if role == "admin":
+        allowed_emails = {
+            entry.strip().lower()
+            for entry in current_app.config.get("GOOGLE_ADMIN_EMAILS", "").split(",")
+            if entry.strip()
+        }
+        if email not in allowed_emails or not admin_record():
+            flash("This Google account is not authorized for administrator access.", "error")
+            return redirect(url_for("admin.admin_login"))
+        session.clear()
+        session["role"] = "admin"
+        session["admin_user"] = email
+        csrf_value()
+        flash("You are now signed in with Google.", "success")
+        return redirect(next_url)
 
     account = db.session.scalar(
         select(CustomerAccount).where(

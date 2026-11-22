@@ -15,6 +15,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from ..services.accounts import read_artisan_users, write_artisan_users
 from ..services.data_store import read_data, write_data
 from ..services.media import save_uploaded_image
+from ..services.pricing import has_valid_deal
 from ..services.security import (
     artisan_profile,
     artisan_required,
@@ -57,6 +58,7 @@ def artisan_register():
                 "name": name,
                 "email": email,
                 "password_hash": generate_password_hash(password),
+                "supabase_user_id": None,
             }
             users.append(account)
             write_artisan_users(users)
@@ -97,7 +99,11 @@ def artisan_login():
             ),
             None,
         )
-        if account and check_password_hash(account.get("password_hash", ""), password):
+        if (
+            account
+            and account.get("password_hash")
+            and check_password_hash(account["password_hash"], password)
+        ):
             session.clear()
             session["role"] = "artisan"
             session["artisan_user_id"] = account["id"]
@@ -224,10 +230,13 @@ def artisan_product_new():
         verify_csrf()
         product = {
             key: request.form.get(key, "").strip()
-            for key in ("name", "craft", "price", "description")
+            for key in ("name", "craft", "category", "price", "deal_price", "description")
         }
+        product["category"] = product["category"] or product["craft"]
         if not product["name"] or not product["price"]:
             flash("Product name and price are required.", "error")
+        elif not has_valid_deal(product):
+            flash("A deal price must be a valid amount below the regular price.", "error")
         else:
             try:
                 uploaded = save_uploaded_image(request.files.get("image_file"))
@@ -280,10 +289,13 @@ def artisan_product_edit(product_id):
     if request.method == "POST":
         verify_csrf()
         updated = dict(product)
-        for key in ("name", "craft", "price", "description"):
+        for key in ("name", "craft", "category", "price", "deal_price", "description"):
             updated[key] = request.form.get(key, "").strip()
+        updated["category"] = updated["category"] or updated["craft"]
         if not updated.get("name") or not updated.get("price"):
             flash("Product name and price are required.", "error")
+        elif not has_valid_deal(updated):
+            flash("A deal price must be a valid amount below the regular price.", "error")
         else:
             try:
                 uploaded = save_uploaded_image(request.files.get("image_file"))

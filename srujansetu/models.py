@@ -37,7 +37,10 @@ class Product(db.Model):
     owner_id = db.Column(db.String(64), index=True)
     name = db.Column(db.String(200), nullable=False)
     craft = db.Column(db.String(160), nullable=False, default="")
+    category = db.Column(db.String(160), nullable=False, default="")
     price = db.Column(db.String(80), nullable=False)
+    deal_price = db.Column(db.String(80), nullable=False, default="")
+    is_featured = db.Column(db.Boolean, nullable=False, default=False)
     artisan = db.Column(db.String(160), nullable=False, default="")
     district = db.Column(db.String(120), nullable=False, default="")
     description = db.Column(db.Text, nullable=False, default="")
@@ -80,7 +83,8 @@ class ArtisanAccount(db.Model):
     id = db.Column(db.String(64), primary_key=True)
     name = db.Column(db.String(160), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True, index=True)
-    password_hash = db.Column(db.String(255), nullable=False)
+    password_hash = db.Column(db.String(255))
+    supabase_user_id = db.Column(db.String(64), unique=True, index=True)
 
 
 class CustomerAccount(db.Model):

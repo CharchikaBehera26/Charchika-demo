@@ -1,0 +1,66 @@
+{% extends "admin_base.html" %}
+
+{% block title %}Customer Orders — SrujanSetu{% endblock %}
+
+{% block admin_content %}
+<div class="admin-layout">
+  <aside class="admin-sidebar">
+    <span class="eyebrow light">{{ tr('WORKSPACE') }}</span>
+    <h2>{{ tr('Management') }}</h2>
+    <a href="{{ url_for('admin.admin_dashboard') }}">▦ {{ tr('Overview') }}</a>
+    <a class="active" href="{{ url_for('admin.admin_orders') }}">▣ {{ tr('Customer orders') }}</a>
+    {% for key, config in sections.items() %}
+    <a href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ tr(config.title) }}</a>
+    {% endfor %}
+  </aside>
+
+  <section class="admin-main">
+    <div class="admin-page-head">
+      <div>
+        <span class="eyebrow">{{ tr('MARKETPLACE ACTIVITY') }}</span>
+        <h1>{{ tr('Customer order requests') }}</h1>
+        <p>{{ tr('These are demo requests only; no payment or delivery is processed.') }}</p>
+      </div>
+      <span class="admin-welcome">{{ orders|length }} {{ tr('request(s)') }}</span>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ tr('Order') }}</th>
+            <th scope="col">{{ tr('Customer and delivery') }}</th>
+            <th scope="col">{{ tr('Items') }}</th>
+            <th scope="col">{{ tr('Total') }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in orders %}
+          {% set order = record["order"] %}
+          <tr>
+            <td>
+              <strong>#{{ order.id[:8] }}</strong>
+              <small>{{ order.created_at.strftime("%d %b %Y, %H:%M") }}</small>
+            </td>
+            <td>
+              <strong>{{ order.customer_name }}</strong><br>
+              <a href="tel:{{ order.phone }}">{{ order.phone }}</a><br>
+              <span class="table-detail">{{ order.address }}</span>
+            </td>
+            <td>
+              {% for item in record["items"] %}
+              <div><strong>{{ item.name }} × {{ item.quantity }}</strong></div>
+              <small>{{ tr('Maker:') }} {{ item.artisan }}</small>
+              {% endfor %}
+            </td>
+            <td><strong>₹{{ "{:,.2f}".format(order.total_price) }}</strong></td>
+          </tr>
+          {% else %}
+          <tr><td class="empty-table" colspan="4">{{ tr('No customer order requests yet.') }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</div>
+{% endblock %}

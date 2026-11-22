@@ -4,27 +4,33 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">MAKER WORKSPACE</span>
-  <h1>Artisan &amp; SHG <em>Login</em></h1>
-  <p>Sign in to update your public profile and manage your product listings.</p>
+  <span class="eyebrow">{{ tr('MAKER WORKSPACE') }}</span>
+  <h1>{{ tr('Artisan &amp; SHG') }} <em>{{ tr('Login') }}</em></h1>
+  <p>{{ tr('Sign in to update your public profile and manage your product listings.') }}</p>
 </section>
 
 <section class="content-wrap auth-content">
   <div class="auth-card">
-    <h2>Welcome back</h2>
+    <h2>{{ tr('Welcome back') }}</h2>
     <form method="post" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Email address
+        {{ tr('Email address') }}
         <input type="email" name="email" required autocomplete="username">
       </label>
       <label>
-        Password
+        {{ tr('Password') }}
         <input type="password" name="password" required autocomplete="current-password">
       </label>
-      <button class="btn btn-green" type="submit">Sign in →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Sign in →') }}</button>
     </form>
-    <p class="auth-foot">New to SrujanSetu? <a href="{{ url_for('artisan.artisan_register') }}">Create an artisan or SHG account</a></p>
+    {% if supabase_google_enabled %}
+    <div class="auth-divider"><span>{{ tr('or') }}</span></div>
+    <a class="btn btn-outline google-sign-in" href="{{ url_for('shop.google_login', role='artisan', next=request.args.get('next', '')) }}">
+      <span aria-hidden="true">G</span> {{ tr('Continue with Google') }}
+    </a>
+    {% endif %}
+    <p class="auth-foot">{{ tr('New to SrujanSetu?') }} <a href="{{ url_for('artisan.artisan_register') }}">{{ tr('Create an artisan or SHG account') }}</a></p>
   </div>
 </section>
 {% endblock %}

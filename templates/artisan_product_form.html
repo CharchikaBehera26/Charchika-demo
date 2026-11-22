@@ -4,9 +4,9 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">YOUR MARKETPLACE</span>
-  <h1>{{ mode }} <em>Product</em></h1>
-  <p>Share clear details so customers can understand your handmade product.</p>
+  <span class="eyebrow">{{ tr('YOUR MARKETPLACE') }}</span>
+  <h1>{{ tr(mode) }} <em>{{ tr('Product') }}</em></h1>
+  <p>{{ tr('Share clear details so customers can understand your handmade product.') }}</p>
 </section>
 
 <section class="content-wrap auth-content">
@@ -14,31 +14,39 @@
     <form method="post" enctype="multipart/form-data" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Product name
+        {{ tr('Product name') }}
         <input name="name" required value="{{ product.get('name', '') }}">
       </label>
       <label>
-        Craft type
+        {{ tr('Craft type') }}
         <input name="craft" value="{{ product.get('craft', '') }}">
       </label>
       <label>
-        Price
+        {{ tr('Category') }}
+        <input name="category" value="{{ product.get('category', product.get('craft', '')) }}" placeholder="{{ tr('e.g. Painting, textiles or home decor') }}">
+      </label>
+      <label>
+        {{ tr('Price') }}
         <input name="price" required value="{{ product.get('price', '') }}" placeholder="e.g. ₹1,200">
       </label>
       <label>
-        Description
+        {{ tr('Deal price (optional)') }}
+        <input name="deal_price" value="{{ product.get('deal_price', '') }}" placeholder="{{ tr('Must be lower than the regular price') }}">
+      </label>
+      <label>
+        {{ tr('Description') }}
         <textarea name="description" rows="4">{{ product.get('description', '') }}</textarea>
       </label>
       <label>
-        Product photo <small>PNG/JPG/WEBP/GIF · max 5 MB</small>
+        {{ tr('Product photo') }} <small>{{ tr('PNG/JPG/WEBP/GIF · max 5 MB') }}</small>
         <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.gif,.webp">
       </label>
       {% if product.get('image') %}
-      <img class="portal-preview" src="{{ product.image }}" alt="Current product image">
+      <img class="portal-preview" src="{{ product.image }}" alt="{{ tr('Current product image') }}">
       {% endif %}
       <div class="form-actions">
-        <button class="btn btn-green" type="submit">{{ mode }} product →</button>
-        <a class="text-link" href="{{ url_for('artisan.artisan_products') }}">Cancel</a>
+        <button class="btn btn-green" type="submit">{{ tr(mode) }} {{ tr('product →') }}</button>
+        <a class="text-link" href="{{ url_for('artisan.artisan_products') }}">{{ tr('Cancel') }}</a>
       </div>
     </form>
   </div>

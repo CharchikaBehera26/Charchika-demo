@@ -55,6 +55,44 @@ def seed_demo_data():
 
     metadata = db.session.get(AppMetadata, "demo_data_seeded")
     if metadata:
+        for collection in ("artisans", "products"):
+            path = current_app.config["JSON_SEED_FILES"][collection]
+            if not path.exists():
+                continue
+            model = COLLECTION_MODELS[collection]
+            records = read_data(collection)
+            records_by_id = {str(item.get("id")): item for item in records}
+            existing_ids = {str(item.get("id")) for item in records}
+            existing_names = {
+                str(item.get("name", "")).casefold() for item in records
+            }
+            for item in json.loads(path.read_text(encoding="utf-8")):
+                item_id = str(item.get("id", ""))
+                item_name = str(item.get("name", "")).casefold()
+                if item_id in existing_ids:
+                    existing = records_by_id[item_id]
+                    if (
+                        collection == "products"
+                        and str(existing.get("name", "")).casefold() == item_name
+                        and not existing.get("image")
+                        and item.get("image")
+                    ):
+                        product = db.session.get(model, existing["id"])
+                        if product is not None:
+                            product.image = item["image"]
+                    continue
+                if item_name in existing_names:
+                    continue
+                values = {
+                    column.name: item[column.name]
+                    for column in model.__table__.columns
+                    if column.name in item
+                }
+                db.session.add(model(**values))
+                existing_ids.add(item_id)
+                existing_names.add(item_name)
+                records_by_id[item_id] = item
+        db.session.commit()
         return
 
     for collection, path in current_app.config["JSON_SEED_FILES"].items():

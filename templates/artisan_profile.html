@@ -4,9 +4,9 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">YOUR PUBLIC MAKER PROFILE</span>
-  <h1>Edit <em>Profile</em></h1>
-  <p>Changes appear in the public Find Artisans directory.</p>
+  <span class="eyebrow">{{ tr('YOUR PUBLIC MAKER PROFILE') }}</span>
+  <h1>{{ tr('Edit') }} <em>{{ tr('Profile') }}</em></h1>
+  <p>{{ tr('Changes appear in the public Find Artisans directory.') }}</p>
 </section>
 
 <section class="content-wrap auth-content">
@@ -15,47 +15,47 @@
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
 
       <label>
-        Full name
+        {{ tr('Full name') }}
         <input name="name" required value="{{ profile.get('name', '') }}">
       </label>
       <label>
-        Craft / skill
+        {{ tr('Craft / skill') }}
         <input name="craft" required value="{{ profile.get('craft', '') }}">
       </label>
       <label>
-        District
+        {{ tr('District') }}
         <input name="district" required value="{{ profile.get('district', '') }}">
       </label>
       <label>
-        Experience
-        <input name="experience" value="{{ profile.get('experience', '') }}" placeholder="e.g. 15 years">
+        {{ tr('Experience') }}
+        <input name="experience" value="{{ profile.get('experience', '') }}" placeholder="{{ tr('e.g. 15 years') }}">
       </label>
       <label>
-        Biography
+        {{ tr('Biography') }}
         <textarea name="bio" rows="4">{{ profile.get('bio', '') }}</textarea>
       </label>
       <fieldset class="location-fields">
-        <legend>Public map location (optional)</legend>
-        <p>These exact coordinates are visible to everyone. Enter your public workshop or shop location—not your home address. Leave both blank to remove your map pin.</p>
+        <legend>{{ tr('Public map location (optional)') }}</legend>
+        <p>{{ tr('These exact coordinates are visible to everyone. Enter your public workshop or shop location—not your home address. Leave both blank to remove your map pin.') }}</p>
         <div class="coordinate-inputs">
           <label>
-            Latitude
+            {{ tr('Latitude') }}
             <input type="number" name="latitude" step="any" min="-90" max="90" value="{{ profile.get('latitude', '') }}" placeholder="e.g. 20.2961">
           </label>
           <label>
-            Longitude
+            {{ tr('Longitude') }}
             <input type="number" name="longitude" step="any" min="-180" max="180" value="{{ profile.get('longitude', '') }}" placeholder="e.g. 85.8245">
           </label>
         </div>
       </fieldset>
       <label>
-        Profile image <small>PNG/JPG/WEBP/GIF · max 5 MB</small>
+        {{ tr('Profile image') }} <small>{{ tr('PNG/JPG/WEBP/GIF · max 5 MB') }}</small>
         <input type="file" name="image_file" accept=".png,.jpg,.jpeg,.gif,.webp">
       </label>
       {% if profile.get('image') %}
-      <img class="portal-preview" src="{{ profile.image }}" alt="Current profile image">
+      <img class="portal-preview" src="{{ profile.image }}" alt="{{ tr('Current profile image') }}">
       {% endif %}
-      <button class="btn btn-green" type="submit">Save profile →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Save profile →') }}</button>
     </form>
   </div>
 </section>

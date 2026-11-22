@@ -26,9 +26,10 @@
       <div class="chat-message bot">{{ copy.guide_hello }}</div>
       {% if answer %}
       <div class="chat-message user">{{ message }}</div>
-      <div class="chat-message bot">{{ answer }}</div>
+      <div class="chat-message bot" id="chatAnswer" data-speech-lang="{{ lang }}">{{ answer }}</div>
+      <button class="btn btn-outline answer-audio" id="listenAnswer" type="button">{{ tr('Listen to answer') }}</button>
       {% if actions %}
-      <nav class="chat-actions" aria-label="Suggested pages">
+      <nav class="chat-actions" aria-label="{{ tr('Suggested pages') }}">
         {% for action in actions %}
         <a class="btn btn-green" href="{{ action.url }}">{{ action.label }} →</a>
         {% endfor %}
@@ -37,14 +38,14 @@
       {% endif %}
     </div>
 
-    <form method="post" class="chat-input" action="{{ url_for('public.assistant') }}">
+    <form method="post" class="chat-input" id="assistantForm" action="{{ url_for('public.assistant') }}">
       <label class="sr-only" for="assistantLang">Language</label>
-      <select id="assistantLang" name="lang" aria-label="Language">
+      <select id="assistantLang" name="lang" aria-label="{{ tr('Language') }}">
         <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
         <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
         <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
       </select>
-      <label class="sr-only" for="assistantMessage">Your question</label>
+      <label class="sr-only" for="assistantMessage">{{ tr('Your question') }}</label>
       <input
         id="assistantMessage"
         name="message"
@@ -56,6 +57,26 @@
       >
       <button class="btn btn-green" type="submit">{{ copy.send }}</button>
     </form>
+    <div class="chat-input-tools">
+      <button class="btn btn-outline" id="voiceInput" type="button">{{ tr('Speak question') }}</button>
+    </div>
+    <p
+      class="voice-status"
+      id="voiceStatus"
+      role="status"
+      aria-live="polite"
+      data-listening="{{ tr('Listening…') }}"
+      data-preparing="{{ tr('Preparing your answer…') }}"
+      data-unsupported="{{ tr('Voice input isn\'t available in this browser.') }}"
+      data-no-speech="{{ tr('I couldn\'t hear that. Please try again or type your question.') }}"
+      data-denied="{{ tr('Microphone permission was denied. Allow it in your browser and retry.') }}"
+      data-service="{{ tr('Speech service is unavailable. Try again or type your question.') }}"
+      data-answer-ready="{{ tr('Answer ready — tap Listen to hear it.') }}"
+      data-speech-unsupported="{{ tr('This browser does not support spoken answers.') }}"
+      data-listen-label="{{ tr('Listen to answer') }}"
+      data-suggested-label="{{ tr('Suggested pages') }}"
+    ></p>
+    <p class="assistant-disclaimer">{{ tr('Voice input uses your browser\'s speech recognition provider; SrujanSetu does not store audio.') }}</p>
 
     <details class="faq-list">
       <summary>{{ copy.faq }}</summary>

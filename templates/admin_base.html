@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ lang }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -14,14 +14,23 @@
   <header class="admin-top">
     <a class="brand" href="{{ url_for('public.home') }}">
       <span class="brand-mark">✺</span>
-      <span><b>SrujanSetu</b><small>Administration</small></span>
+      <span><b>SrujanSetu</b><small>{{ tr('Administration') }}</small></span>
     </a>
-    <nav class="admin-top-right" aria-label="Admin navigation">
-      <a href="{{ url_for('public.home') }}">View website ↗</a>
+    <nav class="admin-top-right" aria-label="{{ tr('Admin navigation') }}">
+      <a href="{{ url_for('public.home') }}">{{ tr('View website ↗') }}</a>
+      <form class="language-picker" method="post" action="{{ url_for('public.set_language') }}">
+        <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
+        <label class="sr-only" for="adminSiteLanguage">{{ tr('Language') }}</label>
+        <select id="adminSiteLanguage" name="lang" aria-label="{{ tr('Language') }}" onchange="this.form.submit()">
+          <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+          <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
+          <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+        </select>
+      </form>
       {% if admin_logged_in %}
       <form method="post" action="{{ url_for('admin.admin_logout') }}">
         <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-        <button class="logout-btn" type="submit">Sign out</button>
+        <button class="logout-btn" type="submit">{{ tr('Sign out') }}</button>
       </form>
       {% endif %}
     </nav>
@@ -31,7 +40,7 @@
     {% if messages %}
     <div class="flash-wrap" role="status">
       {% for category, message in messages %}
-      <div class="flash {{ category }}">{{ message }}</div>
+      <div class="flash {{ category }}">{{ tr(message) }}</div>
       {% endfor %}
     </div>
     {% endif %}

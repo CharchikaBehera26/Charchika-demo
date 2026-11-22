@@ -5,40 +5,46 @@
 {% block admin_content %}
 <div class="admin-layout">
   <aside class="admin-sidebar">
-    <span class="eyebrow light">WORKSPACE</span>
-    <h2>Management</h2>
-    <a class="active" href="{{ url_for('admin.admin_dashboard') }}">▦ Overview</a>
+    <span class="eyebrow light">{{ tr('WORKSPACE') }}</span>
+    <h2>{{ tr('Management') }}</h2>
+    <a class="active" href="{{ url_for('admin.admin_dashboard') }}">▦ {{ tr('Overview') }}</a>
+    <a href="{{ url_for('admin.admin_orders') }}">▣ {{ tr('Customer orders') }}</a>
     {% for key, config in sections.items() %}
-    <a href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ config.title }}</a>
+    <a href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ tr(config.title) }}</a>
     {% endfor %}
   </aside>
 
   <section class="admin-main">
     <div class="admin-page-head">
       <div>
-        <span class="eyebrow">SRUJANSETU CONTROL CENTRE</span>
-        <h1>Dashboard</h1>
-        <p>Manage the content shown across your public website.</p>
+        <span class="eyebrow">{{ tr('SRUJANSETU CONTROL CENTRE') }}</span>
+        <h1>{{ tr('Dashboard') }}</h1>
+        <p>{{ tr('Manage the content shown across your public website.') }}</p>
       </div>
-      <span class="admin-welcome">Signed in as <b>{{ session.get('admin_user') }}</b></span>
+      <span class="admin-welcome">{{ tr('Signed in as') }} <b>{{ session.get('admin_user') }}</b></span>
     </div>
 
     <div class="admin-stat-grid">
       {% for key, config in sections.items() %}
       <a class="admin-stat" href="{{ url_for('admin.admin_manage', kind=key) }}">
-        <span>{{ config.title }}</span>
+        <span>{{ tr(config.title) }}</span>
         <strong>{{ counts[key] }}</strong>
-        <small>Manage records →</small>
+        <small>{{ tr('Manage records →') }}</small>
       </a>
       {% endfor %}
+      <a class="admin-stat" href="{{ url_for('admin.admin_orders') }}">
+        <span>{{ tr('Customer orders') }}</span>
+        <strong>{{ order_count }}</strong>
+        <small>{{ tr('Review order requests →') }}</small>
+      </a>
     </div>
 
     <div class="admin-info">
-      <h2>Quick start</h2>
-      <p>Add records, update information, remove outdated content or upload images. Content is stored in the configured SQL database.</p>
+      <h2>{{ tr('Quick start') }}</h2>
+      <p>{{ tr('Add records, update information, remove outdated content or upload images. Content is stored in the configured SQL database.') }}</p>
       <div class="admin-quick">
         {% for key, config in sections.items() %}
-        <a class="btn btn-outline" href="{{ url_for('admin.admin_new', kind=key) }}">+ Add {{ config.singular }}</a>
+        <a class="btn btn-outline" href="{{ url_for('admin.admin_new', kind=key) }}">+ {{ tr('Add') }} {{ tr(config.singular) }}</a>
         {% endfor %}
       </div>
     </div>

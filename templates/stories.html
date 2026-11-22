@@ -35,10 +35,10 @@
       </label>
       <label>
         {{ copy.story_language }}
-        <select name="lang">
-          <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
-          <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
-          <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+        <select name="story_lang">
+          <option value="en" {% if story_lang == 'en' %}selected{% endif %}>English</option>
+          <option value="or" {% if story_lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
+          <option value="hi" {% if story_lang == 'hi' %}selected{% endif %}>हिंदी</option>
         </select>
       </label>
       <button class="btn btn-green" type="submit">{{ copy.story_submit }}</button>

@@ -4,23 +4,23 @@
 
 {% block content %}
 <section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'about') }}')">
-  <span class="eyebrow">OUR PURPOSE</span>
-  <h1>Connecting craft, <em>culture &amp; community</em></h1>
-  <p>SrujanSetu is an educational project concept designed to showcase Odisha’s traditional crafts and the people who keep them thriving.</p>
+  <span class="eyebrow">{{ tr('OUR PURPOSE') }}</span>
+  <h1>{{ tr('Connecting craft, <em>culture &amp; community</em>')|safe }}</h1>
+  <p>{{ tr('SrujanSetu is an educational project concept designed to showcase Odisha’s traditional crafts and the people who keep them thriving.') }}</p>
 </section>
 
 <section class="content-wrap about-grid">
   <article>
-    <h2>Our vision</h2>
-    <p>To create a welcoming digital bridge between artisans, self-help groups, learners and people who value handmade traditions.</p>
+    <h2>{{ tr('Our vision') }}</h2>
+    <p>{{ tr('To create a welcoming digital bridge between artisans, self-help groups, learners and people who value handmade traditions.') }}</p>
   </article>
   <article>
-    <h2>What this demo includes</h2>
-    <p>Craft discovery, artisan profiles, a sample marketplace, craft stories, scheme information, a map, community notes and a site-guidance assistant.</p>
+    <h2>{{ tr('What this demo includes') }}</h2>
+    <p>{{ tr('Craft discovery, artisan profiles, a sample marketplace, craft stories, scheme information, a map, community notes and a site-guidance assistant.') }}</p>
   </article>
   <article>
-    <h2>Learning project notice</h2>
-    <p>Sample profiles, product listings, counts and scheme descriptions are demonstration data. Replace them with verified information before a real-world launch.</p>
+    <h2>{{ tr('Learning project notice') }}</h2>
+    <p>{{ tr('Sample profiles, product listings, counts and scheme descriptions are demonstration data. Replace them with verified information before a real-world launch.') }}</p>
   </article>
 </section>
 {% endblock %}

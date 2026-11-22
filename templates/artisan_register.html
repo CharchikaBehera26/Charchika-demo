@@ -4,44 +4,44 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">JOIN THE SRUJANSETU COMMUNITY</span>
-  <h1>Artisan &amp; SHG <em>Registration</em></h1>
-  <p>Create a maker account to share your work and manage your marketplace listings.</p>
+  <span class="eyebrow">{{ tr('JOIN THE SRUJANSETU COMMUNITY') }}</span>
+  <h1>{{ tr('Artisan &amp; SHG') }} <em>{{ tr('Registration') }}</em></h1>
+  <p>{{ tr('Create a maker account to share your work and manage your marketplace listings.') }}</p>
 </section>
 
 <section class="content-wrap auth-content">
   <div class="auth-card">
-    <h2>Create your maker account</h2>
-    <p>Your profile is public. Add an exact public workshop location later if you want to appear on the map.</p>
+    <h2>{{ tr('Create your maker account') }}</h2>
+    <p>{{ tr('Your profile is public. Add an exact public workshop location later if you want to appear on the map.') }}</p>
     <form method="post" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Artisan / SHG name
+        {{ tr('Artisan / SHG name') }}
         <input name="name" required minlength="2" autocomplete="name">
       </label>
       <label>
-        Email address
+        {{ tr('Email address') }}
         <input type="email" name="email" required autocomplete="email">
       </label>
       <label>
-        Craft / product category
-        <input name="craft" required placeholder="e.g. Pattachitra painting">
+        {{ tr('Craft / product category') }}
+        <input name="craft" required placeholder="{{ tr('e.g. Pattachitra painting') }}">
       </label>
       <label>
-        District
-        <input name="district" required placeholder="e.g. Puri">
+        {{ tr('District') }}
+        <input name="district" required placeholder="{{ tr('e.g. Puri') }}">
       </label>
       <label>
-        Password <small>At least 10 characters</small>
+        {{ tr('Password') }} <small>{{ tr('At least 10 characters') }}</small>
         <input type="password" name="password" required minlength="10" autocomplete="new-password">
       </label>
       <label>
-        Confirm password
+        {{ tr('Confirm password') }}
         <input type="password" name="confirm" required minlength="10" autocomplete="new-password">
       </label>
-      <button class="btn btn-green" type="submit">Create account →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Create account →') }}</button>
     </form>
-    <p class="auth-foot">Already registered? <a href="{{ url_for('artisan.artisan_login') }}">Sign in</a></p>
+    <p class="auth-foot">{{ tr('Already registered?') }} <a href="{{ url_for('artisan.artisan_login') }}">{{ tr('Sign in') }}</a></p>
   </div>
 </section>
 {% endblock %}

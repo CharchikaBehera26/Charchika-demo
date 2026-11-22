@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}SrujanSetu — Empowering Local Hands{% endblock %}</title>
-  <meta name="description" content="Discover Odisha crafts, meet local artisans and celebrate living heritage with SrujanSetu.">
+  <title>{% block title %}SrujanSetu — {{ tr('Empowering Local Hands') }}{% endblock %}</title>
+  <meta name="description" content="{{ tr('Discover Odisha crafts, meet local artisans and celebrate living heritage with SrujanSetu.') }}">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Oriya:wght@400;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
@@ -14,43 +14,47 @@
 <body>
 <button class="back-tab" id="backTab" type="button" aria-label="{{ chrome.back }}">← <span>{{ chrome.back }}</span></button>
 <header class="topbar">
-  <a class="brand" href="{{ url_for('public.home') }}"><span class="brand-mark">✺</span><span><b>SrujanSetu</b><small>Empowering Local Hands</small></span></a>
-  <button class="menu-toggle" id="menuToggle" type="button" aria-label="Toggle navigation" aria-controls="navLinks" aria-expanded="false">☰</button>
+  <a class="brand" href="{{ url_for('public.home') }}"><span class="brand-mark">✺</span><span><b>SrujanSetu</b><small>{{ tr('Empowering Local Hands') }}</small></span></a>
+  <button class="menu-toggle" id="menuToggle" type="button" aria-label="{{ tr('Toggle navigation') }}" aria-controls="navLinks" aria-expanded="false">☰</button>
   <nav class="nav-links" id="navLinks">
     <a href="{{ url_for('public.home') }}">{{ chrome.home }}</a>
     <a href="{{ url_for('public.crafts') }}">{{ chrome.crafts }}</a>
     <a href="{{ url_for('public.artisans') }}">{{ chrome.artisans }}</a>
     <a href="{{ url_for('public.planner') }}">{{ chrome.map }}</a>
     <a href="{{ url_for('public.marketplace') }}">{{ chrome.market }}</a>
-    <a href="{{ url_for('shop.cart') }}">Cart{% if cart_count %} ({{ cart_count }}){% endif %}</a>
+    <a href="{{ url_for('shop.cart') }}">{{ chrome.cart }}{% if cart_count %} ({{ cart_count }}){% endif %}</a>
     {% if customer_logged_in %}
-    <a href="{{ url_for('shop.customer_orders') }}">My orders</a>
+    <a href="{{ url_for('shop.customer_orders') }}">{{ chrome.orders }}</a>
+    <form class="nav-logout-form" method="post" action="{{ url_for('shop.customer_logout') }}">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <button class="nav-logout" type="submit">{{ chrome.sign_out }}</button>
+    </form>
     {% else %}
-    <a href="{{ url_for('shop.customer_login') }}">Customer sign in</a>
+    <a href="{{ url_for('shop.customer_login') }}">{{ chrome.customer_sign_in }}</a>
     {% endif %}
+    <a class="portal-nav-link" href="{{ url_for('artisan.artisan_register') }}">{{ chrome.seller_join }}</a>
+    <a class="portal-nav-link" href="{{ url_for('artisan.artisan_login') }}">{{ chrome.artisan_portal }}</a>
+    <a class="portal-nav-link" href="{{ url_for('admin.admin_index') }}">{{ chrome.admin }}</a>
     <a href="{{ url_for('public.stories') }}">{{ chrome.stories }}</a>
     <a href="{{ url_for('public.schemes') }}">{{ chrome.schemes }}</a>
     <a class="ai-nav-link" href="{{ url_for('public.assistant') }}">{{ chrome.guide }}</a>
     <a class="ai-nav-link" href="{{ url_for('public.sell') }}">{{ chrome.sell }}</a>
     <a href="{{ url_for('public.about') }}">{{ chrome.about }}</a>
+    <form class="language-picker nav-language-picker" method="post" action="{{ url_for('public.set_language') }}">
+      <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
+      <label class="sr-only" for="mobileSiteLanguage">{{ tr('Language') }}</label>
+      <select id="mobileSiteLanguage" name="lang" aria-label="{{ tr('Language') }}" onchange="this.form.submit()">
+        <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+        <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
+        <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+      </select>
+    </form>
   </nav>
   <div class="top-actions">
-    <a class="admin-shortcut" href="{{ url_for('shop.cart') }}">Cart{% if cart_count %} ({{ cart_count }}){% endif %}</a>
-    {% if customer_logged_in %}
-    <a class="admin-shortcut" href="{{ url_for('shop.customer_orders') }}">My orders</a>
-    <form method="post" action="{{ url_for('shop.customer_logout') }}">
-      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-      <button class="admin-shortcut" type="submit">Sign out</button>
-    </form>
-    {% else %}
-    <a class="admin-shortcut" href="{{ url_for('shop.customer_login') }}">Sign in</a>
-    {% endif %}
-    <a class="admin-shortcut" href="{{ url_for('artisan.artisan_login') }}">{{ chrome.artisan_portal }}</a>
-    <a class="admin-shortcut" href="{{ url_for('admin.admin_index') }}">{{ chrome.admin }}</a>
     <form class="language-picker" method="post" action="{{ url_for('public.set_language') }}">
       <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
-      <label class="sr-only" for="siteLanguage">Language</label>
-      <select id="siteLanguage" name="lang" aria-label="Language" onchange="this.form.submit()">
+      <label class="sr-only" for="siteLanguage">{{ tr('Language') }}</label>
+      <select id="siteLanguage" name="lang" aria-label="{{ tr('Language') }}" onchange="this.form.submit()">
         <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
         <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
         <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
@@ -63,7 +67,7 @@
   {% if messages %}
   <div class="flash-wrap">
     {% for category, message in messages %}
-    <div class="flash {{ category }}">{{ message }}</div>
+    <div class="flash {{ category }}">{{ tr(message) }}</div>
     {% endfor %}
   </div>
   {% endif %}
@@ -78,43 +82,43 @@
         <span class="brand-mark">✺</span>
         <span>
           <b>SrujanSetu</b>
-          <small>Empowering Local Hands</small>
+          <small>{{ tr('Empowering Local Hands') }}</small>
         </span>
       </a>
-      <p>Discover Odisha’s living crafts, meet the makers and support artisan and SHG communities.</p>
-      <a class="footer-help-link" href="{{ url_for('public.assistant') }}">Need help finding something? Ask SrujanSetu Guide →</a>
+      <p>{{ tr('Discover Odisha’s living crafts, meet the makers and support artisan and SHG communities.') }}</p>
+      <a class="footer-help-link" href="{{ url_for('public.assistant') }}">{{ chrome.footer_help }}</a>
     </div>
     <nav class="footer-navigation" aria-label="Footer navigation">
       <div>
-        <h2>Discover</h2>
-        <a href="{{ url_for('public.crafts') }}">Traditional crafts</a>
-        <a href="{{ url_for('public.artisans') }}">Find artisans</a>
-        <a href="{{ url_for('public.planner') }}">Explore the map</a>
-        <a href="{{ url_for('public.stories') }}">Craft stories</a>
+        <h2>{{ tr('Discover') }}</h2>
+        <a href="{{ url_for('public.crafts') }}">{{ tr('Traditional crafts') }}</a>
+        <a href="{{ url_for('public.artisans') }}">{{ tr('Find artisans') }}</a>
+        <a href="{{ url_for('public.planner') }}">{{ tr('Explore the map') }}</a>
+        <a href="{{ url_for('public.stories') }}">{{ tr('Craft stories') }}</a>
       </div>
       <div>
-        <h2>Marketplace</h2>
-        <a href="{{ url_for('public.marketplace') }}">Shop local</a>
-        <a href="{{ url_for('artisan.artisan_register') }}">Join as an artisan or SHG</a>
-        <a href="{{ url_for('public.business') }}">Business tips</a>
-        <a href="{{ url_for('artisan.artisan_login') }}">Maker sign in</a>
+        <h2>{{ tr('Marketplace') }}</h2>
+        <a href="{{ url_for('public.marketplace') }}">{{ tr('Shop local') }}</a>
+        <a href="{{ url_for('artisan.artisan_register') }}">{{ tr('Join as an artisan or SHG') }}</a>
+        <a href="{{ url_for('public.business') }}">{{ tr('Business tips') }}</a>
+        <a href="{{ url_for('artisan.artisan_login') }}">{{ tr('Maker sign in') }}</a>
       </div>
       <div>
-        <h2>Information</h2>
-        <a href="{{ url_for('public.schemes') }}">Schemes and support</a>
-        <a href="{{ url_for('public.community') }}">Community</a>
-        <a href="{{ url_for('public.about') }}">About SrujanSetu</a>
+        <h2>{{ tr('Information') }}</h2>
+        <a href="{{ url_for('public.schemes') }}">{{ tr('Schemes and support') }}</a>
+        <a href="{{ url_for('public.community') }}">{{ tr('Community') }}</a>
+        <a href="{{ url_for('public.about') }}">{{ tr('About SrujanSetu') }}</a>
       </div>
     </nav>
   </div>
   <div class="footer-bottom">
-    <p>© {{ current_year }} SrujanSetu. Educational demonstration; sample listings and scheme information are illustrative.</p>
-    <a href="{{ url_for('admin.admin_index') }}">Admin portal</a>
+    <p>© {{ current_year }} SrujanSetu. {{ tr('Educational demonstration; sample listings and scheme information are illustrative.') }}</p>
+    <a href="{{ url_for('admin.admin_index') }}">{{ tr('Admin portal') }}</a>
   </div>
 </footer>
 <a class="help-bubble" href="{{ url_for('public.assistant') }}">
   <span>🤖</span>
-  <span><b>Need Help?</b><small>Chat with the Guide</small></span>
+  <span><b>{{ chrome.help_b }}</b><small>{{ chrome.help_s }}</small></span>
   <strong>→</strong>
 </a>
 {% block page_scripts %}{% endblock %}

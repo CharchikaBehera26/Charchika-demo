@@ -4,9 +4,9 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">THE HERITAGE TRAIL</span>
-  <h1>Page not found</h1>
-  <p>That page may have moved. Let’s get you back to exploring Odisha’s craft communities.</p>
-  <a class="btn btn-green" href="{{ url_for('public.home') }}">Back to home</a>
+  <span class="eyebrow">{{ tr('THE HERITAGE TRAIL') }}</span>
+  <h1>{{ tr('Page not found') }}</h1>
+  <p>{{ tr('That page may have moved. Let’s get you back to exploring Odisha’s craft communities.') }}</p>
+  <a class="btn btn-green" href="{{ url_for('public.home') }}">{{ tr('Back to home') }}</a>
 </section>
 {% endblock %}

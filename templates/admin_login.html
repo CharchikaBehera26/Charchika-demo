@@ -5,25 +5,31 @@
 {% block admin_content %}
 <div class="auth-shell">
   <div class="auth-card">
-    <span class="eyebrow">SECURE ADMIN AREA</span>
-    <h1>Welcome back</h1>
-    <p>Sign in to manage crafts, artisans, products, schemes and community posts.</p>
+    <span class="eyebrow">{{ tr('SECURE ADMIN AREA') }}</span>
+    <h1>{{ tr('Welcome back') }}</h1>
+    <p>{{ tr('Sign in to manage crafts, artisans, products, schemes and community posts.') }}</p>
 
     <form method="post" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Username
+        {{ tr('Username') }}
         <input name="username" required autocomplete="username">
       </label>
       <label>
-        Password
+        {{ tr('Password') }}
         <input type="password" name="password" required autocomplete="current-password">
       </label>
-      <button class="btn btn-green" type="submit">Sign in →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Sign in →') }}</button>
     </form>
+    {% if supabase_google_admin_enabled %}
+    <div class="auth-divider"><span>{{ tr('or') }}</span></div>
+    <a class="btn btn-outline google-sign-in" href="{{ url_for('shop.google_login', role='admin', next=request.args.get('next', '')) }}">
+      <span aria-hidden="true">G</span> {{ tr('Continue with Google') }}
+    </a>
+    {% endif %}
 
     <p class="auth-note">
-      <a href="{{ url_for('public.home') }}">← Return to public website</a>
+      <a href="{{ url_for('public.home') }}">← {{ tr('Return to public website') }}</a>
     </p>
   </div>
 </div>

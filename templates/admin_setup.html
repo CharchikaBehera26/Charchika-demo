@@ -5,28 +5,28 @@
 {% block admin_content %}
 <div class="auth-shell">
   <div class="auth-card">
-    <span class="eyebrow">FIRST-TIME SETUP</span>
-    <h1>Create administrator</h1>
-    <p>Set up the account that manages SrujanSetu. Choose a strong password and keep it private.</p>
+    <span class="eyebrow">{{ tr('FIRST-TIME SETUP') }}</span>
+    <h1>{{ tr('Create administrator') }}</h1>
+    <p>{{ tr('Set up the account that manages SrujanSetu. Choose a strong password and keep it private.') }}</p>
 
     <form method="post" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Admin username
+        {{ tr('Admin username') }}
         <input name="username" required minlength="3" autocomplete="username">
       </label>
       <label>
-        Password <small>At least 10 characters</small>
+        {{ tr('Password') }} <small>{{ tr('At least 10 characters') }}</small>
         <input type="password" name="password" required minlength="10" autocomplete="new-password">
       </label>
       <label>
-        Confirm password
+        {{ tr('Confirm password') }}
         <input type="password" name="confirm" required minlength="10" autocomplete="new-password">
       </label>
-      <button class="btn btn-green" type="submit">Create admin account →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Create admin account →') }}</button>
     </form>
 
-    <p class="auth-note">This setup page is disabled automatically after the first admin account is created.</p>
+    <p class="auth-note">{{ tr('This setup page is disabled automatically after the first admin account is created.') }}</p>
   </div>
 </div>
 {% endblock %}

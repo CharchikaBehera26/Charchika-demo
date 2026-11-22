@@ -11,9 +11,13 @@ services:
         generateValue: true
       - key: DATABASE_URL
         sync: false
+      - key: REQUIRE_DATABASE_URL
+        value: "true"
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: GOOGLE_ADMIN_EMAILS
         sync: false
       - key: PUBLIC_BASE_URL
         sync: false

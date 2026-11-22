@@ -13,9 +13,20 @@ def _sqlite_database_uri():
 
 def get_database_uri():
     database_uri = os.environ.get("DATABASE_URL", "").strip()
+    require_database = os.environ.get("REQUIRE_DATABASE_URL", "").lower() == "true"
     if not database_uri:
+        if require_database:
+            raise RuntimeError(
+                "DATABASE_URL is required for this deployment. Configure the "
+                "Supabase PostgreSQL connection string."
+            )
         return _sqlite_database_uri()
     if "<" in database_uri and ">" in database_uri:
+        if require_database:
+            raise RuntimeError(
+                "DATABASE_URL still contains template placeholders. Configure "
+                "the Supabase PostgreSQL connection string."
+            )
         warnings.warn(
             "DATABASE_URL still contains template placeholders; using the local "
             "SQLite database. Set DATABASE_URL to a real database URL to use it.",
@@ -23,6 +34,13 @@ def get_database_uri():
             stacklevel=2,
         )
         return _sqlite_database_uri()
+    if require_database and not database_uri.startswith(
+        ("postgres://", "postgresql://", "postgresql+psycopg://")
+    ):
+        raise RuntimeError(
+            "DATABASE_URL must point to PostgreSQL when "
+            "REQUIRE_DATABASE_URL=true."
+        )
     if (
         os.name == "nt"
         and (database_uri.startswith("postgres://") or database_uri.startswith("postgresql://"))
@@ -56,6 +74,7 @@ class Config:
         os.environ.get("SUPABASE_ANON_KEY", ""),
     ).strip()
     PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "").strip().rstrip("/")
+    GOOGLE_ADMIN_EMAILS = os.environ.get("GOOGLE_ADMIN_EMAILS", "").strip()
     SESSION_COOKIE_HTTPONLY = True
     SESSION_COOKIE_SAMESITE = "Lax"
     SESSION_COOKIE_SECURE = (

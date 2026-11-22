@@ -31,7 +31,10 @@ ADMIN_SECTIONS = {
         "fields": [
             ("name", "Product name", "text", True),
             ("craft", "Craft type", "text", False),
+            ("category", "Category", "text", False),
             ("price", "Price", "text", True),
+            ("deal_price", "Deal price (optional)", "text", False),
+            ("is_featured", "Feature on marketplace", "checkbox", False),
             ("artisan", "Artisan / SHG", "text", False),
             ("district", "District", "text", False),
             ("description", "Description", "textarea", False),

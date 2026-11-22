@@ -4,15 +4,15 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">YOUR MARKETPLACE LISTINGS</span>
-  <h1>My <em>Products</em></h1>
-  <p>Only you can edit or delete the products attached to your maker account.</p>
+  <span class="eyebrow">{{ tr('YOUR MARKETPLACE LISTINGS') }}</span>
+  <h1>{{ tr('My <em>Products</em>')|safe }}</h1>
+  <p>{{ tr('Only you can edit or delete the products attached to your maker account.') }}</p>
 </section>
 
 <section class="content-wrap">
   <div class="portal-toolbar">
-    <a class="btn btn-green" href="{{ url_for('artisan.artisan_product_new') }}">+ Add product</a>
-    <a class="text-link" href="{{ url_for('artisan.artisan_dashboard') }}">← Dashboard</a>
+    <a class="btn btn-green" href="{{ url_for('artisan.artisan_product_new') }}">+ {{ tr('Add product') }}</a>
+    <a class="text-link" href="{{ url_for('artisan.artisan_dashboard') }}">← {{ tr('Dashboard') }}</a>
   </div>
 
   <div class="card-grid product-grid">
@@ -26,28 +26,28 @@
         {% endif %}
       </div>
       <div class="card-body">
-        <span class="eyebrow">{{ product.get('craft', 'Handmade') }}</span>
+        <span class="eyebrow">{{ tr(product.get('category') or product.get('craft', 'Handmade')) }}</span>
         <h2>{{ product.name }}</h2>
         <p>{{ product.get('description', '') }}</p>
         <strong class="price">{{ product.price }}</strong>
         <div class="portal-actions">
-          <a href="{{ url_for('artisan.artisan_product_edit', product_id=product.id) }}">Edit</a>
+          <a href="{{ url_for('artisan.artisan_product_edit', product_id=product.id) }}">{{ tr('Edit') }}</a>
           <form
             method="post"
             action="{{ url_for('artisan.artisan_product_delete', product_id=product.id) }}"
-            onsubmit="return confirm('Delete this product?')"
+            onsubmit="return confirm('{{ tr('Delete this product?') }}')"
           >
             <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-            <button type="submit">Delete</button>
+            <button type="submit">{{ tr('Delete') }}</button>
           </form>
         </div>
       </div>
     </article>
     {% else %}
     <div class="empty-state">
-      <h2>No products yet</h2>
-      <p>Start with your first listing to showcase your work.</p>
-      <a class="btn btn-green" href="{{ url_for('artisan.artisan_product_new') }}">Add a product</a>
+      <h2>{{ tr('No products yet') }}</h2>
+      <p>{{ tr('Start with your first listing to showcase your work.') }}</p>
+      <a class="btn btn-green" href="{{ url_for('artisan.artisan_product_new') }}">{{ tr('Add a product') }}</a>
     </div>
     {% endfor %}
   </div>

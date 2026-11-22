@@ -22,6 +22,25 @@ class DatabaseConfigTests(unittest.TestCase):
         with patch.dict(os.environ, {"DATABASE_URL": database_url}):
             self.assertEqual(get_database_uri(), database_url)
 
+    def test_required_database_rejects_missing_url(self):
+        with patch.dict(
+            os.environ,
+            {"DATABASE_URL": "", "REQUIRE_DATABASE_URL": "true"},
+        ):
+            with self.assertRaisesRegex(RuntimeError, "DATABASE_URL is required"):
+                get_database_uri()
+
+    def test_required_database_rejects_sqlite_url(self):
+        with patch.dict(
+            os.environ,
+            {
+                "DATABASE_URL": "sqlite:///local.db",
+                "REQUIRE_DATABASE_URL": "true",
+            },
+        ):
+            with self.assertRaisesRegex(RuntimeError, "must point to PostgreSQL"):
+                get_database_uri()
+
 
 if __name__ == "__main__":
     unittest.main()

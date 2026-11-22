@@ -62,7 +62,7 @@ Customers can create an account or sign in from the SHG Marketplace, add product
 
 ## Supabase Auth and Google sign-in
 
-Google customer sign-in uses Supabase Auth's server-side PKCE flow. Existing email/password customer accounts continue to work; when a customer signs in with a Google account that has a verified matching email, the Google identity is linked to that customer record.
+Google sign-in uses Supabase Auth's server-side PKCE flow for customer, artisan, and administrator accounts. Existing email/password accounts continue to work; a verified matching Google email links to the existing customer or artisan account. Artisans must create an artisan account first, then sign in with Google using that same email. Google administrator sign-in is disabled unless `GOOGLE_ADMIN_EMAILS` is configured as a comma-separated allowlist in Render; first create the admin account with the regular setup flow. Keep this allowlist restricted to trusted administrators.
 
 1. In Google Cloud Console, create a **Web application** OAuth client. Add the website origins (local `http://127.0.0.1:5000` and your Render URL) to **Authorized JavaScript origins**.
 2. In Supabase, open **Authentication → Sign In / Providers → Google**, enable Google, and enter the Google client ID and secret. Copy the Supabase callback URL shown on that page (usually `https://<project-ref>.supabase.co/auth/v1/callback`) into the Google OAuth client's **Authorized redirect URIs**.
@@ -75,11 +75,12 @@ The callback uses `PUBLIC_BASE_URL` when set; otherwise it uses the host and HTT
 
 ## Deploy on Render with Supabase
 
-The repository includes [render.yaml](./render.yaml) for a Render web service. Connect the GitHub repository to Render and deploy the Blueprint. In Render's environment settings, provide:
+The repository includes [render.yaml](./render.yaml) for a Render web service. Connect the GitHub repository to Render and deploy the Blueprint. The current app is a server-rendered Flask site, so Render hosts both its frontend pages and server routes; Supabase provides PostgreSQL and Auth, not the Flask application server. In Render's environment settings, provide:
 
 - `DATABASE_URL`: the Supabase **Session pooler** URI copied from **Connect** (port `5432`; use the username and host exactly as supplied).
 - `SUPABASE_URL`: the project URL from Supabase.
 - `SUPABASE_PUBLISHABLE_KEY`: the project's publishable key (or set `SUPABASE_ANON_KEY` instead).
 - `PUBLIC_BASE_URL`: the final HTTPS Render URL.
+- `GOOGLE_ADMIN_EMAILS`: optional comma-separated allowlist of administrator Google email addresses. Leave unset to keep admin Google sign-in disabled.
 
-Render generates `SECRET_KEY` and sets secure session cookies. The start command applies pending Flask-Migrate migrations before launching Gunicorn. Render's web service is the full Flask app (both pages and server routes); no separate static frontend host is needed. The free Render plan may sleep when idle. Render's filesystem is ephemeral, so maker-uploaded images in `static/uploads` will not survive redeploys; configure durable object storage before relying on uploaded product/profile photos in production.
+Render generates `SECRET_KEY`, requires `DATABASE_URL` to point to PostgreSQL, and sets secure session cookies. The start command applies pending Flask-Migrate migrations before launching Gunicorn. The free Render plan may sleep when idle. Render's filesystem is ephemeral, so maker-uploaded images in `static/uploads` will not survive redeploys; configure durable object storage before relying on uploaded product/profile photos in production.

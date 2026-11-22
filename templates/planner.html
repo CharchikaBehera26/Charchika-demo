@@ -13,20 +13,20 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">MEET THE MAKERS WHERE THEY WORK</span>
-  <h1>Odisha Artisan <em>&amp; SHG Map</em></h1>
-  <p>Find makers who have chosen to publish the exact location of their workshop or public business.</p>
+  <span class="eyebrow">{{ tr('MEET THE MAKERS WHERE THEY WORK') }}</span>
+  <h1>{{ tr('Odisha Artisan') }} <em>{{ tr('&amp; SHG Map') }}</em></h1>
+  <p>{{ tr('Find makers who have chosen to publish the exact location of their workshop or public business.') }}</p>
 </section>
 
 <section class="content-wrap">
   <form class="map-filter" method="get" action="{{ url_for('public.planner') }}">
-    <label for="district">Filter by district</label>
+    <label for="district">{{ tr('Filter by district') }}</label>
     <select id="district" name="district">
       {% for district in districts %}
-      <option value="{{ district }}" {% if district == selected %}selected{% endif %}>{{ district }}</option>
+      <option value="{{ district }}" {% if district == selected %}selected{% endif %}>{{ tr(district) }}</option>
       {% endfor %}
     </select>
-    <button class="btn btn-green" type="submit">Show locations</button>
+    <button class="btn btn-green" type="submit">{{ tr('Show locations') }}</button>
   </form>
 
   <p class="location-privacy">
@@ -35,29 +35,48 @@
 
   <div class="map-layout">
     <div class="map-canvas-wrap">
-      <div id="artisanMap" class="artisan-map" role="application" aria-label="Map of artisan and SHG locations in Odisha"></div>
-      <p id="mapLoadNotice" class="map-load-notice" role="status">Loading interactive map…</p>
+      <div
+        class="map-location-tools"
+        id="mapMessages"
+        data-map-library-error="{{ tr('The map library did not load. Check your internet connection and reload.') }}"
+        data-map-data-error="{{ tr('Map locations could not be loaded. Please reload the page.') }}"
+        data-tile-error="{{ tr('Map tiles could not be loaded. Check your internet connection.') }}"
+        data-location-unavailable="{{ tr('Location is not available in this browser.') }}"
+        data-location-finding="{{ tr('Finding your location…') }}"
+        data-location-found="{{ tr('Map centered on you; public artisan pins are sorted by distance.') }}"
+        data-location-denied="{{ tr('Location permission was denied. Allow location access in your browser and try again.') }}"
+        data-location-failed="{{ tr('Your location could not be determined. Try again in a clearer location.') }}"
+        data-location-timeout="{{ tr('Finding your location timed out. Please try again.') }}"
+      >
+        <button class="btn btn-outline" id="locateMe" type="button">{{ tr('Find artisans near me') }}</button>
+        <p id="locationStatus" class="location-status" role="status" aria-live="polite">
+          {{ tr('Your location is used only in this browser and is not saved or shared.') }}
+        </p>
+      </div>
+      <div id="artisanMap" class="artisan-map" role="application" aria-label="{{ tr('Map of artisan and SHG locations in Odisha') }}"></div>
+      <p id="mapLoadNotice" class="map-load-notice" role="status">{{ tr('Loading interactive map…') }}</p>
     </div>
     <aside class="map-results" aria-live="polite">
-      <h2>Public map pins <span>{{ map_artisans|length }}</span></h2>
+      <h2>{{ tr('Public map pins') }} <span>{{ map_artisans|length }}</span></h2>
       {% if map_artisans %}
       <ul>
         {% for artisan in map_artisans %}
-        <li>
+        <li data-lat="{{ artisan.latitude }}" data-lng="{{ artisan.longitude }}">
           <strong>{{ artisan.name }}</strong>
-          <small>{{ artisan.craft }} · {{ artisan.district }}</small>
+          <small>{{ tr(artisan.craft) }} · {{ tr(artisan.district) }}</small>
+          <small class="artisan-distance"></small>
         </li>
         {% endfor %}
       </ul>
       {% else %}
-      <p>No exact map locations have been shared for this filter yet. The map is centered on Odisha.</p>
+      <p>{{ tr('No exact map locations have been shared for this filter yet. The map is centered on Odisha.') }}</p>
       {% endif %}
     </aside>
   </div>
   <script id="artisanMapData" type="application/json">{{ map_artisans|tojson }}</script>
 
   <h2 class="subheading">
-    {% if selected == "All districts" %}Artisans across Odisha{% else %}Artisans in {{ selected }}{% endif %}
+    {% if selected == "All districts" %}{{ tr('Artisans across Odisha') }}{% else %}{{ tr('Artisans in') }} {{ tr(selected) }}{% endif %}
   </h2>
   <div class="card-grid">
     {% for artisan in artisans %}
@@ -65,16 +84,16 @@
       <div class="craft-icon green">{{ artisan.emoji }}</div>
       <div class="card-body">
         <h3>{{ artisan.name }}</h3>
-        <p>{{ artisan.craft }} · {{ artisan.district }}</p>
+        <p>{{ tr(artisan.craft) }} · {{ tr(artisan.district) }}</p>
         {% if artisan.latitude is defined and artisan.longitude is defined %}
-        <small>Exact public location is pinned on the map.</small>
+        <small>{{ tr('Exact public location is pinned on the map.') }}</small>
         {% else %}
-        <small>Location not shared on map.</small>
+        <small>{{ tr('Location not shared on map.') }}</small>
         {% endif %}
       </div>
     </article>
     {% else %}
-    <p class="empty-state">No artisan profiles match this district yet.</p>
+    <p class="empty-state">{{ tr('No artisan profiles match this district yet.') }}</p>
     {% endfor %}
   </div>
 </section>

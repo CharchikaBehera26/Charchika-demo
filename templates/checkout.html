@@ -4,40 +4,40 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">DEMO ORDER REQUEST</span>
-  <h1>Checkout</h1>
-  <p>This demonstration records your order request; it does not collect payment or arrange delivery.</p>
+  <span class="eyebrow">{{ tr('DEMO ORDER REQUEST') }}</span>
+  <h1>{{ tr('Checkout') }}</h1>
+  <p>{{ tr('This demonstration records your order request; it does not collect payment or arrange delivery.') }}</p>
 </section>
 
 <section class="content-wrap split-layout">
   <div class="auth-card wide">
-    <h2>Contact and delivery details</h2>
+    <h2>{{ tr('Contact and delivery details') }}</h2>
     <form method="post" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Name
+        {{ tr('Name') }}
         <input name="name" value="{{ request.form.get('name', account.name) }}" required autocomplete="name">
       </label>
       <label>
-        Phone number
+        {{ tr('Phone number') }}
         <input type="tel" name="phone" value="{{ request.form.get('phone', '') }}" required autocomplete="tel">
       </label>
       <label>
-        Delivery address
+        {{ tr('Delivery address') }}
         <textarea name="address" rows="4" required autocomplete="street-address">{{ request.form.get('address', '') }}</textarea>
       </label>
-      <button class="btn btn-green" type="submit">Submit demo order request →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Submit demo order request →') }}</button>
     </form>
   </div>
   <aside class="form-panel">
-    <h2>Order summary</h2>
+    <h2>{{ tr('Order summary') }}</h2>
     {% for line in lines %}
     <p>{{ line.product.name }} × {{ line.quantity }}<br>
-      <strong>{% if line.line_total is not none %}{{ format_price(line.line_total) }}{% else %}Price unavailable{% endif %}</strong>
+      <strong>{% if line.line_total is not none %}{{ format_price(line.line_total) }}{% else %}{{ tr('Price unavailable') }}{% endif %}</strong>
     </p>
     {% endfor %}
-    <p class="order-total">Total <strong>{{ format_price(total) }}</strong></p>
-    <p class="demo-note">No payment will be taken. Contact the artisan directly to arrange a real purchase.</p>
+    <p class="order-total">{{ tr('Total') }} <strong>{{ format_price(total) }}</strong></p>
+    <p class="demo-note">{{ tr('No payment will be taken. Contact the artisan directly to arrange a real purchase.') }}</p>
   </aside>
 </section>
 {% endblock %}

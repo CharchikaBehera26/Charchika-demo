@@ -5,35 +5,35 @@
 {% block content %}
 <section class="hero has-photo" style="--hero-image: url('{{ media('scene', 'hero') }}')">
   <div class="hero-copy">
-    <span class="eyebrow">THE HERITAGE OF ODISHA</span>
-    <h1>From the Hands of Odisha,<br>to the <em>Heart</em> of the World.</h1>
-    <p>Discover authentic crafts, support local artisans<br class="desktop"> and be a part of Odisha’s rich heritage.</p>
+    <span class="eyebrow">{{ tr('THE HERITAGE OF ODISHA') }}</span>
+      <h1>{{ tr('From the Hands of Odisha,') }}<br>{{ tr('to the <em>Heart</em> of the World.')|safe }}</h1>
+      <p>{{ tr('Discover authentic crafts, support local artisans') }}<br class="desktop"> {{ tr('and be a part of Odisha’s rich heritage.') }}</p>
     <div class="hero-actions">
-      <a class="btn btn-green" href="{{ url_for('public.crafts') }}">Explore Crafts <span>→</span></a>
-      <a class="btn btn-outline" href="{{ url_for('public.planner') }}">⌖ &nbsp;Find Nearby Artisans</a>
+      <a class="btn btn-green" href="{{ url_for('public.crafts') }}">{{ tr('Explore Crafts') }} <span>→</span></a>
+      <a class="btn btn-outline" href="{{ url_for('public.planner') }}">{{ tr('⌖ &nbsp;Find Nearby Artisans')|safe }}</a>
     </div>
   </div>
   <div class="hero-art">
     <img class="hero-photo" src="{{ media('scene', 'hero') }}" alt="Traditional Indian craft artistry">
-    <div class="hero-caption">Rooted in tradition. Made by hand.</div>
+    <div class="hero-caption">{{ tr('Rooted in tradition. Made by hand.') }}</div>
   </div>
 </section>
 
 <section class="quick-links">
-  <a href="{{ url_for('public.marketplace') }}"><span>🧺</span><b>Shop Local</b><small>Support Artisans</small></a>
-  <a href="{{ url_for('public.planner') }}"><span>📍</span><b>Discover Nearby</b><small>Artisans &amp; SHGs</small></a>
-  <a href="{{ url_for('public.stories') }}"><span>📖</span><b>Learn &amp; Explore</b><small>Craft Stories</small></a>
-  <a href="{{ url_for('public.schemes') }}"><span>🏛️</span><b>Find Government</b><small>Schemes</small></a>
-  <a href="{{ url_for('public.community') }}"><span>👥</span><b>Join Community</b><small>Share &amp; Connect</small></a>
+  <a href="{{ url_for('public.marketplace') }}"><span>🧺</span><b>{{ tr('Shop Local') }}</b><small>{{ tr('Support Artisans') }}</small></a>
+  <a href="{{ url_for('public.planner') }}"><span>📍</span><b>{{ tr('Discover Nearby') }}</b><small>{{ tr('Artisans & SHGs') }}</small></a>
+  <a href="{{ url_for('public.stories') }}"><span>📖</span><b>{{ tr('Learn & Explore') }}</b><small>{{ tr('Craft Stories') }}</small></a>
+  <a href="{{ url_for('public.schemes') }}"><span>🏛️</span><b>{{ tr('Find Government') }}</b><small>{{ tr('Schemes') }}</small></a>
+  <a href="{{ url_for('public.community') }}"><span>👥</span><b>{{ tr('Join Community') }}</b><small>{{ tr('Share & Connect') }}</small></a>
 </section>
 
 <section class="feature-grid">
   <article class="map-card">
     <div>
-      <span class="eyebrow light">EXPLORE THE STATE</span>
-      <h2>Explore Odisha<br>on the Map</h2>
-      <p>Find artisans, SHGs and traditional markets near you.</p>
-      <a class="btn btn-gold" href="{{ url_for('public.planner') }}">Open Explorer →</a>
+      <span class="eyebrow light">{{ tr('EXPLORE THE STATE') }}</span>
+      <h2>{{ tr('Explore Odisha<br>on the Map')|safe }}</h2>
+      <p>{{ tr('Find artisans, SHGs and traditional markets near you.') }}</p>
+      <a class="btn btn-gold" href="{{ url_for('public.planner') }}">{{ tr('Open Explorer →') }}</a>
     </div>
     <div class="odisha-shape">🗺️<span>✦</span><span>✦</span></div>
   </article>
@@ -41,10 +41,10 @@
   <article class="panel artisans-panel">
     <div class="section-heading">
       <div>
-        <span class="eyebrow">REAL PEOPLE. REAL STORIES.</span>
-        <h2>Meet Our Artisans</h2>
+        <span class="eyebrow">{{ tr('REAL PEOPLE. REAL STORIES.') }}</span>
+        <h2>{{ tr('Meet Our Artisans') }}</h2>
       </div>
-      <a href="{{ url_for('public.artisans') }}">View All →</a>
+      <a href="{{ url_for('public.artisans') }}">{{ tr('View All →') }}</a>
     </div>
     <div class="mini-artisans">
       {% for a in artisans %}
@@ -55,29 +55,29 @@
         <span>{{ a.craft }}</span>
       </a>
       {% else %}
-      <p class="empty-state">Artisan profiles will appear here soon.</p>
+      <p class="empty-state">{{ tr('Artisan profiles will appear here soon.') }}</p>
       {% endfor %}
     </div>
   </article>
 
   <article class="craft-feature">
-    <span class="eyebrow light">MADE WITH MEANING</span>
-    <h2>Discover Our<br>Traditional Crafts</h2>
-    <p>Pattachitra, Sambalpuri, Pipili Appliqué and more…</p>
+    <span class="eyebrow light">{{ tr('MADE WITH MEANING') }}</span>
+    <h2>{{ tr('Discover Our<br>Traditional Crafts')|safe }}</h2>
+    <p>{{ tr('Pattachitra, Sambalpuri, Pipili Appliqué and more…') }}</p>
     <div class="craft-big-icon">🎨</div>
-    <a class="btn btn-gold" href="{{ url_for('public.crafts') }}">Explore Crafts →</a>
+    <a class="btn btn-gold" href="{{ url_for('public.crafts') }}">{{ tr('Explore Crafts') }} →</a>
   </article>
 </section>
 
 <section class="impact">
   <div>
-    <span class="eyebrow">A SHARED LEGACY</span>
-    <h2>Our Impact Together</h2>
+    <span class="eyebrow">{{ tr('A SHARED LEGACY') }}</span>
+    <h2>{{ tr('Our Impact Together') }}</h2>
   </div>
-  <div class="impact-stat"><b>👥</b><strong>50K+</strong><small>Happy Users</small></div>
-  <div class="impact-stat"><b>🧺</b><strong>{{ artisan_count }}+</strong><small>Artisans &amp; SHGs*</small></div>
-  <div class="impact-stat"><b>🤝</b><strong>{{ product_count }}+</strong><small>Products Showcased*</small></div>
-  <div class="impact-stat"><b>📍</b><strong>15+</strong><small>Districts Covered*</small></div>
-  <small class="demo-note">*Sample project data; figures are illustrative.</small>
+  <div class="impact-stat"><b>👥</b><strong>50K+</strong><small>{{ tr('Happy Users') }}</small></div>
+  <div class="impact-stat"><b>🧺</b><strong>{{ artisan_count }}+</strong><small>{{ tr('Artisans & SHGs*') }}</small></div>
+  <div class="impact-stat"><b>🤝</b><strong>{{ product_count }}+</strong><small>{{ tr('Products Showcased*') }}</small></div>
+  <div class="impact-stat"><b>📍</b><strong>15+</strong><small>{{ tr('Districts Covered*') }}</small></div>
+  <small class="demo-note">{{ tr('*Sample project data; figures are illustrative.') }}</small>
 </section>
 {% endblock %}

@@ -5,9 +5,10 @@
 {% block admin_content %}
 <div class="admin-layout">
   <aside class="admin-sidebar">
-    <span class="eyebrow light">WORKSPACE</span>
-    <h2>Management</h2>
-    <a href="{{ url_for('admin.admin_dashboard') }}">▦ Overview</a>
+    <span class="eyebrow light">{{ tr('WORKSPACE') }}</span>
+    <h2>{{ tr('Management') }}</h2>
+    <a href="{{ url_for('admin.admin_dashboard') }}">▦ {{ tr('Overview') }}</a>
+    <a href="{{ url_for('admin.admin_orders') }}">▣ {{ tr('Customer orders') }}</a>
     {% for key, section in {
       'artisans': {'title': 'Artisans'},
       'crafts': {'title': 'Crafts'},
@@ -15,28 +16,28 @@
       'schemes': {'title': 'Schemes'},
       'community': {'title': 'Community posts'}
     }.items() %}
-    <a class="{% if key == kind %}active{% endif %}" href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ section.title }}</a>
+    <a class="{% if key == kind %}active{% endif %}" href="{{ url_for('admin.admin_manage', kind=key) }}">✦ {{ tr(section.title) }}</a>
     {% endfor %}
   </aside>
 
   <section class="admin-main">
     <div class="admin-page-head">
       <div>
-        <span class="eyebrow">CONTENT MANAGEMENT</span>
-        <h1>{{ config.title }}</h1>
-        <p>{{ items|length }} record(s) in the database.</p>
+        <span class="eyebrow">{{ tr('CONTENT MANAGEMENT') }}</span>
+        <h1>{{ tr(config.title) }}</h1>
+        <p>{{ items|length }} {{ tr('record(s) in the database.') }}</p>
       </div>
-      <a class="btn btn-green" href="{{ url_for('admin.admin_new', kind=kind) }}">+ Add {{ config.singular }}</a>
+      <a class="btn btn-green" href="{{ url_for('admin.admin_new', kind=kind) }}">+ {{ tr('Add') }} {{ tr(config.singular) }}</a>
     </div>
 
     <div class="admin-table-wrap">
       <table class="admin-table">
         <thead>
           <tr>
-            <th scope="col">Record</th>
-            {% if kind != 'community' %}<th scope="col">Details</th>{% endif %}
+            <th scope="col">{{ tr('Record') }}</th>
+            {% if kind != 'community' %}<th scope="col">{{ tr('Details') }}</th>{% endif %}
             <th scope="col">ID</th>
-            <th scope="col">Actions</th>
+            <th scope="col">{{ tr('Actions') }}</th>
           </tr>
         </thead>
         <tbody>
@@ -50,7 +51,7 @@
                 <span class="record-emoji">{{ item.get('emoji', '✦') }}</span>
                 {% endif %}
                 <div>
-                  <b>{{ item.get('name', item.get('title', 'Community post')) }}</b>
+                  <b>{{ item.get('name', item.get('title', tr('Community post'))) }}</b>
                   <small>{{ item.get('craft', item.get('district', item.get('date', ''))) }}</small>
                 </div>
               </div>
@@ -63,14 +64,14 @@
             <td>#{{ item.get('id', '—') }}</td>
             <td>
               <div class="table-actions">
-                <a href="{{ url_for('admin.admin_edit', kind=kind, item_id=item.get('id', 0)) }}">Edit</a>
+                <a href="{{ url_for('admin.admin_edit', kind=kind, item_id=item.get('id', 0)) }}">{{ tr('Edit') }}</a>
                 <form
                   method="post"
                   action="{{ url_for('admin.admin_delete', kind=kind, item_id=item.get('id', 0)) }}"
                   onsubmit="return confirm('Delete this record permanently?')"
                 >
                   <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-                  <button type="submit">Delete</button>
+                  <button type="submit">{{ tr('Delete') }}</button>
                 </form>
               </div>
             </td>
@@ -78,7 +79,7 @@
           {% else %}
           <tr>
             <td colspan="{% if kind == 'community' %}3{% else %}4{% endif %}" class="empty-table">
-              No records yet. Add your first {{ config.singular|lower }}.
+              {{ tr('No records yet. Add your first') }} {{ tr(config.singular|lower) }}.
             </td>
           </tr>
           {% endfor %}

@@ -38,5 +38,23 @@
     "experience": "15 years",
     "emoji": "✨",
     "image": "https://images.unsplash.com/photo-1617038220319-276d3cfab638?auto=format&fit=crop&w=800&q=85"
+  },
+  {
+    "id": 5,
+    "name": "Laxmi Behera",
+    "craft": "Terracotta",
+    "district": "Balasore",
+    "bio": "A sample maker profile for Odisha's hand-shaped and fired clay traditions.",
+    "experience": "9 years",
+    "emoji": "🏺"
+  },
+  {
+    "id": 6,
+    "name": "Dhaneswar Naik",
+    "craft": "Dhokra Metal Craft",
+    "district": "Dhenkanal",
+    "bio": "A sample maker profile celebrating the distinctive Dhokra metal-casting tradition.",
+    "experience": "12 years",
+    "emoji": "🪔"
   }
 ]

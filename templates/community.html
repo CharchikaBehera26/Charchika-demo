@@ -4,24 +4,24 @@
 
 {% block content %}
 <section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'community') }}')">
-  <span class="eyebrow">TOGETHER, WE KEEP TRADITION ALIVE</span>
-  <h1>Our <em>Community</em></h1>
-  <p>Share a note, celebrate a craft or leave an encouraging message for local makers.</p>
+  <span class="eyebrow">{{ tr('TOGETHER, WE KEEP TRADITION ALIVE') }}</span>
+  <h1>{{ tr('Our <em>Community</em>')|safe }}</h1>
+  <p>{{ tr('Share a note, celebrate a craft or leave an encouraging message for local makers.') }}</p>
 </section>
 
 <section class="content-wrap split-layout">
   <aside class="form-panel">
-    <h2>Share a community note</h2>
+    <h2>{{ tr('Share a community note') }}</h2>
     <form method="post" class="stack-form">
       <label>
-        Your name
+        {{ tr('Your name') }}
         <input name="name" required maxlength="120" autocomplete="name">
       </label>
       <label>
-        Your message
+        {{ tr('Your message') }}
         <textarea name="message" rows="4" required maxlength="1000"></textarea>
       </label>
-      <button class="btn btn-green" type="submit">Post message</button>
+      <button class="btn btn-green" type="submit">{{ tr('Post message') }}</button>
     </form>
   </aside>
 
@@ -35,8 +35,8 @@
     {% else %}
     <div class="empty-state">
       <span aria-hidden="true">🌿</span>
-      <h3>Be the first to share</h3>
-      <p>Community notes will appear here.</p>
+      <h3>{{ tr('Be the first to share') }}</h3>
+      <p>{{ tr('Community notes will appear here.') }}</p>
     </div>
     {% endfor %}
   </div>

@@ -4,34 +4,34 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">SHOP LOCAL</span>
-  <h1>Customer <em>Sign In</em></h1>
-  <p>Sign in to place a demo order and keep track of your order requests.</p>
+  <span class="eyebrow">{{ tr('SHOP LOCAL') }}</span>
+  <h1>{{ tr('Customer <em>Sign In</em>')|safe }}</h1>
+  <p>{{ tr('Sign in to place a demo order and keep track of your order requests.') }}</p>
 </section>
 
 <section class="content-wrap auth-content">
   <div class="auth-card">
-    <h2>Welcome back</h2>
+    <h2>{{ tr('Welcome back') }}</h2>
     <form method="post" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        Email address
+        {{ tr('Email address') }}
         <input type="email" name="email" required autocomplete="username">
       </label>
       <label>
-        Password
+        {{ tr('Password') }}
         <input type="password" name="password" required autocomplete="current-password">
       </label>
-      <button class="btn btn-green" type="submit">Sign in →</button>
+      <button class="btn btn-green" type="submit">{{ tr('Sign in →') }}</button>
     </form>
     {% if supabase_google_enabled %}
-    <div class="auth-divider"><span>or</span></div>
+    <div class="auth-divider"><span>{{ tr('or') }}</span></div>
     <a class="btn btn-outline google-sign-in" href="{{ url_for('shop.google_login', next=request.args.get('next', '')) }}">
-      <span aria-hidden="true">G</span> Continue with Google
+      <span aria-hidden="true">G</span> {{ tr('Continue with Google') }}
     </a>
     {% endif %}
-    <p class="auth-foot">New to SrujanSetu? <a href="{{ url_for('shop.customer_register', next=request.args.get('next', '')) }}">Create a customer account</a></p>
-    <p class="auth-foot"><a href="{{ url_for('shop.cart') }}">Return to your cart</a></p>
+    <p class="auth-foot">{{ tr('New to SrujanSetu?') }} <a href="{{ url_for('shop.customer_register', next=request.args.get('next', '')) }}">{{ tr('Create a customer account') }}</a></p>
+    <p class="auth-foot"><a href="{{ url_for('shop.cart') }}">{{ tr('Return to your cart') }}</a></p>
   </div>
 </section>
 {% endblock %}

@@ -4,32 +4,32 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">YOUR MAKER WORKSPACE</span>
-  <h1>Namaskar, <em>{{ profile.name if profile else account.name }}</em></h1>
-  <p>Manage your public profile and marketplace products.</p>
+  <span class="eyebrow">{{ tr('YOUR MAKER WORKSPACE') }}</span>
+  <h1>{{ tr('Namaskar,') }} <em>{{ profile.name if profile else account.name }}</em></h1>
+  <p>{{ tr('Manage your public profile and marketplace products.') }}</p>
 </section>
 
 <section class="content-wrap">
   <div class="artisan-portal-grid">
     <a class="portal-card" href="{{ url_for('artisan.artisan_profile_edit') }}">
       <span aria-hidden="true">✿</span>
-      <h2>My maker profile</h2>
-      <p>Update your name, craft, district, biography, profile photo and optional public map location.</p>
-      <b>Edit profile →</b>
+      <h2>{{ tr('My maker profile') }}</h2>
+      <p>{{ tr('Update your name, craft, district, biography, profile photo and optional public map location.') }}</p>
+      <b>{{ tr('Edit profile →') }}</b>
     </a>
     <a class="portal-card" href="{{ url_for('artisan.artisan_products') }}">
       <span aria-hidden="true">▣</span>
-      <h2>My products</h2>
-      <p>You currently have {{ products|length }} product listing(s).</p>
-      <b>Manage products →</b>
+      <h2>{{ tr('My products') }}</h2>
+      <p>{{ tr('You currently have') }} {{ products|length }} {{ tr('product listing(s).') }}</p>
+      <b>{{ tr('Manage products →') }}</b>
     </a>
   </div>
 
   <div class="portal-toolbar">
-    <span>Signed in as {{ account.email }}</span>
+    <span>{{ tr('Signed in as') }} {{ account.email }}</span>
     <form method="post" action="{{ url_for('artisan.artisan_logout') }}">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-      <button class="btn btn-outline" type="submit">Sign out</button>
+      <button class="btn btn-outline" type="submit">{{ tr('Sign out') }}</button>
     </form>
   </div>
 </section>

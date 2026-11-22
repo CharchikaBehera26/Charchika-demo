@@ -11,7 +11,7 @@ from .config import Config, PROJECT_ROOT, get_database_uri
 from .extensions import db, migrate
 from .services.data_store import seed_demo_data
 from .services.gallery import media
-from .services.i18n import chrome_for, normalize_lang
+from .services.i18n import craft_description, chrome_for, normalize_lang, translate_text
 from .services.security import csrf_value, current_artisan_account
 
 
@@ -78,6 +78,8 @@ def create_app(test_config=None):
             "current_year": datetime.now().year,
             "lang": lang,
             "chrome": chrome_for(lang),
+            "tr": lambda value: translate_text(value, lang),
+            "craft_description": lambda name, fallback: craft_description(name, fallback, lang),
             "media": media,
             "csrf_token": csrf_value,
             "admin_logged_in": (
@@ -98,6 +100,11 @@ def create_app(test_config=None):
                 app.config.get("SUPABASE_URL")
                 and app.config.get("SUPABASE_ANON_KEY")
             ),
+            "supabase_google_admin_enabled": bool(
+                app.config.get("SUPABASE_URL")
+                and app.config.get("SUPABASE_ANON_KEY")
+                and app.config.get("GOOGLE_ADMIN_EMAILS")
+            ),
             "cart_count": sum(
                 int(quantity) for quantity in cart.values()
                 if str(quantity).isdigit() and 0 <= int(quantity) <= 99
@@ -115,7 +122,15 @@ def create_app(test_config=None):
         print("Demo data import complete.")
 
     with app.app_context():
-        if inspect(db.engine).has_table("app_metadata"):
+        schema = inspect(db.engine)
+        if schema.has_table("app_metadata") and all(
+            schema.has_table(table.name)
+            and {
+                column["name"]
+                for column in schema.get_columns(table.name)
+            } >= {column.name for column in table.columns}
+            for table in db.metadata.sorted_tables
+        ):
             seed_demo_data()
 
     return app

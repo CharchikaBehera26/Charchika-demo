@@ -4,9 +4,9 @@
 
 {% block content %}
 <section class="page-hero">
-  <span class="eyebrow">GROW WITH CONFIDENCE</span>
-  <h1>Business <em>Tips</em></h1>
-  <p>Practical ideas to help artisans and SHGs present their work online.</p>
+  <span class="eyebrow">{{ tr('GROW WITH CONFIDENCE') }}</span>
+  <h1>{{ tr('Business <em>Tips</em>')|safe }}</h1>
+  <p>{{ tr('Practical ideas to help artisans and SHGs present their work online.') }}</p>
 </section>
 
 <section class="content-wrap">
@@ -14,11 +14,11 @@
     {% for tip in tips %}
     <article class="tip-card">
       <span aria-hidden="true">✦</span>
-      <p>{{ tip }}</p>
+      <p>{{ tr(tip) }}</p>
     </article>
     {% endfor %}
   </div>
-  <div class="notice">These are general educational suggestions, not financial or business guarantees.</div>
-  <a class="btn btn-green" href="{{ url_for('artisan.artisan_register') }}">Join the maker marketplace →</a>
+  <div class="notice">{{ tr('These are general educational suggestions, not financial or business guarantees.') }}</div>
+  <a class="btn btn-green" href="{{ url_for('artisan.artisan_register') }}">{{ tr('Join the maker marketplace →') }}</a>
 </section>
 {% endblock %}

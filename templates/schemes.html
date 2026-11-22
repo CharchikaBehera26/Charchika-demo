@@ -4,33 +4,33 @@
 
 {% block content %}
 <section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'schemes') }}')">
-  <span class="eyebrow">INFORMATION FOR MAKERS</span>
-  <h1>Scheme <em>Finder</em></h1>
-  <p>Explore starting points for artisan, handloom and SHG support information.</p>
+  <span class="eyebrow">{{ tr('INFORMATION FOR MAKERS') }}</span>
+  <h1>{{ tr('Scheme <em>Finder</em>')|safe }}</h1>
+  <p>{{ tr('Explore starting points for artisan, handloom and SHG support information.') }}</p>
 </section>
 
 <section class="content-wrap">
   <div class="notice">
-    Educational demo: these are illustrative information cards, not verified active government schemes. Confirm current details with official departments.
+    {{ tr('Educational demo: these are illustrative information cards, not verified active government schemes. Confirm current details with official departments.') }}
   </div>
   <form class="search-form" method="get" action="{{ url_for('public.schemes') }}">
-    <label class="sr-only" for="schemeSearch">Search support topics</label>
-    <input id="schemeSearch" name="q" value="{{ query }}" placeholder="Search support topics…">
-    <button class="btn btn-green" type="submit">Search</button>
+    <label class="sr-only" for="schemeSearch">{{ tr('Search support topics') }}</label>
+    <input id="schemeSearch" name="q" value="{{ query }}" placeholder="{{ tr('Search support topics…') }}">
+    <button class="btn btn-green" type="submit">{{ tr('Search') }}</button>
   </form>
   <div class="card-grid">
     {% for scheme in schemes %}
     <article class="content-card">
       <div class="scheme-icon" aria-hidden="true">🏛️</div>
       <div class="card-body">
-        <span class="eyebrow">{{ scheme.audience }}</span>
-        <h2>{{ scheme.name }}</h2>
-        <p>{{ scheme.description }}</p>
-        <small>{{ scheme.note }}</small>
+        <span class="eyebrow">{{ tr(scheme.audience) }}</span>
+        <h2>{{ tr(scheme.name) }}</h2>
+        <p>{{ tr(scheme.description) }}</p>
+        <small>{{ tr(scheme.note) }}</small>
       </div>
     </article>
     {% else %}
-    <p class="empty-state">No support topics matched that search. Try another term.</p>
+    <p class="empty-state">{{ tr('No support topics matched that search. Try another term.') }}</p>
     {% endfor %}
   </div>
 </section>

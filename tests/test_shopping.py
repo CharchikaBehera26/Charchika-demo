@@ -1,9 +1,18 @@
 import re
 import unittest
+from decimal import Decimal
+import json
 
 from srujansetu import create_app
 from srujansetu.extensions import db
-from srujansetu.models import CustomerOrder, Product
+from srujansetu.models import (
+    AppMetadata,
+    Artisan,
+    CustomerAccount,
+    CustomerOrder,
+    Product,
+)
+from srujansetu.services.data_store import seed_demo_data
 
 
 class ShoppingTests(unittest.TestCase):
@@ -188,6 +197,104 @@ class ShoppingTests(unittest.TestCase):
         self.assertIn(b"invalid price and cannot be ordered", response.data)
         with self.app.app_context():
             self.assertEqual(db.session.query(CustomerOrder).count(), 0)
+
+    def test_navigation_exposes_maker_admin_and_customer_logout(self):
+        response = self.client.get("/marketplace")
+        self.assertIn(b'href="/artisan/register"', response.data)
+        self.assertIn(b'href="/artisan/login"', response.data)
+        self.assertIn(b'href="/admin"', response.data)
+
+        with self.app.app_context():
+            db.session.add(CustomerAccount(
+                id="customer-1",
+                name="Asha Buyer",
+                email="asha@example.com",
+                password_hash=None,
+            ))
+            db.session.commit()
+        with self.client.session_transaction() as browser_session:
+            browser_session["role"] = "customer"
+            browser_session["customer_user_id"] = "customer-1"
+        response = self.client.get("/marketplace")
+        self.assertIn(b'action="/shop/logout"', response.data)
+        self.assertIn(b"Sign out", response.data)
+
+    def test_map_has_current_location_control_and_published_artisan_pins(self):
+        with self.app.app_context():
+            db.session.add(Artisan(
+                id=1,
+                name="Sasmita Das",
+                craft="Pattachitra",
+                district="Puri",
+                latitude=19.8,
+                longitude=85.8,
+            ))
+            db.session.commit()
+        response = self.client.get("/planner")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'id="locateMe"', response.data)
+        self.assertIn(b'data-lat="19.8"', response.data)
+        self.assertIn(b"Your location is used only in this browser", response.data)
+
+    def test_admin_can_monitor_customer_order_requests(self):
+        with self.app.app_context():
+            db.session.add(CustomerOrder(
+                id="order-12345678",
+                customer_id="buyer-1",
+                customer_name="Asha Buyer",
+                phone="9876543210",
+                address="Puri, Odisha",
+                items_json=json.dumps([{
+                    "name": "Pattachitra Panel",
+                    "artisan": "Sasmita Das",
+                    "quantity": 1,
+                    "unit_price": "₹1,800.00",
+                    "line_total": "₹1,800.00",
+                }]),
+                total_price=Decimal("1800.00"),
+            ))
+            db.session.commit()
+        with self.client.session_transaction() as browser_session:
+            browser_session["role"] = "admin"
+            browser_session["admin_user"] = "test-admin"
+
+        response = self.client.get("/admin/orders")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Customer order requests", response.data)
+        self.assertIn(b"Pattachitra Panel", response.data)
+        self.assertIn(b"9876543210", response.data)
+        self.assertEqual(self.client.get("/admin/dashboard").status_code, 200)
+
+    def test_selected_language_is_used_across_public_customer_and_portal_pages(self):
+        with self.client.session_transaction() as browser_session:
+            browser_session["lang"] = "hi"
+
+        expected_text = {
+            "/marketplace": "बाज़ार",
+            "/shop/login": "साइन इन",
+            "/artisan/login": "कारीगर कार्यक्षेत्र",
+            "/admin/setup": "पहली बार सेटअप",
+        }
+        for path, phrase in expected_text.items():
+            with self.subTest(path=path):
+                response = self.client.get(path)
+                self.assertEqual(response.status_code, 200)
+                self.assertIn(b'<html lang="hi">', response.data)
+                self.assertIn(phrase.encode(), response.data)
+
+    def test_seed_adds_photo_to_matching_legacy_sample_without_overwriting_fields(self):
+        with self.app.app_context():
+            product = db.session.get(Product, 1)
+            product.name = "Jagannath Pattachitra Panel"
+            product.description = "Keep this existing description."
+            db.session.add(AppMetadata(key="demo_data_seeded", value="true"))
+            db.session.commit()
+
+            seed_demo_data()
+
+            product = db.session.get(Product, 1)
+            self.assertTrue(product.image.startswith("https://images.unsplash.com/"))
+            self.assertEqual(product.description, "Keep this existing description.")
 
 
 if __name__ == "__main__":

@@ -35,6 +35,7 @@ def read_artisan_users():
             "name": account.name,
             "email": account.email,
             "password_hash": account.password_hash,
+            "supabase_user_id": account.supabase_user_id,
         }
         for account in accounts
     ]
@@ -48,6 +49,7 @@ def write_artisan_users(users):
             name=user["name"],
             email=user["email"],
             password_hash=user["password_hash"],
+            supabase_user_id=user.get("supabase_user_id"),
         )
         for user in users
     )
