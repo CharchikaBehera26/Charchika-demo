@@ -10,6 +10,7 @@ from flask import (
     abort,
     current_app,
     flash,
+    jsonify,
     redirect,
     render_template,
     request,
@@ -366,6 +367,7 @@ def cart():
 @shop_bp.route("/cart/add/<int:product_id>", methods=["POST"])
 def cart_add(product_id):
     verify_csrf()
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
     product = next(
         (
             item for item in read_data("products")
@@ -383,15 +385,26 @@ def cart_add(product_id):
         requested_quantity = int(request.form.get("quantity", "1"))
         current_quantity = int(stored.get(key, 0))
     except (TypeError, ValueError):
+        if is_ajax:
+            return jsonify(error="Enter a valid quantity."), 400
         flash("Enter a valid quantity.", "error")
         return redirect(url_for("public.marketplace"))
     quantity = current_quantity + requested_quantity
     if not 1 <= quantity <= 99:
+        if is_ajax:
+            return jsonify(error="Cart quantities must be between 1 and 99."), 400
         flash("Cart quantities must be between 1 and 99.", "error")
     else:
         stored[key] = quantity
         session["cart"] = stored
-        flash(f"{product.get('name', 'Product')} added to your cart.", "success")
+        message = f"{product.get('name', 'Product')} added to your cart."
+        if is_ajax:
+            cart_count = sum(
+                int(value) for value in stored.values()
+                if str(value).isdigit() and 0 <= int(value) <= 99
+            )
+            return jsonify(message=message, cart_count=cart_count)
+        flash(message, "success")
     return redirect(url_for("public.marketplace"))
 
 

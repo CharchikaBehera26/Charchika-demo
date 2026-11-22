@@ -51,6 +51,20 @@ class FAQTests(unittest.TestCase):
         self.assertIn(b'href="/artisans"', response.data)
         self.assertIn(b'href="/planner"', response.data)
 
+    def test_assistant_panel_is_compact_and_keeps_panel_form_action(self):
+        response = self.client.get("/assistant?panel=1")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'class="assistant-panel-page"', response.data)
+        self.assertIn(b'action="/assistant?panel=1"', response.data)
+
+    def test_main_menu_omits_sell_and_opens_assistant_panel(self):
+        response = self.client.get("/")
+        self.assertEqual(response.status_code, 200)
+        self.assertNotIn(b'href="/sell"', response.data)
+        self.assertIn(b'id="assistantPopover"', response.data)
+        self.assertIn(b'/assistant?panel=1', response.data)
+        self.assertIn(b'class="ai-nav-link assistant-open-link"', response.data)
+
     def test_unknown_question_has_clear_fallback(self):
         response = self.client.post(
             "/assistant",

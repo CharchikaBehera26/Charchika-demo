@@ -131,7 +131,7 @@
         <small>{{ tr('By') }} {{ product.artisan }} · {{ product.district }}</small>
         {% if product.has_valid_deal %}<small class="regular-price">{{ tr('Regular price') }}: <s>{{ product.price }}</s></small>{% endif %}
         <strong class="price">{% if product.current_price_label %}{{ product.current_price_label }}{% else %}{{ tr('Price unavailable') }}{% endif %}</strong>
-        <form class="add-cart-form" method="post" action="{{ url_for('shop.cart_add', product_id=product.id) }}">
+        <form class="add-cart-form" method="post" action="{{ url_for('shop.cart_add', product_id=product.id) }}" data-request-error="{{ tr('Could not add this item to your cart. Please try again.') }}">
           <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
           <label>
             {{ tr('Qty') }}
