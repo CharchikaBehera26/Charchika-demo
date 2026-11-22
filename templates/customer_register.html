@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Create Customer Account — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">SHOP LOCAL</span>
+  <h1>Create a <em>Customer Account</em></h1>
+  <p>Create an account to submit and track demo order requests for local crafts.</p>
+</section>
+
+<section class="content-wrap auth-content">
+  <div class="auth-card">
+    <h2>Join SrujanSetu</h2>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label>
+        Your name
+        <input name="name" required minlength="2" autocomplete="name">
+      </label>
+      <label>
+        Email address
+        <input type="email" name="email" required autocomplete="email">
+      </label>
+      <label>
+        Password <small>At least 10 characters</small>
+        <input type="password" name="password" required minlength="10" autocomplete="new-password">
+      </label>
+      <label>
+        Confirm password
+        <input type="password" name="confirm" required minlength="10" autocomplete="new-password">
+      </label>
+      <button class="btn btn-green" type="submit">Create account →</button>
+    </form>
+    {% if supabase_google_enabled %}
+    <div class="auth-divider"><span>or</span></div>
+    <a class="btn btn-outline google-sign-in" href="{{ url_for('shop.google_login', next=request.args.get('next', '')) }}">
+      <span aria-hidden="true">G</span> Sign up with Google
+    </a>
+    {% endif %}
+    <p class="auth-foot">Already have an account? <a href="{{ url_for('shop.customer_login', next=request.args.get('next', '')) }}">Sign in</a></p>
+  </div>
+</section>
+{% endblock %}

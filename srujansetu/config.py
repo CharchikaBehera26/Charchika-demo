@@ -50,6 +50,18 @@ class Config:
         "dev-only-change-this-secret-before-deployment",
     )
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    SUPABASE_URL = os.environ.get("SUPABASE_URL", "").strip().rstrip("/")
+    SUPABASE_ANON_KEY = os.environ.get(
+        "SUPABASE_PUBLISHABLE_KEY",
+        os.environ.get("SUPABASE_ANON_KEY", ""),
+    ).strip()
+    PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "").strip().rstrip("/")
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    SESSION_COOKIE_SECURE = (
+        os.environ.get("SESSION_COOKIE_SECURE", "false").lower() == "true"
+    )
+    PREFERRED_URL_SCHEME = "https"
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_pre_ping": True,
         "pool_recycle": 300,

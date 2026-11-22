@@ -1,3 +1,5 @@
+from datetime import datetime, timezone
+
 from .extensions import db
 
 
@@ -79,6 +81,33 @@ class ArtisanAccount(db.Model):
     name = db.Column(db.String(160), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
+
+
+class CustomerAccount(db.Model):
+    __tablename__ = "customer_accounts"
+
+    id = db.Column(db.String(64), primary_key=True)
+    name = db.Column(db.String(160), nullable=False)
+    email = db.Column(db.String(255), nullable=False, unique=True, index=True)
+    password_hash = db.Column(db.String(255))
+    supabase_user_id = db.Column(db.String(64), unique=True, index=True)
+
+
+class CustomerOrder(db.Model):
+    __tablename__ = "customer_orders"
+
+    id = db.Column(db.String(64), primary_key=True)
+    customer_id = db.Column(db.String(64), nullable=False, index=True)
+    customer_name = db.Column(db.String(160), nullable=False)
+    phone = db.Column(db.String(40), nullable=False)
+    address = db.Column(db.Text, nullable=False)
+    items_json = db.Column(db.Text, nullable=False)
+    total_price = db.Column(db.Numeric(12, 2), nullable=False)
+    created_at = db.Column(
+        db.DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
+    )
 
 
 class AdminAccount(db.Model):

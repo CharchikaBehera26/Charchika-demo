@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Order Request — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">DEMO ORDER REQUEST</span>
+  <h1>Request <em>recorded</em></h1>
+  <p>Your request is saved in this demonstration site. No payment or delivery has been arranged.</p>
+</section>
+
+<section class="content-wrap">
+  <div class="form-panel order-detail">
+    <p><strong>Submitted:</strong> {{ order.created_at.strftime("%d %b %Y, %H:%M") }}</p>
+    <p><strong>Delivery contact:</strong> {{ order.customer_name }} · {{ order.phone }}</p>
+    <p><strong>Address:</strong> {{ order.address }}</p>
+    <h2>Items</h2>
+    {% for item in items %}
+    <p>{{ item.name }} × {{ item.quantity }} — <strong>{{ item.line_total }}</strong></p>
+    {% endfor %}
+    <p class="order-total">Total <strong>{{ format_price(order.total_price) }}</strong></p>
+    <p class="notice">This is not a paid or confirmed shipment. Contact the listed artisan directly to arrange a real purchase.</p>
+    <a class="btn btn-outline" href="{{ url_for('shop.customer_orders') }}">View my orders</a>
+  </div>
+</section>
+{% endblock %}

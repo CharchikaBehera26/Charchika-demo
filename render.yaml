@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: srujansetu
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python -m flask --app app db upgrade && gunicorn app:app --bind 0.0.0.0:$PORT
+    healthCheckPath: /
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_PUBLISHABLE_KEY
+        sync: false
+      - key: PUBLIC_BASE_URL
+        sync: false
+      - key: SESSION_COOKIE_SECURE
+        value: "true"

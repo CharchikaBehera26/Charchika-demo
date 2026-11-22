@@ -82,8 +82,13 @@ def cached_faqs():
         FAQ(
             "Can I buy products on this site?",
             ("buy online", "place an order", "checkout", "purchase product", "buy product"),
-            "The marketplace currently shows demonstration listings only. It does not process orders or payments, so contact and checkout details must be added before a real launch.",
-            (("Browse sample products", "public.marketplace"),),
+            "You can add products to a cart and submit a demo order request from a customer account. This site does not process payment or arrange delivery; contact the maker directly to complete a real purchase.",
+            (
+                ("Browse the marketplace", "public.marketplace"),
+                ("View your cart", "shop.cart"),
+                ("Create a customer account", "shop.customer_register"),
+                ("Customer sign in", "shop.customer_login"),
+            ),
         ),
         FAQ(
             "How can I contact a maker?",

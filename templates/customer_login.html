@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Customer Sign In — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">SHOP LOCAL</span>
+  <h1>Customer <em>Sign In</em></h1>
+  <p>Sign in to place a demo order and keep track of your order requests.</p>
+</section>
+
+<section class="content-wrap auth-content">
+  <div class="auth-card">
+    <h2>Welcome back</h2>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+      <label>
+        Email address
+        <input type="email" name="email" required autocomplete="username">
+      </label>
+      <label>
+        Password
+        <input type="password" name="password" required autocomplete="current-password">
+      </label>
+      <button class="btn btn-green" type="submit">Sign in →</button>
+    </form>
+    {% if supabase_google_enabled %}
+    <div class="auth-divider"><span>or</span></div>
+    <a class="btn btn-outline google-sign-in" href="{{ url_for('shop.google_login', next=request.args.get('next', '')) }}">
+      <span aria-hidden="true">G</span> Continue with Google
+    </a>
+    {% endif %}
+    <p class="auth-foot">New to SrujanSetu? <a href="{{ url_for('shop.customer_register', next=request.args.get('next', '')) }}">Create a customer account</a></p>
+    <p class="auth-foot"><a href="{{ url_for('shop.cart') }}">Return to your cart</a></p>
+  </div>
+</section>
+{% endblock %}

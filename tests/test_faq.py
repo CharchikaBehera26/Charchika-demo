@@ -59,6 +59,17 @@ class FAQTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"I couldn&#39;t find that in the site&#39;s information yet.", response.data)
 
+    def test_buying_question_explains_demo_order_and_customer_actions(self):
+        response = self.client.post(
+            "/assistant",
+            data={"message": "Can I buy products on this site?"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"submit a demo order request", response.data)
+        self.assertIn(b'href="/shop/cart"', response.data)
+        self.assertIn(b'href="/shop/register"', response.data)
+        self.assertIn(b'href="/shop/login"', response.data)
+
 
 if __name__ == "__main__":
     unittest.main()

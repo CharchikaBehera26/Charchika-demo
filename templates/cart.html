@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Your Cart — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero">
+  <span class="eyebrow">YOUR MARKETPLACE PICKS</span>
+  <h1>Shopping <em>Cart</em></h1>
+  <p>Review your handmade product selections before continuing to checkout.</p>
+</section>
+
+<section class="content-wrap">
+  {% if lines %}
+  <div class="cart-list">
+    {% for line in lines %}
+    <article class="cart-item">
+      <div class="cart-product">
+        <h2>{{ line.product.name }}</h2>
+        <p>By {{ line.product.artisan }} · {{ line.product.district }}</p>
+        <strong>{{ line.product.price }}</strong>
+      </div>
+      <form class="cart-quantity" method="post" action="{{ url_for('shop.cart_update') }}">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="hidden" name="product_id" value="{{ line.product.id }}">
+        <label>
+          Quantity <small>(0 removes)</small>
+          <input type="number" name="quantity" value="{{ line.quantity }}" min="0" max="99" required>
+        </label>
+        <button class="btn btn-outline" type="submit">Update</button>
+      </form>
+      <strong class="cart-line-total">
+        {% if line.line_total is not none %}{{ format_price(line.line_total) }}{% else %}Price unavailable{% endif %}
+      </strong>
+    </article>
+    {% endfor %}
+  </div>
+  <div class="cart-summary">
+    <p>Subtotal <strong>{{ format_price(total) }}</strong></p>
+    <small>Delivery and payment are not handled by this demo checkout.</small>
+    <a class="btn btn-green" href="{{ url_for('shop.checkout') }}">Continue to checkout →</a>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <h2>Your cart is empty</h2>
+    <p>Browse the marketplace and add a handmade item to get started.</p>
+    <a class="btn btn-green" href="{{ url_for('public.marketplace') }}">Browse marketplace</a>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

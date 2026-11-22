@@ -16,7 +16,16 @@
       <a class="text-link" href="{{ url_for('artisan.artisan_register') }}">Create a maker account →</a>
       or <a class="text-link" href="{{ url_for('artisan.artisan_login') }}">sign in</a> to manage your listings.
     </p>
-    <small>Sample listings are for demonstration only; this is not a live checkout service.</small>
+    <p>
+      <a class="text-link" href="{{ url_for('shop.cart') }}">View cart{% if cart_count %} ({{ cart_count }}){% endif %} →</a>
+      {% if not customer_logged_in %}
+      · <a class="text-link" href="{{ url_for('shop.customer_login') }}">Customer sign in</a>
+      · <a class="text-link" href="{{ url_for('shop.customer_register') }}">Create customer account</a>
+      {% else %}
+      · Signed in as {{ current_customer.name }}
+      {% endif %}
+    </p>
+    <small>Checkout records a demo order request. Online payments and delivery are not enabled.</small>
   </div>
 
   <div class="card-grid product-grid">
@@ -35,7 +44,14 @@
         <p>{{ product.description }}</p>
         <small>By {{ product.artisan }} · {{ product.district }}</small>
         <strong class="price">{{ product.price }}</strong>
-        <span class="demo-note">Demonstration listing · No online checkout</span>
+        <form class="add-cart-form" method="post" action="{{ url_for('shop.cart_add', product_id=product.id) }}">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <label>
+            Qty
+            <input type="number" name="quantity" value="1" min="1" max="99" aria-label="Quantity for {{ product.name }}">
+          </label>
+          <button class="btn btn-green" type="submit">Add to cart</button>
+        </form>
       </div>
     </article>
     {% else %}
