@@ -1,0 +1,5 @@
+<nav class="agent-tabs" aria-label="{{ chrome.agents }}">
+  <a href="{{ url_for('public.assistant') }}" {% if active == 'guide' %}aria-current="page"{% endif %}>{{ chrome.guide }}</a>
+  <a href="{{ url_for('public.sell') }}" {% if active == 'sell' %}aria-current="page"{% endif %}>{{ chrome.sell }}</a>
+  <a href="{{ url_for('public.stories') }}" {% if active == 'story' %}aria-current="page"{% endif %}>{{ chrome.story }}</a>
+</nav>

@@ -3,7 +3,7 @@
 {% block title %}Find Artisans — SrujanSetu{% endblock %}
 
 {% block content %}
-<section class="page-hero">
+<section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'artisans') }}')">
   <span class="eyebrow">THE HANDS BEHIND THE HERITAGE</span>
   <h1>Meet Our <em>Artisans</em></h1>
   <p>Discover the makers, their skills and the traditions they keep alive.</p>
@@ -29,7 +29,7 @@
     <article class="content-card artisan-card">
       <div class="artisan-photo">
         {% if artisan.image %}
-        <img src="{{ artisan.image }}" alt="{{ artisan.name }}">
+        <img src="{{ media('artisan', artisan.name, artisan.image) }}" alt="{{ artisan.name }}">
         {% else %}
         <span aria-hidden="true">{{ artisan.emoji }}</span>
         {% endif %}

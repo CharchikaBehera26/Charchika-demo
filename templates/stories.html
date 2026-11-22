@@ -3,17 +3,69 @@
 {% block title %}Craft Stories — SrujanSetu{% endblock %}
 
 {% block content %}
-<section class="page-hero">
-  <span class="eyebrow">KNOW THE STORY. VALUE THE SKILL.</span>
-  <h1>Craft <em>Stories</em></h1>
-  <p>Short introductions to the living traditions of Odisha.</p>
+<section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'stories') }}')">
+  <span class="eyebrow">{{ copy.story_kicker }}</span>
+  <h1>{{ copy.story_title_html|safe }}</h1>
+  <p>{{ copy.story_lead }}</p>
 </section>
 
 <section class="content-wrap">
+  {% set active = 'story' %}
+  {% include "_agent_tabs.html" %}
+
+  <div class="story-layout">
+    <form method="post" class="form-panel story-form" action="{{ url_for('public.stories') }}">
+      <h2>{{ copy.story_form_title }}</h2>
+      <label>
+        {{ copy.story_craft }}
+        <select name="craft" required>
+          <option value="">—</option>
+          {% for craft in crafts %}
+          <option value="{{ craft.name }}" {% if selected_craft == craft.name %}selected{% endif %}>{{ craft.name }}</option>
+          {% endfor %}
+        </select>
+      </label>
+      <label>
+        {{ copy.story_focus }}
+        <select name="focus">
+          <option value="making" {% if focus == 'making' %}selected{% endif %}>{{ copy.focus_making }}</option>
+          <option value="maker" {% if focus == 'maker' %}selected{% endif %}>{{ copy.focus_maker }}</option>
+          <option value="gift" {% if focus == 'gift' %}selected{% endif %}>{{ copy.focus_gift }}</option>
+        </select>
+      </label>
+      <label>
+        {{ copy.story_language }}
+        <select name="lang">
+          <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+          <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
+          <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+        </select>
+      </label>
+      <button class="btn btn-green" type="submit">{{ copy.story_submit }}</button>
+      <p class="assistant-disclaimer">{{ copy.story_note }}</p>
+    </form>
+
+    {% if generated %}
+    <article class="content-card generated-story">
+      <img src="{{ generated.image }}" alt="{{ generated.craft }}">
+      <div class="card-body">
+        <span class="eyebrow">{{ generated.category }}</span>
+        <h2>{{ generated.title }}</h2>
+        {% for paragraph in generated.paragraphs %}
+        <p>{{ paragraph }}</p>
+        {% endfor %}
+      </div>
+    </article>
+    {% endif %}
+  </div>
+
+  <h2 class="subheading">{{ copy.saved_stories }}</h2>
   <div class="card-grid">
     {% for story in stories %}
     <article class="content-card story-card">
-      <div class="story-art" aria-hidden="true">{{ story.emoji }}</div>
+      <div class="story-art photo-frame">
+        <img src="{{ media('story', story.title) }}" alt="{{ story.title }}">
+      </div>
       <div class="card-body">
         <span class="eyebrow">{{ story.category }}</span>
         <h2>{{ story.title }}</h2>
@@ -21,7 +73,7 @@
       </div>
     </article>
     {% else %}
-    <p class="empty-state">Craft stories will be added soon.</p>
+    <p class="empty-state">{{ copy.empty_story }}</p>
     {% endfor %}
   </div>
 </section>

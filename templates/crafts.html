@@ -3,7 +3,7 @@
 {% block title %}Explore Crafts — SrujanSetu{% endblock %}
 
 {% block content %}
-<section class="page-hero">
+<section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'crafts') }}')">
   <span class="eyebrow">A TAPESTRY OF TRADITION</span>
   <h1>Explore Odisha’s <em>Living Crafts</em></h1>
   <p>Every craft carries a story. Discover the skills, places and people behind them.</p>
@@ -19,7 +19,7 @@
   <div class="card-grid">
     {% for craft in crafts %}
     <article class="content-card">
-      <div class="craft-icon {{ craft.tone }}" aria-hidden="true">{{ craft.emoji }}</div>
+      <div class="craft-icon photo-frame {{ craft.tone }}"><img src="{{ media('craft', craft.name) }}" alt="{{ craft.name }}"></div>
       <div class="card-body">
         <span class="eyebrow">{{ craft.region }}</span>
         <h2>{{ craft.name }}</h2>

@@ -18,16 +18,15 @@ python -m pip install -r requirements.txt
 Copy-Item .env.example .env
 ```
 
-The default database is `instance/srujansetu.sqlite`. To use Supabase, edit `.env` and set `DATABASE_URL` to the PostgreSQL connection URI from the Supabase project settings. Keep `.env` private and never place database credentials in browser code or commit them. Set `SECRET_KEY` in `.env` to a long, random value before deployment.
+The default database is `instance/srujansetu.sqlite`. The sample `DATABASE_URL` in `.env.example` is only a placeholder; if left unchanged, the app uses local SQLite. To use Supabase, replace it in `.env` with the PostgreSQL connection URI from the Supabase project settings. Keep `.env` private and never place database credentials in browser code or commit them. Set `SECRET_KEY` in `.env` to a long, random value before deployment.
 
 Initialize the database and start the website:
 
 ```powershell
-python -m flask --app app db upgrade
-python app.py
+python startall.py
 ```
 
-Open the local address printed by Flask. The existing JSON files in `data/` are used once as starter content when the application first starts against an initialized database; later starts do not overwrite database content.
+`startall.py` applies outstanding database migrations, then starts the Flask development server. Open the local address printed by Flask. The existing JSON files in `data/` are used once as starter content when the application first starts against an initialized database; later starts do not overwrite database content.
 
 If a local database already contains the application tables but has no Alembic migration record, back it up and verify that its schema matches the current models before marking it at the current revision:
 

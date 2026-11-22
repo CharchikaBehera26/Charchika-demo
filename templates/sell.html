@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Sell assistant — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'market') }}')">
+  <span class="eyebrow">{{ copy.sell_kicker }}</span>
+  <h1>{{ copy.sell_title_html|safe }}</h1>
+  <p>{{ copy.sell_lead }}</p>
+</section>
+
+<section class="content-wrap assistant-wrap">
+  {% set active = 'sell' %}
+  {% include "_agent_tabs.html" %}
+  <div class="chat-panel">
+    <div class="chat-head">
+      <span class="bot-avatar" aria-hidden="true">🧺</span>
+      <div>
+        <b>{{ copy.sell_name }}</b>
+        <small>{{ copy.guide_status }}</small>
+      </div>
+      <span class="online-dot"><span aria-hidden="true">●</span> {{ copy.guide_ready }}</span>
+    </div>
+
+    <div class="chat-transcript" aria-live="polite">
+      <div class="chat-message bot">{{ copy.sell_hello }}</div>
+      {% if answer %}
+      <div class="chat-message user">{{ message }}</div>
+      <div class="chat-message bot">{{ answer }}</div>
+      {% if picks %}
+      <div class="sell-picks">
+        {% for product in picks %}
+        <article class="sell-pick">
+          <img src="{{ media('product', product.name, product.image) }}" alt="{{ product.name }}">
+          <div>
+            <b>{{ product.name }}</b>
+            <small>{{ product.craft }} · {{ product.artisan }}</small>
+            <strong>{{ product.price }}</strong>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if actions %}
+      <nav class="chat-actions" aria-label="Suggested pages">
+        {% for action in actions %}
+        <a class="btn btn-green" href="{{ action.url }}">{{ action.label }} →</a>
+        {% endfor %}
+      </nav>
+      {% endif %}
+      {% endif %}
+    </div>
+
+    <form method="post" class="chat-input" action="{{ url_for('public.sell') }}">
+      <label class="sr-only" for="sellLang">Language</label>
+      <select id="sellLang" name="lang" aria-label="Language">
+        <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>
+        <option value="or" {% if lang == 'or' %}selected{% endif %}>ଓଡ଼ିଆ</option>
+        <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
+      </select>
+      <label class="sr-only" for="sellMessage">What you want to sell or buy</label>
+      <input
+        id="sellMessage"
+        name="message"
+        required
+        maxlength="500"
+        autocomplete="off"
+        value="{{ message if not answer else '' }}"
+        placeholder="{{ copy.sell_placeholder }}"
+      >
+      <button class="btn btn-green" type="submit">{{ copy.send }}</button>
+    </form>
+  </div>
+  <p class="assistant-disclaimer">{{ copy.sell_note }}</p>
+</section>
+{% endblock %}

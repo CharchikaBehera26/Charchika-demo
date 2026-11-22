@@ -3,7 +3,7 @@
 {% block title %}SHG Marketplace — SrujanSetu{% endblock %}
 
 {% block content %}
-<section class="page-hero">
+<section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'market') }}')">
   <span class="eyebrow">BUY LOCAL. KEEP CRAFT ALIVE.</span>
   <h1>SHG <em>Marketplace</em></h1>
   <p>Explore handmade products and discover the makers behind them.</p>
@@ -24,7 +24,7 @@
     <article class="content-card product-card">
       <div class="product-art">
         {% if product.image %}
-        <img class="product-image" src="{{ product.image }}" alt="{{ product.name }}">
+        <img class="product-image" src="{{ media('product', product.name, product.image) }}" alt="{{ product.name }}">
         {% else %}
         <span aria-hidden="true">{{ product.emoji }}</span>
         {% endif %}

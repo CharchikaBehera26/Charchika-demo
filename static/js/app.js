@@ -1,5 +1,12 @@
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
+const backTab = document.getElementById("backTab");
+if (backTab) {
+  backTab.addEventListener("click", () => {
+    if (window.history.length > 1) window.history.back();
+    else window.location.href = "/";
+  });
+}
 if (menuToggle && navLinks) {
   menuToggle.addEventListener("click", () => {
     const isOpen = navLinks.classList.toggle("open");

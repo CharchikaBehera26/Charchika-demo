@@ -9,6 +9,8 @@ from sqlalchemy import inspect
 from .config import Config, PROJECT_ROOT, get_database_uri
 from .extensions import db, migrate
 from .services.data_store import seed_demo_data
+from .services.gallery import media
+from .services.i18n import chrome_for, normalize_lang
 from .services.security import csrf_value, current_artisan_account
 
 
@@ -45,8 +47,12 @@ def create_app(test_config=None):
 
     @app.context_processor
     def inject_template_context():
+        lang = normalize_lang(session.get("lang"))
         return {
             "current_year": datetime.now().year,
+            "lang": lang,
+            "chrome": chrome_for(lang),
+            "media": media,
             "csrf_token": csrf_value,
             "admin_logged_in": (
                 session.get("role") == "admin"

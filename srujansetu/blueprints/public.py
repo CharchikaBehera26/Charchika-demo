@@ -3,8 +3,10 @@ from datetime import datetime
 
 from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
 
+from ..services.agents import generate_story, sell_reply
 from ..services.data_store import read_data, write_data
 from ..services.faq import cached_faqs, find_faq, normalize_question
+from ..services.i18n import EN, language_from_message, localize_guide, normalize_lang, page_copy
 from ..services.security import next_id, parse_optional_coordinates
 
 
@@ -76,9 +78,30 @@ def marketplace():
     return render_template("marketplace.html", products=read_data("products"))
 
 
-@public_bp.route("/stories")
+@public_bp.route("/stories", methods=["GET", "POST"])
 def stories():
-    return render_template("stories.html", stories=read_data("stories"))
+    lang = normalize_lang(session.get("lang"))
+    generated = None
+    selected_craft = request.form.get("craft", "") if request.method == "POST" else ""
+    focus = request.form.get("focus", "making") if request.method == "POST" else "making"
+    if request.method == "POST":
+        lang = normalize_lang(request.form.get("lang") or lang)
+        session["lang"] = lang
+        if not selected_craft:
+            flash("Choose a craft before weaving a story.", "error")
+        else:
+            generated = generate_story(selected_craft, lang, focus)
+            if generated is None:
+                flash("That craft is not in the catalog.", "error")
+    return render_template(
+        "stories.html",
+        stories=read_data("stories"),
+        crafts=read_data("crafts"),
+        generated=generated,
+        selected_craft=selected_craft,
+        focus=focus,
+        copy=page_copy(lang),
+    )
 
 
 @public_bp.route("/schemes")
@@ -167,19 +190,19 @@ def assistant_reply(message):
 
     if mentions("sign in", "sign-in", "login", "log in", "my account"):
         return (
-            "Use the artisan and SHG portal to sign in and manage your public profile or product listings.",
+            EN["signin"],
             [{"label": "Open artisan sign in", "url": url_for("artisan.artisan_login")}],
         )
 
     if mentions("register", "registration", "sign up", "create account", "join as"):
         return (
-            "Create an artisan or SHG account to publish a profile and manage marketplace listings. You can add an exact public map location from your profile later.",
+            EN["register"],
             [{"label": "Create a maker account", "url": url_for("artisan.artisan_register")}],
         )
 
     if mentions("nearby", "near me", "map", "location", "directions"):
         return (
-            "The map is centered on Odisha. It shows exact public pins only for makers who have added coordinates to their profile.",
+            EN["map"],
             [
                 action("Open the artisan map", "planner"),
                 action("Browse all artisan profiles", "artisans"),
@@ -188,7 +211,7 @@ def assistant_reply(message):
 
     if mentions("find artisan", "find artisans", "meet artisan", "meet artisans", "maker", "shg", "self help group"):
         return (
-            "Browse maker profiles by name, craft or district. You can also use the map to see profiles that have shared an exact public location.",
+            EN["find"],
             [
                 action("Find artisans", "artisans"),
                 action("Open the artisan map", "planner"),
@@ -198,41 +221,48 @@ def assistant_reply(message):
     if mentions("business", "sell", "selling", "add product", "list product"):
         if session.get("role") == "artisan":
             return (
-                "You are signed in. Add a product listing from your maker workspace.",
+                EN["sell_in"],
                 [{
                     "label": "Add a product",
                     "url": url_for("artisan.artisan_product_new"),
                 }],
             )
         return (
-            "To sell through the demonstration marketplace, first create a maker account. Already registered? Sign in to manage your listings.",
+            EN["sell_out"],
             [
                 {"label": "Create a maker account", "url": url_for("artisan.artisan_register")},
                 {"label": "Sign in", "url": url_for("artisan.artisan_login")},
+                {"label": "Ask the sell assistant", "url": url_for("public.sell")},
             ],
         )
 
     if mentions("buy", "shop", "marketplace", "product", "products", "price"):
         return (
-            "The marketplace contains demonstration listings. Open a product listing to discover its maker and craft.",
-            [action("Explore the SHG marketplace", "marketplace")],
+            EN["buy"],
+            [
+                action("Explore the SHG marketplace", "marketplace"),
+                {"label": "Ask the sell assistant", "url": url_for("public.sell")},
+            ],
         )
 
     if mentions("scheme", "schemes", "government", "grant", "support", "benefit"):
         return (
-            "The scheme finder contains illustrative information only. Confirm eligibility, availability and application details with the official department before applying.",
+            EN["scheme"],
             [action("Open the scheme finder", "schemes")],
         )
 
     if mentions("story", "stories", "history", "tradition"):
         return (
-            "Explore short introductions to Odisha's living craft traditions and the people who carry them forward.",
-            [action("Read craft stories", "stories")],
+            EN["story"],
+            [
+                action("Read craft stories", "stories"),
+                {"label": "Write a craft story", "url": url_for("public.stories")},
+            ],
         )
 
     if mentions("community", "share a note", "post a message"):
         return (
-            "You can share an encouraging note with the SrujanSetu community.",
+            EN["community"],
             [action("Visit the community", "community")],
         )
 
@@ -259,7 +289,7 @@ def assistant_reply(message):
 
     if mentions("hello", "hi", "hey", "namaskar", "help", "what can you do"):
         return (
-            "Namaskar! I can answer questions using the site's craft information and guide you to artisans, the map, marketplace, stories, community or scheme finder. What would you like to do?",
+            EN["hello"],
             [
                 action("Explore crafts", "crafts"),
                 action("Find artisans", "artisans"),
@@ -270,12 +300,12 @@ def assistant_reply(message):
 
     if mentions("craft", "crafts", "handicraft", "handicrafts", "weaving"):
         return (
-            "The craft directory covers Odisha traditions, including Pattachitra, Sambalpuri Ikat, Pipili Appliqué, Silver Filigree, Terracotta and Dhokra.",
+            EN["crafts"],
             [action("Browse Odisha crafts", "crafts")],
         )
 
     return (
-        "I couldn't find that in the site's information yet. I can help with Odisha crafts, finding artisans, exact map locations, marketplace listings, community posts and scheme information.",
+        EN["fallback"],
         [
             action("Explore crafts", "crafts"),
             action("Find artisans", "artisans"),
@@ -285,25 +315,68 @@ def assistant_reply(message):
     )
 
 
+def _safe_next(value):
+    if not value or not value.startswith("/") or value.startswith("//"):
+        return url_for("public.home")
+    return value
+
+
+@public_bp.route("/language", methods=["POST"])
+def set_language():
+    session["lang"] = normalize_lang(request.form.get("lang"))
+    return redirect(_safe_next(request.form.get("next")))
+
+
 @public_bp.route("/assistant", methods=["GET", "POST"])
 def assistant():
     message = ""
     answer = None
     actions = []
+    lang = normalize_lang(session.get("lang"))
     if request.method == "POST":
         message = request.form.get("message", "").strip()
+        lang = language_from_message(message, request.form.get("lang") or lang)
+        session["lang"] = lang
         if not message:
             flash("Enter a question before sending it.", "error")
         elif len(message) > 500:
             flash("Please keep your question under 500 characters.", "error")
         else:
-            answer, actions = assistant_reply(message)
+            answer, actions = localize_guide(*assistant_reply(message), lang)
     return render_template(
         "assistant.html",
         message=message,
         answer=answer,
         actions=actions,
         faq_items=cached_faqs(),
+        copy=page_copy(lang),
+    )
+
+
+@public_bp.route("/sell", methods=["GET", "POST"])
+def sell():
+    message = ""
+    answer = None
+    actions = []
+    picks = []
+    lang = normalize_lang(session.get("lang"))
+    if request.method == "POST":
+        message = request.form.get("message", "").strip()
+        lang = language_from_message(message, request.form.get("lang") or lang)
+        session["lang"] = lang
+        if not message:
+            flash("Tell the sell assistant what you are looking for.", "error")
+        elif len(message) > 500:
+            flash("Please keep your note under 500 characters.", "error")
+        else:
+            answer, picks, actions = sell_reply(message, lang)
+    return render_template(
+        "sell.html",
+        message=message,
+        answer=answer,
+        actions=actions,
+        picks=picks,
+        copy=page_copy(lang),
     )
 
 

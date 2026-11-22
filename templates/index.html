@@ -3,7 +3,7 @@
 {% block title %}SrujanSetu — Empowering Local Hands{% endblock %}
 
 {% block content %}
-<section class="hero">
+<section class="hero has-photo" style="--hero-image: url('{{ media('scene', 'hero') }}')">
   <div class="hero-copy">
     <span class="eyebrow">THE HERITAGE OF ODISHA</span>
     <h1>From the Hands of Odisha,<br>to the <em>Heart</em> of the World.</h1>
@@ -14,9 +14,7 @@
     </div>
   </div>
   <div class="hero-art">
-    <div class="sun-disc"></div>
-    <div class="temple">♜</div>
-    <div class="artisan-illustration">👩🏽‍🎨</div>
+    <img class="hero-photo" src="{{ media('scene', 'hero') }}" alt="Traditional Indian craft artistry">
     <div class="hero-caption">Rooted in tradition. Made by hand.</div>
   </div>
 </section>
@@ -51,7 +49,7 @@
     <div class="mini-artisans">
       {% for a in artisans %}
       <a class="mini-card" href="{{ url_for('public.artisans') }}">
-        <div class="mini-photo">{{ a.emoji }}</div>
+        <div class="mini-photo"><img src="{{ media('artisan', a.name, a.image) }}" alt="{{ a.name }}"></div>
         <b>{{ a.name }}</b>
         <small>⌖ {{ a.district }}</small>
         <span>{{ a.craft }}</span>
