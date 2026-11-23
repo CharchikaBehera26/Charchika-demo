@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Oriya:wght@400;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261123_04">
   {% block page_head %}{% endblock %}
 </head>
 <body{% if request.args.get('panel') == '1' %} class="assistant-panel-page"{% endif %}>
@@ -17,7 +17,6 @@
 {% endif %}
 <header class="topbar">
   <a class="brand" href="{{ url_for('public.home') }}"><span class="brand-mark">✺</span><span><b>SrujanSetu</b><small>{{ tr('Empowering Local Hands') }}</small></span></a>
-  <button class="menu-toggle" id="menuToggle" type="button" aria-label="{{ tr('Toggle navigation') }}" aria-controls="navLinks" aria-expanded="false">☰</button>
   <nav class="nav-links" id="navLinks">
     <a href="{{ url_for('public.home') }}">{{ chrome.home }}</a>
     <a href="{{ url_for('public.crafts') }}">{{ chrome.crafts }}</a>
@@ -25,18 +24,6 @@
     <a href="{{ url_for('public.planner') }}">{{ chrome.map }}</a>
     <a href="{{ url_for('public.marketplace') }}">{{ chrome.market }}</a>
     <a href="{{ url_for('shop.cart') }}">{{ chrome.cart }}<span data-cart-count>{% if cart_count %} ({{ cart_count }}){% endif %}</span></a>
-    {% if customer_logged_in %}
-    <a href="{{ url_for('shop.customer_orders') }}">{{ chrome.orders }}</a>
-    <form class="nav-logout-form" method="post" action="{{ url_for('shop.customer_logout') }}">
-      <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
-      <button class="nav-logout" type="submit">{{ chrome.sign_out }}</button>
-    </form>
-    {% else %}
-    <a href="{{ url_for('shop.customer_login') }}">{{ chrome.customer_sign_in }}</a>
-    {% endif %}
-    <a class="portal-nav-link" href="{{ url_for('artisan.artisan_register') }}">{{ chrome.seller_join }}</a>
-    <a class="portal-nav-link" href="{{ url_for('artisan.artisan_login') }}">{{ chrome.artisan_portal }}</a>
-    <a class="portal-nav-link" href="{{ url_for('admin.admin_index') }}">{{ chrome.admin }}</a>
     <a href="{{ url_for('public.stories') }}">{{ chrome.stories }}</a>
     <a href="{{ url_for('public.schemes') }}">{{ chrome.schemes }}</a>
     <a class="ai-nav-link assistant-open-link" href="{{ url_for('public.assistant') }}">{{ chrome.guide }}</a>
@@ -61,7 +48,91 @@
         <option value="hi" {% if lang == 'hi' %}selected{% endif %}>हिंदी</option>
       </select>
     </form>
+    {% if customer_logged_in %}
+      <div class="auth-dropdown">
+        <a class="topbar-auth-btn topbar-user-badge" href="{{ url_for('shop.customer_orders') }}" title="{{ tr('Customer account') }}">
+          👤 {{ current_customer.name.split()[0] }} ▾
+        </a>
+        <div class="auth-dropdown-menu">
+          <span class="auth-dropdown-header">{{ current_customer.name }}</span>
+          <a href="{{ url_for('shop.customer_orders') }}">📦 {{ chrome.orders }}</a>
+          <a href="{{ url_for('shop.cart') }}">🛒 {{ chrome.cart }}</a>
+          <form class="nav-logout-form" method="post" action="{{ url_for('shop.customer_logout') }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="auth-dropdown-item nav-logout-btn" type="submit">🚪 {{ chrome.sign_out }}</button>
+          </form>
+        </div>
+      </div>
+    {% elif artisan_logged_in %}
+      <div class="auth-dropdown">
+        <a class="topbar-auth-btn topbar-user-badge" href="{{ url_for('artisan.artisan_dashboard') }}" title="{{ tr('Maker workspace') }}">
+          🧵 {{ current_artisan.name.split()[0] if current_artisan else tr('Maker') }} ▾
+        </a>
+        <div class="auth-dropdown-menu">
+          <span class="auth-dropdown-header">{{ tr('Maker Workspace') }}</span>
+          <a href="{{ url_for('artisan.artisan_dashboard') }}">📊 {{ tr('Dashboard') }}</a>
+          <a href="{{ url_for('artisan.artisan_products') }}">📦 {{ tr('My Products') }}</a>
+          <a href="{{ url_for('artisan.artisan_profile_edit') }}">⚙️ {{ tr('Edit Profile') }}</a>
+          <form class="nav-logout-form" method="post" action="{{ url_for('artisan.artisan_logout') }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="auth-dropdown-item nav-logout-btn" type="submit">🚪 {{ chrome.sign_out }}</button>
+          </form>
+        </div>
+      </div>
+    {% elif admin_logged_in %}
+      <div class="auth-dropdown">
+        <a class="topbar-auth-btn topbar-user-badge" href="{{ url_for('admin.admin_index') }}">
+          ⚙️ Admin ▾
+        </a>
+        <div class="auth-dropdown-menu">
+          <span class="auth-dropdown-header">SrujanSetu Admin</span>
+          <a href="{{ url_for('admin.admin_index') }}">📊 {{ tr('Admin Dashboard') }}</a>
+          <form class="nav-logout-form" method="post" action="{{ url_for('admin.admin_logout') }}">
+            <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+            <button class="auth-dropdown-item nav-logout-btn" type="submit">🚪 {{ chrome.sign_out }}</button>
+          </form>
+        </div>
+      </div>
+    {% else %}
+      <div class="auth-dropdown" id="loginDropdown">
+        <button class="topbar-auth-btn topbar-login-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          🔑 {{ tr('Login') }} ▾
+        </button>
+        <div class="auth-dropdown-menu">
+          <span class="auth-dropdown-header">{{ tr('Login to your account') }}</span>
+          <a href="{{ url_for('shop.customer_login') }}">
+            <strong>🛍️ {{ tr('Customer Sign In') }}</strong>
+            <small>{{ tr('Buy products & track orders') }}</small>
+          </a>
+          <a href="{{ url_for('artisan.artisan_login') }}">
+            <strong>🧵 {{ tr('Artisan & SHG Portal') }}</strong>
+            <small>{{ tr('Sign in to manage products') }}</small>
+          </a>
+          <a href="{{ url_for('admin.admin_login') }}">
+            <strong>⚙️ {{ tr('Admin Portal') }}</strong>
+            <small>{{ tr('System administration') }}</small>
+          </a>
+        </div>
+      </div>
+      <div class="auth-dropdown" id="registerDropdown">
+        <button class="topbar-auth-btn topbar-register-btn" type="button" aria-haspopup="true" aria-expanded="false">
+          ✨ {{ tr('Register') }} ▾
+        </button>
+        <div class="auth-dropdown-menu">
+          <span class="auth-dropdown-header">{{ tr('Create new account') }}</span>
+          <a href="{{ url_for('shop.customer_register') }}">
+            <strong>🛍️ {{ tr('Customer Account') }}</strong>
+            <small>{{ tr('Buy directly from Odisha SHGs') }}</small>
+          </a>
+          <a href="{{ url_for('artisan.artisan_register') }}">
+            <strong>🧵 {{ tr('Join as Artisan / SHG') }}</strong>
+            <small>{{ tr('List handmade crafts for free') }}</small>
+          </a>
+        </div>
+      </div>
+    {% endif %}
     <a class="avatar" href="{{ url_for('public.community') }}" title="Community">S</a>
+    <button class="menu-toggle" id="menuToggle" type="button" aria-label="{{ tr('Toggle navigation') }}" aria-controls="navLinks" aria-expanded="false">☰</button>
   </div>
 </header>
 <div class="nav-backdrop" id="navBackdrop" aria-hidden="true"></div>
@@ -131,6 +202,6 @@
   <iframe data-src="{{ url_for('public.assistant', panel=1) }}" title="Srujan AI assistant"></iframe>
 </section>
 {% block page_scripts %}{% endblock %}
-<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script src="{{ url_for('static', filename='js/app.js') }}?v=20261123_04"></script>
 </body>
 </html>

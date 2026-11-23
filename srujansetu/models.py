@@ -38,6 +38,7 @@ class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     owner_id = db.Column(db.String(64), index=True)
     name = db.Column(db.String(200), nullable=False)
+    name_local = db.Column(db.String(300), nullable=False, default="")
     craft = db.Column(db.String(160), nullable=False, default="")
     category = db.Column(db.String(160), nullable=False, default="")
     price = db.Column(db.String(80), nullable=False)

@@ -344,6 +344,9 @@ def seed_demo_data():
                                 product.deal_price = item["deal_price"]
                             if item.get("owner_id") and not existing.get("owner_id"):
                                 product.owner_id = item["owner_id"]
+                            # Sync bilingual local name if empty or changed
+                            if item.get("name_local") and item["name_local"] != existing.get("name_local"):
+                                product.name_local = item["name_local"]
                     elif collection == "artisans":
                         artisan = db.session.get(model, existing["id"])
                         if artisan is not None:

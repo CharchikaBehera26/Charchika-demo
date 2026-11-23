@@ -35,6 +35,33 @@ document.addEventListener("click", event => {
   ) {
     closeNav();
   }
+  // Close any open auth dropdowns if clicked outside
+  document.querySelectorAll(".auth-dropdown.open").forEach(dropdown => {
+    if (!dropdown.contains(event.target)) {
+      dropdown.classList.remove("open");
+      const btn = dropdown.querySelector(".topbar-auth-btn");
+      if (btn) btn.setAttribute("aria-expanded", "false");
+    }
+  });
+});
+
+// Auth dropdown toggles for mouse click and touch
+document.querySelectorAll(".auth-dropdown").forEach(dropdown => {
+  const btn = dropdown.querySelector(".topbar-auth-btn");
+  if (!btn) return;
+  btn.addEventListener("click", e => {
+    e.stopPropagation();
+    const wasOpen = dropdown.classList.contains("open");
+    document.querySelectorAll(".auth-dropdown.open").forEach(d => {
+      if (d !== dropdown) {
+        d.classList.remove("open");
+        const b = d.querySelector(".topbar-auth-btn");
+        if (b) b.setAttribute("aria-expanded", "false");
+      }
+    });
+    dropdown.classList.toggle("open", !wasOpen);
+    btn.setAttribute("aria-expanded", String(!wasOpen));
+  });
 });
 
 function showCartToast(message) {

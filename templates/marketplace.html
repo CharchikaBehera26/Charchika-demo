@@ -4,42 +4,44 @@
 
 {% block content %}
 <section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'market') }}')">
-  <span class="eyebrow">{{ tr('BUY LOCAL. KEEP CRAFT ALIVE.') }}</span>
+  <span class="eyebrow">{{ tr('BUY LOCAL. SUPPORT YOUR VILLAGE.') }}</span>
   <h1>{{ tr('SHG <em>Marketplace</em>')|safe }}</h1>
-  <p>{{ tr('Explore handmade products and discover the makers behind them.') }}</p>
+  <p>{{ tr('Handmade by women-led Self Help Groups & local artisans of Odisha. Every purchase empowers a maker.') }}</p>
 </section>
 
 <section class="content-wrap">
-  <div class="marketplace-intro">
-    <p>
-      {{ tr('Are you an artisan or SHG?') }}
-      <a class="text-link" href="{{ url_for('artisan.artisan_register') }}">{{ tr('Create a maker account →') }}</a>
-      {{ tr('or') }} <a class="text-link" href="{{ url_for('artisan.artisan_login') }}">{{ tr('sign in') }}</a> {{ tr('to manage your listings.') }}
-    </p>
-    <p>
-      <a class="text-link" href="{{ url_for('shop.cart') }}">{{ tr('View cart') }}{% if cart_count %} ({{ cart_count }}){% endif %} →</a>
+
+  <!-- SHG Mission Banner -->
+  <div class="shg-mission-banner">
+    <span class="shg-icon">🤝</span>
+    <div>
+      <strong>{{ tr('Connecting you directly with local vendors & SHGs') }}</strong>
+      <p>{{ tr('All products here are made by artisans and Self Help Groups (SHGs) from Odisha\'s villages. Shop directly, support livelihoods, and keep traditional crafts alive.') }}</p>
+    </div>
+    <div class="shg-login-cta">
       {% if not customer_logged_in %}
-      · <a class="text-link" href="{{ url_for('shop.customer_login') }}">{{ tr('Customer sign in') }}</a>
-      · <a class="text-link" href="{{ url_for('shop.customer_register') }}">{{ tr('Create customer account') }}</a>
+      <a class="btn btn-green" href="{{ url_for('shop.customer_login') }}">{{ tr('Sign in to Buy') }}</a>
+      <a class="text-link" href="{{ url_for('shop.customer_register') }}">{{ tr('Create account') }}</a>
       {% else %}
-      · {{ tr('Signed in as') }} {{ current_customer.name }}
+      <span class="signed-in-badge">✅ {{ tr('Signed in as') }} {{ current_customer.name }}</span>
+      <a class="text-link" href="{{ url_for('shop.cart') }}">{{ tr('View cart') }}{% if cart_count %} ({{ cart_count }}){% endif %} →</a>
       {% endif %}
-    </p>
-    <small>{{ tr('Checkout records a demo order request. Online payments and delivery are not enabled.') }}</small>
+    </div>
   </div>
 
   {% if not selected_category %}
   <div class="market-discovery-grid">
     <section class="market-feature-panel">
       <span class="eyebrow">{{ tr('FEATURED MAKER PICKS') }}</span>
-      <h2>{{ tr('Curated products from Odisha makers') }}</h2>
+      <h2>{{ tr('Curated products from Odisha SHGs & makers') }}</h2>
       {% for product in featured %}
       <a class="market-pick" href="#product-{{ product.id }}">
         <span>{{ product.emoji }} <b>{{ product.name }}</b></span>
+        <small class="product-name-local">{{ product.name_local or '' }}</small>
         <small>{{ product.artisan }} · {{ product.category or product.craft }}</small>
       </a>
       {% endfor %}
-      <small class="market-note">{{ tr('Sample listings are illustrative; item names and prices are provided by each maker.') }}</small>
+      <small class="market-note">{{ tr('Item names and prices are set by each maker or SHG.') }}</small>
     </section>
 
     <section class="market-feature-panel">
@@ -49,34 +51,37 @@
       {% for product, request_count in most_requested %}
       <a class="market-pick" href="#product-{{ product.id }}">
         <span>{{ product.emoji }} <b>{{ product.name }}</b></span>
+        <small class="product-name-local">{{ product.name_local or '' }}</small>
         <small>{{ request_count }} {{ tr('item(s) in demo order requests') }}</small>
       </a>
       {% endfor %}
-      <small class="market-note">{{ tr('Counts are demo order requests, not completed or paid purchases.') }}</small>
+      <small class="market-note">{{ tr('Counts are demo order requests, not completed purchases.') }}</small>
       {% else %}
       <span class="eyebrow">{{ tr('TRENDING PICKS') }}</span>
-      <h2>{{ tr('Popular sample listings') }}</h2>
+      <h2>{{ tr('Popular from local makers') }}</h2>
       {% for product in featured[:3] %}
       <a class="market-pick" href="#product-{{ product.id }}">
         <span>{{ product.emoji }} <b>{{ product.name }}</b></span>
+        <small class="product-name-local">{{ product.name_local or '' }}</small>
         <small>{{ product.artisan }} · {{ product.category or product.craft }}</small>
       </a>
       {% endfor %}
-      <small class="market-note">{{ tr('Featured picks are curated demo listings, not a sales ranking.') }}</small>
+      <small class="market-note">{{ tr('Featured picks are curated from local SHG and artisan listings.') }}</small>
       {% endif %}
     </section>
 
     {% if deals %}
     <section class="market-feature-panel deal-panel">
-      <span class="eyebrow">{{ tr('TODAY’S MAKER DEALS') }}</span>
-      <h2>{{ tr('Special prices from makers') }}</h2>
+      <span class="eyebrow">{{ tr('TODAY\'S MAKER DEALS') }}</span>
+      <h2>{{ tr('Special prices from local makers') }}</h2>
       {% for product in deals %}
       <a class="market-pick" href="#product-{{ product.id }}">
         <span>{{ product.emoji }} <b>{{ product.name }}</b></span>
+        <small class="product-name-local">{{ product.name_local or '' }}</small>
         <small><s>{{ product.price }}</s> <strong>{{ product.deal_price_label }}</strong> · {{ product.artisan }}</small>
       </a>
       {% endfor %}
-      <small class="market-note">{{ tr('These sample offers are shown as listed; confirm availability with the maker.') }}</small>
+      <small class="market-note">{{ tr('Confirm availability directly with the maker or SHG.') }}</small>
     </section>
     {% endif %}
   </div>
@@ -84,7 +89,7 @@
   <section class="market-sellers">
     <div>
       <span class="eyebrow">{{ tr('MEET THE MAKERS') }}</span>
-      <h2>{{ tr('Makers with the most listings') }}</h2>
+      <h2>{{ tr('Artisans & SHGs with active listings') }}</h2>
     </div>
     <div class="market-seller-list">
       {% for seller in sellers %}
@@ -94,12 +99,12 @@
       </a>
       {% endfor %}
     </div>
-    <small class="market-note">{{ tr('Listing counts are not sales totals.') }}</small>
+    <small class="market-note">{{ tr('Listing counts show how many products each maker has shared.') }}</small>
   </section>
   {% endif %}
 
   <form class="market-category-filter" method="get" action="{{ url_for('public.marketplace') }}">
-    <label for="marketCategory">{{ tr('Shop by category') }}
+    <label for="marketCategory">{{ tr('Shop by craft category') }}
       <select id="marketCategory" name="category" onchange="this.form.submit()">
         <option value="">{{ tr('All categories') }}</option>
         {% for category in categories %}
@@ -108,7 +113,7 @@
       </select>
     </label>
     {% if selected_category %}
-    <a class="text-link" href="{{ url_for('public.marketplace') }}">{{ tr('Clear category filter') }}</a>
+    <a class="text-link" href="{{ url_for('public.marketplace') }}">{{ tr('Clear filter') }}</a>
     {% endif %}
   </form>
 
@@ -119,16 +124,24 @@
         {% if product.image %}
         <img class="product-image" src="{{ media('product', product.name, product.image) }}" alt="{{ product.name }}" loading="lazy" decoding="async">
         {% else %}
-        <span aria-hidden="true">{{ product.emoji }}</span>
+        <span aria-hidden="true" class="product-emoji-fallback">{{ product.emoji }}</span>
         {% endif %}
+        {% if product.is_featured %}<span class="product-badge featured-badge">{{ tr('Featured') }}</span>{% endif %}
+        {% if product.has_valid_deal %}<span class="product-badge deal-badge">🏷️ {{ tr('Maker deal') }}</span>{% endif %}
       </div>
       <div class="card-body">
         <span class="eyebrow">{{ tr(product.category or product.craft) }}</span>
-        {% if product.is_featured %}<span class="product-badge">{{ tr('Featured') }}</span>{% endif %}
-        {% if product.has_valid_deal %}<span class="product-badge deal-badge">{{ tr('Maker deal') }}</span>{% endif %}
-        <h2>{{ product.name }}</h2>
+        <h2 class="product-title">
+          <span class="product-name-en">{{ product.name }}</span>
+          {% if product.name_local %}
+          <span class="product-name-odia">🇮🇳 {{ product.name_local }}</span>
+          {% endif %}
+        </h2>
         <p>{{ product.description }}</p>
-        <small>{{ tr('By') }} {{ product.artisan }} · {{ product.district }}</small>
+        <div class="product-maker-info">
+          <span class="maker-badge">🏘️ {{ product.artisan }}</span>
+          <span class="district-badge">📍 {{ product.district }}</span>
+        </div>
         {% if product.has_valid_deal %}<small class="regular-price">{{ tr('Regular price') }}: <s>{{ product.price }}</s></small>{% endif %}
         <strong class="price">{% if product.current_price_label %}{{ product.current_price_label }}{% else %}{{ tr('Price unavailable') }}{% endif %}</strong>
         <form class="add-cart-form" method="post" action="{{ url_for('shop.cart_add', product_id=product.id) }}" data-request-error="{{ tr('Could not add this item to your cart. Please try again.') }}">
@@ -145,11 +158,37 @@
     <div class="empty-state">
       <h2>{% if selected_category %}{{ tr('No products match this category yet.') }}{% else %}{{ tr('No products are listed yet') }}{% endif %}</h2>
       {% if not selected_category %}
-      <p>{{ tr('Maker listings will appear here when artisans and SHGs add products.') }}</p>
-      <a class="btn btn-green" href="{{ url_for('artisan.artisan_register') }}">{{ tr('Join as a maker') }}</a>
+      <p>{{ tr('SHG and artisan listings will appear here when makers add their products.') }}</p>
+      <a class="btn btn-green" href="{{ url_for('artisan.artisan_register') }}">{{ tr('Join as a maker or SHG') }}</a>
       {% endif %}
     </div>
     {% endfor %}
   </div>
+
+  <!-- SHG Info Footer -->
+  <div class="shg-info-strip">
+    <div>
+      <span>🧵</span>
+      <div>
+        <strong>{{ tr('Are you an artisan or SHG?') }}</strong>
+        <p>{{ tr('List your handmade products for free and reach buyers across India.') }}</p>
+        <a class="btn btn-outline" href="{{ url_for('artisan.artisan_register') }}">{{ tr('Register your SHG / Create maker account →') }}</a>
+      </div>
+    </div>
+    <div>
+      <span>🛒</span>
+      <div>
+        <strong>{{ tr('Ready to buy?') }}</strong>
+        <p>{{ tr('Sign in or create a free account to place order requests with local makers.') }}</p>
+        {% if not customer_logged_in %}
+        <a class="btn btn-green" href="{{ url_for('shop.customer_login') }}">{{ tr('Sign in') }}</a>
+        <a class="text-link" href="{{ url_for('shop.customer_register') }}">{{ tr('Create account') }}</a>
+        {% else %}
+        <a class="btn btn-green" href="{{ url_for('shop.cart') }}">{{ tr('View cart') }}{% if cart_count %} ({{ cart_count }}){% endif %} →</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
 </section>
 {% endblock %}

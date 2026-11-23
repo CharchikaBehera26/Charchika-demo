@@ -181,11 +181,8 @@
 .voice-status{min-height:18px;margin:8px 2px;color:var(--muted);font-size:11px;line-height:1.5}
 @media(max-width:1800px){.nav-language-picker{display:block;width:100%;margin:8px 0}.nav-language-picker select{width:100%}}
 @media(max-width:700px){.market-category-filter{align-items:stretch;flex-direction:column}.market-category-filter select{width:100%}}
-<<<<<<< HEAD
 .maker-analytics{display:grid;gap:18px;margin-bottom:32px}.maker-analytics>h2,.analytics-table-heading{font:700 23px "Playfair Display",serif;margin:0}.analytics-note,.analytics-empty{margin:0;color:var(--muted);font-size:12px;line-height:1.55}.analytics-stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}.analytics-stat-grid article{min-width:0;padding:16px;background:#fffaf3;border:1px solid var(--line);border-radius:12px}.analytics-stat-grid span,.analytics-stat-grid strong{display:block}.analytics-stat-grid span{color:var(--muted);font-size:11px}.analytics-stat-grid strong{margin-top:7px;color:var(--green);font:700 23px "Playfair Display",serif;overflow-wrap:anywhere}.analytics-panel{min-width:0;padding:18px;background:#fffaf3;border:1px solid var(--line);border-radius:14px}.analytics-panel h3{margin:0 0 14px;font:700 17px "Playfair Display",serif}.analytics-panel canvas{width:100%;height:280px;max-height:280px}
 .chart-unavailable{margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.5}
-=======
-
 .back-tab{top:84px;left:12px;bottom:auto;writing-mode:initial;transform:none;border-radius:10px;padding:9px 12px}
 .help-bubble{border:1px solid var(--line);font:inherit;cursor:pointer}
 .assistant-popover{position:fixed;left:20px;right:auto;bottom:84px;z-index:45;width:min(380px,calc(100vw - 24px));height:min(540px,calc(100vh - 120px));overflow:hidden;border:1px solid var(--line);border-radius:18px;background:#fffaf4;box-shadow:0 16px 50px #33200d35}
@@ -198,13 +195,133 @@
 .assistant-panel-page main{height:100vh;overflow-y:auto}
 .assistant-panel-page .assistant-wrap{width:100%;max-width:none;margin:0;padding:10px}
 .assistant-panel-page .chat-panel{padding:14px;border:0;border-radius:0;box-shadow:none}
-@media(max-width:1800px){
-  .nav-links{right:14px;left:auto;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 82px);overflow-y:auto;border:1px solid var(--line);border-radius:0 0 16px 16px}
-  .back-tab{top:76px;left:10px}
-}
-@media(max-width:760px){
-  .back-tab{top:76px;left:10px;bottom:auto;border-radius:10px;padding:8px 10px}
-  .assistant-popover{left:12px;bottom:76px;width:min(360px,calc(100vw - 24px));height:min(520px,calc(100vh - 110px))}
-}
+@media(max-width:1800px){.nav-links{right:14px;left:auto;width:min(360px,calc(100vw - 28px));max-height:calc(100vh - 82px);overflow-y:auto;border:1px solid var(--line);border-radius:0 0 16px 16px}.back-tab{top:76px;left:10px}}
+@media(max-width:760px){.back-tab{top:76px;left:10px;bottom:auto;border-radius:10px;padding:8px 10px}.assistant-popover{left:12px;bottom:76px;width:min(360px,calc(100vw - 24px));height:min(520px,calc(100vh - 110px))}}
 body:not(.assistant-panel-page) .hero-caption{bottom:-12px}
->>>>>>> ac319277c98b91c56f6dc9974c68e610ea211f04
+
+
+/* ═══ SHG Marketplace & Bilingual Enhancements ═══ */
+
+/* Nav: Login button — always visible & styled */
+.nav-links .nav-login-btn{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--green);color:#fff!important;
+  padding:8px 16px!important;border-radius:20px;
+  font-size:12px!important;font-weight:700;white-space:nowrap;
+  border-bottom:0!important;transition:.2s;
+}
+.nav-links .nav-login-btn:hover{background:var(--green2);transform:translateY(-1px)}
+.nav-links .nav-register-btn{
+  color:var(--green)!important;font-size:12px!important;
+  font-weight:700;border-bottom:0!important;white-space:nowrap;
+}
+
+/* Product card: bilingual name */
+.product-title{font:700 18px "Playfair Display",serif;margin:7px 0 4px;color:var(--green)}
+.product-name-odia{
+  display:block;
+  font:600 13px "Noto Sans Oriya",sans-serif;
+  color:var(--muted);margin-top:3px;line-height:1.4;
+}
+.product-name-local{
+  display:block;
+  font:600 11px "Noto Sans Oriya",sans-serif;
+  color:var(--muted);margin-top:2px;
+}
+
+/* Maker info tags */
+.product-maker-info{display:flex;flex-wrap:wrap;gap:7px;margin:10px 0 6px}
+.maker-badge,.district-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;padding:4px 10px;
+  border-radius:14px;white-space:nowrap;
+}
+.maker-badge{background:#e6efe3;color:#1d5b43}
+.district-badge{background:#fff0d2;color:#8a4c1a}
+
+/* Featured badge — absolute position inside product-art */
+.product-art{position:relative}
+.product-art .product-badge,.product-art .featured-badge,.product-art .deal-badge{
+  position:absolute;top:10px;left:10px;z-index:2;
+}
+.product-art .deal-badge{left:auto;right:10px}
+.product-emoji-fallback{font-size:76px;line-height:1}
+
+/* SHG Mission Banner */
+.shg-mission-banner{
+  display:flex;align-items:flex-start;gap:18px;flex-wrap:wrap;
+  background:linear-gradient(135deg,#e7f0e4,#dff0d8);
+  border:1px solid #b8d9b4;border-radius:16px;
+  padding:20px 24px;margin-bottom:28px;
+}
+.shg-mission-banner .shg-icon{font-size:38px;flex-shrink:0;margin-top:4px}
+.shg-mission-banner strong{font-size:15px;color:var(--green)}
+.shg-mission-banner p{margin:6px 0 0;font-size:13px;line-height:1.6;color:#3a5a30;max-width:620px}
+.shg-login-cta{margin-left:auto;display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:140px}
+.signed-in-badge{color:var(--green);font-size:12px;font-weight:700}
+
+/* SHG Info Strip at bottom */
+.shg-info-strip{
+  display:grid;grid-template-columns:1fr 1fr;gap:18px;
+  margin-top:38px;padding:24px;
+  background:#fffaf3;border:1px solid var(--line);border-radius:16px;
+}
+.shg-info-strip>div{
+  display:flex;gap:16px;align-items:flex-start;
+  padding:16px;background:#fff9f1;border:1px solid #ead9c5;border-radius:12px;
+}
+.shg-info-strip span{font-size:30px;flex-shrink:0;margin-top:4px}
+.shg-info-strip strong{font-size:14px;color:var(--green);display:block;margin-bottom:5px}
+.shg-info-strip p{font-size:12px;color:var(--muted);line-height:1.6;margin:0 0 10px}
+@media(max-width:760px){
+  .shg-info-strip{grid-template-columns:1fr}
+  .shg-login-cta{align-items:flex-start;margin-left:0;width:100%}
+  .shg-mission-banner{flex-direction:column;gap:12px}
+}
+
+
+.topbar{height:72px;padding:0 clamp(16px,3vw,40px);display:flex;align-items:center;justify-content:space-between;background:#fff9f0;border-bottom:1px solid #eadcc9;position:sticky;top:0;z-index:1000}
+.nav-backdrop{display:none;position:fixed;top:72px;left:0;right:0;bottom:0;background:rgba(18,63,49,0.5);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);z-index:999}
+.nav-backdrop.open{display:block}
+.menu-toggle{display:inline-flex!important;align-items:center;justify-content:center;width:40px;height:40px;background:#fffdf9;border:1px solid var(--line);border-radius:10px;font-size:22px;color:var(--green);cursor:pointer;transition:all .2s;margin-left:4px;flex-shrink:0}
+.menu-toggle:hover{background:#eef6f0;border-color:var(--green)}
+
+/* Auth Dropdowns in Topbar */
+.auth-dropdown{position:relative;display:inline-block}
+.topbar-auth-btn{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:20px;font:700 12px "DM Sans",sans-serif;cursor:pointer;white-space:nowrap;border:1px solid transparent;text-decoration:none;transition:all .2s ease}
+.topbar-login-btn{background:var(--green);color:#fff!important;box-shadow:0 3px 10px rgba(18,63,49,0.2)}
+.topbar-login-btn:hover{background:var(--green2);transform:translateY(-1px)}
+.topbar-register-btn{background:#fffdf9;color:var(--green)!important;border:1px solid var(--green)}
+.topbar-register-btn:hover{background:#eef6f0;transform:translateY(-1px)}
+.topbar-user-badge{background:#2a7a56;color:#fff!important}
+
+.auth-dropdown-menu{display:none;position:absolute;top:calc(100% + 8px);right:0;min-width:270px;background:#fffaf3;border:1px solid var(--line);border-radius:14px;box-shadow:0 14px 40px rgba(50,35,20,0.24);padding:8px;z-index:1005}
+.auth-dropdown:hover .auth-dropdown-menu,.auth-dropdown.open .auth-dropdown-menu{display:block}
+.auth-dropdown-header{display:block;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);font-weight:700;padding:6px 10px 4px;border-bottom:1px solid var(--line);margin-bottom:4px}
+.auth-dropdown-menu a{display:block;padding:8px 10px;border-radius:8px;color:var(--ink);text-decoration:none;transition:background .15s}
+.auth-dropdown-menu a:hover{background:#f4e8d8;color:var(--green2)}
+.auth-dropdown-menu a strong{display:block;font-size:13px;color:var(--green)}
+.auth-dropdown-menu a small{display:block;font-size:11px;color:var(--muted);margin-top:2px}
+.auth-dropdown-item{width:100%;text-align:left;background:none;border:0;padding:8px 10px;font:700 12px "DM Sans",sans-serif;color:#b34e35;cursor:pointer;border-radius:8px}
+.auth-dropdown-item:hover{background:#fae4dc}
+
+/* Always show top-actions with high z-index */
+.top-actions{display:flex!important;align-items:center;gap:10px;margin-left:auto;z-index:1002}
+@media(max-width:760px){
+  .top-actions .avatar{display:none}
+  .topbar-auth-btn{padding:7px 11px;font-size:11px}
+}
+
+/* Ensure slide-out navigation menu sits cleanly on top of backdrop and is completely clickable */
+@media(max-width:1800px){
+  .nav-links{display:none;position:fixed;top:72px;right:14px;left:auto;width:min(340px,calc(100vw - 28px));max-height:calc(100vh - 86px);overflow-y:auto;background:#fff9f0;padding:16px 20px;border:1px solid var(--line);border-radius:0 0 16px 16px;box-shadow:0 18px 45px rgba(18,63,49,0.25);flex-direction:column;align-items:stretch;gap:4px;z-index:1001!important}
+  .nav-links.open{display:flex!important}
+  .nav-links a{display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;padding:11px 12px;border-radius:10px;color:var(--ink);transition:background .15s,color .15s;text-align:left;width:100%}
+  .nav-links a:hover{background:#f4e8d8;color:var(--green2)}
+}
+
+/* Product card bilingual name styling */
+.product-title{font:700 18px "Playfair Display",serif;margin:7px 0 4px;color:var(--green)}
+.product-name-en{display:block}
+.product-name-odia{display:inline-block;font:600 13px "Noto Sans Oriya",sans-serif;color:#8a4c1a;background:#fff2e0;padding:2px 8px;border-radius:6px;margin-top:5px;line-height:1.4;border:1px solid #ebd3b8}
+.product-name-local{display:block;font:600 11px "Noto Sans Oriya",sans-serif;color:#8a4c1a;margin-top:2px}
