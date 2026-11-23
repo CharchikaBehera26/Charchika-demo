@@ -116,6 +116,17 @@ class ShoppingTests(unittest.TestCase):
             order = db.session.query(CustomerOrder).one()
             self.assertEqual(str(order.total_price), "3600.00")
 
+    def test_ajax_add_to_cart_returns_cart_count_without_redirecting(self):
+        marketplace = self.client.get("/marketplace")
+        response = self.client.post(
+            "/shop/cart/add/1",
+            data={"_csrf": self.csrf_token(marketplace), "quantity": "2"},
+            headers={"X-Requested-With": "XMLHttpRequest"},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.get_json()["cart_count"], 2)
+        self.assertIn(b"added to your cart", response.get_json()["message"].encode())
+
     def test_invalid_credentials_and_csrf_are_rejected(self):
         login_page = self.client.get("/shop/login")
         token = self.csrf_token(login_page)
@@ -201,6 +212,10 @@ class ShoppingTests(unittest.TestCase):
 
     def test_navigation_exposes_maker_admin_and_customer_logout(self):
         response = self.client.get("/marketplace")
+        home_page = self.client.get("/")
+        self.assertNotIn(b'id="backTab"', home_page.data)
+        self.assertIn(b'id="backTab"', response.data)
+        self.assertIn(b'>\xe2\x86\x90</button>', response.data)
         self.assertIn(b'href="/artisan/register"', response.data)
         self.assertIn(b'href="/artisan/login"', response.data)
         self.assertIn(b'href="/admin"', response.data)

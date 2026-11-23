@@ -31,14 +31,14 @@
       {% if actions %}
       <nav class="chat-actions" aria-label="{{ tr('Suggested pages') }}">
         {% for action in actions %}
-        <a class="btn btn-green" href="{{ action.url }}">{{ action.label }} →</a>
+        <a class="btn btn-green" href="{{ action.url }}" target="_top">{{ action.label }} →</a>
         {% endfor %}
       </nav>
       {% endif %}
       {% endif %}
     </div>
 
-    <form method="post" class="chat-input" id="assistantForm" action="{{ url_for('public.assistant') }}">
+    <form method="post" class="chat-input" id="assistantForm" action="{{ url_for('public.assistant', panel=request.args.get('panel')) }}">
       <label class="sr-only" for="assistantLang">Language</label>
       <select id="assistantLang" name="lang" aria-label="{{ tr('Language') }}">
         <option value="en" {% if lang == 'en' %}selected{% endif %}>English</option>

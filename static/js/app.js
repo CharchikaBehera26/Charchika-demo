@@ -100,6 +100,94 @@ document.querySelectorAll(".add-cart-form").forEach(form => {
   });
 });
 
+const assistantToggle = document.getElementById("assistantToggle");
+const assistantPopover = document.getElementById("assistantPopover");
+const assistantClose = document.getElementById("assistantClose");
+if (assistantToggle && assistantPopover && assistantClose) {
+  const assistantFrame = assistantPopover.querySelector("iframe");
+  const setAssistantOpen = isOpen => {
+    assistantPopover.hidden = !isOpen;
+    assistantToggle.setAttribute("aria-expanded", String(isOpen));
+    if (isOpen) {
+      if (assistantFrame.dataset.src) {
+        assistantFrame.src = assistantFrame.dataset.src;
+        delete assistantFrame.dataset.src;
+      }
+      assistantClose.focus();
+    }
+    else assistantToggle.focus();
+  };
+
+  assistantToggle.addEventListener("click", () => {
+    setAssistantOpen(assistantPopover.hidden);
+  });
+  document.querySelectorAll(".assistant-open-link").forEach(link => {
+    link.addEventListener("click", event => {
+      event.preventDefault();
+      if (navLinks && menuToggle) {
+        navLinks.classList.remove("open");
+        menuToggle.setAttribute("aria-expanded", "false");
+      }
+      setAssistantOpen(true);
+    });
+  });
+  assistantClose.addEventListener("click", () => setAssistantOpen(false));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && !assistantPopover.hidden) setAssistantOpen(false);
+  });
+}
+
+function showCartFeedback(message, kind) {
+  let flashWrap = document.querySelector(".flash-wrap");
+  if (!flashWrap) {
+    flashWrap = document.createElement("div");
+    flashWrap.className = "flash-wrap";
+    document.body.appendChild(flashWrap);
+  }
+  const flash = document.createElement("div");
+  flash.className = `flash ${kind}`;
+  flash.setAttribute("role", "status");
+  flash.textContent = message;
+  flashWrap.appendChild(flash);
+  setTimeout(() => {
+    flash.style.opacity = "0";
+    flash.style.transform = "translateY(-8px)";
+  }, 4200);
+  setTimeout(() => flash.remove(), 4800);
+}
+
+document.querySelectorAll(".add-cart-form").forEach(form => {
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: {
+          Accept: "application/json",
+          "X-Requested-With": "XMLHttpRequest",
+        },
+      });
+      const result = await response.json();
+      if (!response.ok) {
+        showCartFeedback(result.error, "error");
+        return;
+      }
+
+      const cartCount = document.querySelector("[data-cart-count]");
+      if (cartCount) cartCount.textContent = result.cart_count ? ` (${result.cart_count})` : "";
+      showCartFeedback(result.message, "success");
+    } catch (error) {
+      console.error("Could not add the product to the cart.", error);
+      showCartFeedback(form.dataset.requestError, "error");
+    } finally {
+      submitButton.disabled = false;
+    }
+  });
+});
+
 document.querySelectorAll(".flash").forEach(el => {
   setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateY(-8px)"; }, 4200);
   setTimeout(() => el.remove(), 4800);
@@ -187,6 +275,7 @@ if (assistantInput) {
           const link = document.createElement("a");
           link.className = "btn btn-green";
           link.href = action.url;
+          link.target = "_top";
           link.textContent = `${action.label} →`;
           actions.appendChild(link);
         });
