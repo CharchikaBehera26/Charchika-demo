@@ -239,7 +239,7 @@ def artisan_product_new():
         verify_csrf()
         product = {
             key: request.form.get(key, "").strip()
-            for key in ("name", "craft", "category", "price", "deal_price", "description")
+            for key in ("name", "name_local", "craft", "category", "price", "deal_price", "description")
         }
         product["category"] = product["category"] or product["craft"]
         if not product["name"] or not product["price"]:
@@ -298,7 +298,7 @@ def artisan_product_edit(product_id):
     if request.method == "POST":
         verify_csrf()
         updated = dict(product)
-        for key in ("name", "craft", "category", "price", "deal_price", "description"):
+        for key in ("name", "name_local", "craft", "category", "price", "deal_price", "description"):
             updated[key] = request.form.get(key, "").strip()
         updated["category"] = updated["category"] or updated["craft"]
         if not updated.get("name") or not updated.get("price"):

@@ -14,8 +14,12 @@
     <form method="post" enctype="multipart/form-data" class="stack-form">
       <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
       <label>
-        {{ tr('Product name') }}
-        <input name="name" required value="{{ product.get('name', '') }}">
+        {{ tr('Product name (English)') }}
+        <input name="name" required value="{{ product.get('name', '') }}" placeholder="e.g. Sambalpuri Ikat Saree">
+      </label>
+      <label>
+        {{ tr('Indian / Local Name (Odia / Hindi)') }}
+        <input name="name_local" value="{{ product.get('name_local', '') }}" placeholder="e.g. ସମ୍ବଲପୁରୀ ରେଶମ ଶାଢ଼ି">
       </label>
       <label>
         {{ tr('Craft type') }}
