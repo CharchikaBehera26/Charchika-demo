@@ -57,12 +57,22 @@
       <div class="analytics-chart-grid">
         <article class="analytics-panel">
           <h3>{{ tr('Order requests by seller') }}</h3>
-          <canvas id="sellerOverviewChart" data-request-label="{{ tr('Demo order requests') }}" aria-label="{{ tr('Demo order requests by maker') }}" role="img"></canvas>
+          <canvas id="sellerOverviewChart" data-request-label="{{ tr('Demo order requests') }}" data-value-label="{{ tr('Demo request value (₹)') }}" aria-label="{{ tr('Demo order requests by maker') }}" role="img"></canvas>
           <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the tables below.') }}</p>
         </article>
         <article class="analytics-panel">
           <h3>{{ tr('Marketplace request trend') }}</h3>
-          <canvas id="marketplaceTrendChart" data-request-label="{{ tr('Demo order requests') }}" aria-label="{{ tr('Demo order request trend over six months') }}" role="img"></canvas>
+          <canvas id="marketplaceTrendChart" data-request-label="{{ tr('Demo order requests') }}" data-value-label="{{ tr('Demo request value (₹)') }}" aria-label="{{ tr('Demo order request trend over six months') }}" role="img"></canvas>
+          <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the tables below.') }}</p>
+        </article>
+        <article class="analytics-panel">
+          <h3>{{ tr('Seller composition (Artisans vs SHGs)') }}</h3>
+          <canvas id="sellerTypeChart" aria-label="{{ tr('Maker distribution by type') }}" role="img"></canvas>
+          <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the tables below.') }}</p>
+        </article>
+        <article class="analytics-panel">
+          <h3>{{ tr('Craft clusters by district') }}</h3>
+          <canvas id="sellerDistrictChart" data-makers-label="{{ tr('Makers') }}" data-requests-label="{{ tr('Order requests') }}" aria-label="{{ tr('Regional craft distribution by district') }}" role="img"></canvas>
           <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the tables below.') }}</p>
         </article>
       </div>
@@ -115,6 +125,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
 <script id="adminAnalyticsData" type="application/json">{{ {
   "makers": analytics.maker_chart,
-  "monthly": analytics.monthly_chart
+  "monthly": analytics.monthly_chart,
+  "types": analytics.type_chart,
+  "districts": analytics.district_chart
 }|tojson }}</script>
 {% endblock %}

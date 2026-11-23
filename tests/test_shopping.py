@@ -335,6 +335,31 @@ class ShoppingTests(unittest.TestCase):
         self.assertIn(b"1,000.00", response.data)
         self.assertIn(b'id="sellerAnalyticsData"', response.data)
 
+    def test_ajax_add_to_cart_returns_json_without_redirect(self):
+        marketplace = self.client.get("/marketplace")
+        cart_response = self.client.post(
+            "/shop/cart/add/1",
+            data={"_csrf": self.csrf_token(marketplace), "quantity": "3"},
+            headers={"X-Requested-With": "XMLHttpRequest"},
+        )
+        self.assertEqual(cart_response.status_code, 200)
+        data = cart_response.get_json()
+        self.assertEqual(data["status"], "success")
+        self.assertEqual(data["cart_count"], 3)
+        self.assertIn("added to your cart", data["message"])
+
+    def test_admin_dashboard_includes_chart_data(self):
+        with self.client.session_transaction() as browser_session:
+            browser_session["role"] = "admin"
+            browser_session["admin_user"] = "admin@example.com"
+
+        response = self.client.get("/admin/dashboard")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b'id="adminAnalyticsData"', response.data)
+        self.assertIn(b'sellerOverviewChart', response.data)
+        self.assertIn(b'sellerTypeChart', response.data)
+        self.assertIn(b'sellerDistrictChart', response.data)
+
     def test_selected_language_is_used_across_public_customer_and_portal_pages(self):
         with self.client.session_transaction() as browser_session:
             browser_session["lang"] = "hi"

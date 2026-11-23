@@ -56,9 +56,34 @@ python -m unittest discover -s tests -v
 
 The guide uses a cached local FAQ catalog and links to relevant site pages. It is not a generative AI service and does not send questions to an external provider.
 
-## Marketplace shopping
+## Marketplace shopping and seamless cart
 
-Customers can create an account or sign in from the SHG Marketplace, add products to a cart, and submit a demo order request. Order requests are saved to the configured database and can be reviewed from **My orders**. This sample marketplace does not process payments, confirm availability, or arrange delivery; customers must contact makers directly to complete a real purchase.
+Customers can create an account or sign in from the SHG Marketplace, add products to a cart, and submit a demo order request.
+- **Scroll-Preserving Add-to-Cart**: Adding a product to the cart uses asynchronous requests with instant toast notifications and live badge updates without reloading or jumping to the top of the page.
+- **Expanded Artisan & SHG Catalog**: 30+ authentic handmade craft listings across Pattachitra, Sambalpuri Ikat, Pipili Appliqué, Tarakasi Silver Filigree, Terracotta Pottery, Dhokra Brass Craft, Sabai Grass, Golden Grass (Kaincha), Kotpad Tribal Handloom, and Stone Carving.
+- **Real Craft Photography**: Products and maker profiles feature genuine, high-resolution photography showcasing Odisha's living heritage.
+- Order requests are saved to the configured database and can be reviewed from **My orders**. This sample marketplace does not process payments, confirm availability, or arrange delivery; customers must contact makers directly to complete a real purchase.
+
+## Artisan & SHG interactive map
+
+The map powered by Leaflet highlights public maker locations across Odisha craft districts:
+- Verified artisan pins and approximate cluster pins for registered Self-Help Groups (SHGs) across Puri, Raghurajpur, Sambalpur, Bargarh, Cuttack, Dhenkanal, Mayurbhanj (Baripada), Kendrapara, Koraput, Balasore, and Ganjam.
+- Color-coded pins for individual master artisans (emerald green) and SHG collectives (warm terracotta).
+- Privacy-aware approximate location labeling for rural craft clusters.
+
+## Interactive dashboards & Chart.js analytics
+
+Both maker and administrator workspaces provide data analytics powered by Chart.js:
+- **Seller Workspace Dashboard**: Individual artisans and SHGs view product performance metrics including demo order requests, units requested, estimated demo request values, catalog view impressions, and a bar chart of product activity.
+- **Admin Control Centre**: Comprehensive marketplace analytics featuring four interactive Chart.js visualizations:
+  1. *Order requests & request values by seller* (dual-axis comparison)
+  2. *Marketplace 6-month request trend* (smooth line chart)
+  3. *Seller composition* (doughnut chart of individual artisans vs SHG collectives)
+  4. *Regional craft cluster distribution* (bar chart of makers and requests by district)
+
+## Responsive navigation
+
+In laptop, tablet, and mobile views, the navigation drawer smoothly slides in from the left, occupying half the viewport with a frosted backdrop scrim and outside-click dismissal.
 
 ## Supabase Auth and Google sign-in
 

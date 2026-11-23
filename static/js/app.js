@@ -1,5 +1,6 @@
 const menuToggle = document.getElementById("menuToggle");
 const navLinks = document.getElementById("navLinks");
+const navBackdrop = document.getElementById("navBackdrop");
 const backTab = document.getElementById("backTab");
 if (backTab) {
   backTab.addEventListener("click", () => {
@@ -7,12 +8,97 @@ if (backTab) {
     else window.location.href = "/";
   });
 }
+function closeNav() {
+  if (navLinks && navLinks.classList.contains("open")) {
+    navLinks.classList.remove("open");
+    if (menuToggle) menuToggle.setAttribute("aria-expanded", "false");
+    if (navBackdrop) navBackdrop.classList.remove("open");
+  }
+}
 if (menuToggle && navLinks) {
   menuToggle.addEventListener("click", () => {
     const isOpen = navLinks.classList.toggle("open");
     menuToggle.setAttribute("aria-expanded", String(isOpen));
+    if (navBackdrop) navBackdrop.classList.toggle("open", isOpen);
   });
 }
+if (navBackdrop) {
+  navBackdrop.addEventListener("click", closeNav);
+}
+document.addEventListener("click", event => {
+  if (
+    navLinks &&
+    navLinks.classList.contains("open") &&
+    !navLinks.contains(event.target) &&
+    menuToggle &&
+    !menuToggle.contains(event.target)
+  ) {
+    closeNav();
+  }
+});
+
+function showCartToast(message) {
+  let toast = document.getElementById("cartToast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "cartToast";
+    toast.className = "cart-toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(toast._timer);
+  toast._timer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3500);
+}
+
+document.querySelectorAll(".add-cart-form").forEach(form => {
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = form.querySelector('button[type="submit"]');
+    const originalText = button ? button.textContent : "";
+    if (button) {
+      button.disabled = true;
+      button.textContent = "…";
+    }
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        body: new FormData(form),
+        headers: {
+          "X-Requested-With": "XMLHttpRequest",
+          "Accept": "application/json",
+        },
+      });
+      const data = await response.json();
+      if (response.ok && data.status === "success") {
+        if (button) {
+          button.textContent = "✓ Added";
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+          }, 1400);
+        }
+        document.querySelectorAll('a[href*="/shop/cart"]').forEach(link => {
+          const match = link.textContent.match(/^[^\(]+/);
+          const prefix = match ? match[0].trim() : "Cart";
+          link.textContent = `${prefix} (${data.cart_count})`;
+        });
+        showCartToast(data.message || "Added to cart.");
+      } else {
+        if (button) {
+          button.textContent = originalText;
+          button.disabled = false;
+        }
+        form.submit();
+      }
+    } catch (err) {
+      console.error("Cart AJAX error, submitting normally.", err);
+      form.submit();
+    }
+  });
+});
 
 document.querySelectorAll(".flash").forEach(el => {
   setTimeout(() => { el.style.opacity = "0"; el.style.transform = "translateY(-8px)"; }, 4200);
@@ -281,22 +367,33 @@ if (sellerAnalyticsElement && window.Chart) {
   try {
     const analytics = JSON.parse(sellerAnalyticsElement.textContent);
     const chart = document.getElementById("sellerProductChart");
-    if (chart && analytics.labels.length) {
+    if (chart && analytics.labels && analytics.labels.length) {
+      const datasets = [{
+        label: chart.dataset.unitsLabel || "Items requested",
+        data: analytics.units,
+        backgroundColor: "#1d5b43",
+        borderRadius: 6,
+      }];
+      if (analytics.views && analytics.views.length) {
+        datasets.push({
+          label: chart.dataset.viewsLabel || "Catalog views",
+          data: analytics.views,
+          backgroundColor: "#d96b32",
+          borderRadius: 6,
+        });
+      }
       new window.Chart(chart, {
         type: "bar",
         data: {
           labels: analytics.labels,
-          datasets: [{
-            label: chart.dataset.unitsLabel,
-            data: analytics.units,
-            backgroundColor: "#4b8a64",
-            borderRadius: 6,
-          }],
+          datasets,
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
+          plugins: {
+            legend: { display: datasets.length > 1, position: "top" },
+          },
           scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
         },
       });
@@ -311,45 +408,159 @@ if (adminAnalyticsElement && window.Chart) {
   try {
     const analytics = JSON.parse(adminAnalyticsElement.textContent);
     const sellerChart = document.getElementById("sellerOverviewChart");
-    if (sellerChart) {
+    if (sellerChart && analytics.makers) {
       new window.Chart(sellerChart, {
         type: "bar",
         data: {
           labels: analytics.makers.labels,
-          datasets: [{
-            label: sellerChart.dataset.requestLabel,
-            data: analytics.makers.requests,
-            backgroundColor: "#4b8a64",
-            borderRadius: 6,
-          }],
+          datasets: [
+            {
+              label: sellerChart.dataset.requestLabel || "Demo order requests",
+              data: analytics.makers.requests,
+              backgroundColor: "#1d5b43",
+              borderRadius: 6,
+              yAxisID: "y",
+            },
+            {
+              label: sellerChart.dataset.valueLabel || "Demo request value (₹)",
+              data: analytics.makers.request_value,
+              backgroundColor: "#d96b32",
+              borderRadius: 6,
+              yAxisID: "y1",
+            },
+          ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+          plugins: { legend: { display: true, position: "top" } },
+          scales: {
+            y: {
+              type: "linear",
+              display: true,
+              position: "left",
+              beginAtZero: true,
+              ticks: { precision: 0 },
+            },
+            y1: {
+              type: "linear",
+              display: true,
+              position: "right",
+              beginAtZero: true,
+              grid: { drawOnChartArea: false },
+              ticks: {
+                callback: value => "₹" + Number(value).toLocaleString("en-IN"),
+              },
+            },
+          },
         },
       });
     }
 
     const trendChart = document.getElementById("marketplaceTrendChart");
-    if (trendChart) {
+    if (trendChart && analytics.monthly) {
       new window.Chart(trendChart, {
         type: "line",
         data: {
           labels: analytics.monthly.labels,
-          datasets: [{
-            label: trendChart.dataset.requestLabel,
-            data: analytics.monthly.requests,
-            borderColor: "#d96b32",
-            backgroundColor: "#d96b3233",
-            fill: true,
-            tension: 0.3,
-          }],
+          datasets: [
+            {
+              label: trendChart.dataset.requestLabel || "Demo order requests",
+              data: analytics.monthly.requests,
+              borderColor: "#1d5b43",
+              backgroundColor: "#1d5b4322",
+              fill: true,
+              tension: 0.35,
+              yAxisID: "y",
+            },
+            {
+              label: trendChart.dataset.valueLabel || "Demo request value (₹)",
+              data: analytics.monthly.request_value,
+              borderColor: "#d96b32",
+              backgroundColor: "#d96b3222",
+              fill: false,
+              tension: 0.35,
+              yAxisID: "y1",
+            },
+          ],
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          plugins: { legend: { display: true, position: "top" } },
+          scales: {
+            y: {
+              type: "linear",
+              display: true,
+              position: "left",
+              beginAtZero: true,
+              ticks: { precision: 0 },
+            },
+            y1: {
+              type: "linear",
+              display: true,
+              position: "right",
+              beginAtZero: true,
+              grid: { drawOnChartArea: false },
+              ticks: {
+                callback: value => "₹" + Number(value).toLocaleString("en-IN"),
+              },
+            },
+          },
+        },
+      });
+    }
+
+    const typeChart = document.getElementById("sellerTypeChart");
+    if (typeChart && analytics.types) {
+      new window.Chart(typeChart, {
+        type: "doughnut",
+        data: {
+          labels: analytics.types.labels,
+          datasets: [
+            {
+              data: analytics.types.counts,
+              backgroundColor: ["#1d5b43", "#e07a3f"],
+              borderWidth: 2,
+              borderColor: "#fffaf3",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: true, position: "bottom" },
+          },
+        },
+      });
+    }
+
+    const districtChart = document.getElementById("sellerDistrictChart");
+    if (districtChart && analytics.districts) {
+      new window.Chart(districtChart, {
+        type: "bar",
+        data: {
+          labels: analytics.districts.labels,
+          datasets: [
+            {
+              label: districtChart.dataset.makersLabel || "Makers",
+              data: analytics.districts.makers,
+              backgroundColor: "#2d6a4f",
+              borderRadius: 6,
+            },
+            {
+              label: districtChart.dataset.requestsLabel || "Order requests",
+              data: analytics.districts.requests,
+              backgroundColor: "#e76f51",
+              borderRadius: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true, position: "top" } },
           scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
         },
       });

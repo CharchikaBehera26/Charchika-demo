@@ -15,13 +15,14 @@
     <p class="analytics-note">{{ tr('These figures are demo order requests only. They are not paid sales or payouts.') }}</p>
     <div class="analytics-stat-grid">
       <article><span>{{ tr('Product listings') }}</span><strong>{{ analytics.seller.product_count }}</strong></article>
+      <article><span>{{ tr('Product catalog views') }}</span><strong>{{ analytics.seller.views }}</strong></article>
       <article><span>{{ tr('Order requests') }}</span><strong>{{ analytics.seller.request_count }}</strong></article>
       <article><span>{{ tr('Items requested') }}</span><strong>{{ analytics.seller.units }}</strong></article>
       <article><span>{{ tr('Demo request value') }}</span><strong>₹{{ "{:,.2f}".format(analytics.seller.request_value) }}</strong></article>
     </div>
     <div class="analytics-panel">
-      <h3>{{ tr('Requests by product') }}</h3>
-      <canvas id="sellerProductChart" data-units-label="{{ tr('Items requested (demo)') }}" aria-label="{{ tr('Demo order request items by product') }}" role="img"></canvas>
+      <h3>{{ tr('Performance by product') }}</h3>
+      <canvas id="sellerProductChart" data-units-label="{{ tr('Items requested (demo)') }}" data-views-label="{{ tr('Catalog views') }}" data-value-label="{{ tr('Demo request value (₹)') }}" aria-label="{{ tr('Demo order request items and views by product') }}" role="img"></canvas>
       <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the table below.') }}</p>
       {% if not analytics.seller.products %}
       <p class="analytics-empty">{{ tr('Product request activity will appear here when customers submit demo orders.') }}</p>
@@ -30,10 +31,10 @@
     {% if analytics.seller.products %}
     <div class="admin-table-wrap">
       <table class="admin-table">
-        <thead><tr><th>{{ tr('Product') }}</th><th>{{ tr('Requests') }}</th><th>{{ tr('Items requested') }}</th><th>{{ tr('Demo request value') }}</th></tr></thead>
+        <thead><tr><th>{{ tr('Product') }}</th><th>{{ tr('Catalog views') }}</th><th>{{ tr('Requests') }}</th><th>{{ tr('Items requested') }}</th><th>{{ tr('Demo request value') }}</th></tr></thead>
         <tbody>
           {% for product in analytics.seller.products %}
-          <tr><td>{{ product.name }}</td><td>{{ product.request_count }}</td><td>{{ product.units }}</td><td>₹{{ "{:,.2f}".format(product.request_value) }}</td></tr>
+          <tr><td><strong>{{ product.name }}</strong></td><td>{{ product.views }}</td><td>{{ product.request_count }}</td><td>{{ product.units }}</td><td>₹{{ "{:,.2f}".format(product.request_value) }}</td></tr>
           {% endfor %}
         </tbody>
       </table>

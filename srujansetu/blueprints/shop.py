@@ -379,20 +379,38 @@ def cart_add(product_id):
     if not isinstance(stored, dict):
         stored = {}
     key = str(product_id)
+    is_ajax = request.headers.get("X-Requested-With") == "XMLHttpRequest"
     try:
         requested_quantity = int(request.form.get("quantity", "1"))
         current_quantity = int(stored.get(key, 0))
     except (TypeError, ValueError):
+        if is_ajax:
+            return {"status": "error", "message": "Enter a valid quantity."}, 400
         flash("Enter a valid quantity.", "error")
-        return redirect(url_for("public.marketplace"))
+        return redirect(request.referrer or url_for("public.marketplace"))
     quantity = current_quantity + requested_quantity
     if not 1 <= quantity <= 99:
+        if is_ajax:
+            return {"status": "error", "message": "Cart quantities must be between 1 and 99."}, 400
         flash("Cart quantities must be between 1 and 99.", "error")
     else:
         stored[key] = quantity
         session["cart"] = stored
         flash(f"{product.get('name', 'Product')} added to your cart.", "success")
-    return redirect(url_for("public.marketplace"))
+
+    total_cart_items = sum(
+        int(v) for v in stored.values() if str(v).isdigit() and 1 <= int(v) <= 99
+    )
+    if is_ajax:
+        return {
+            "status": "success",
+            "message": f"{product.get('name', 'Product')} added to your cart.",
+            "cart_count": total_cart_items,
+            "product_id": product_id,
+            "product_name": product.get("name", "Product"),
+        }
+
+    return redirect(request.referrer or url_for("public.marketplace"))
 
 
 @shop_bp.route("/cart/update", methods=["POST"])
