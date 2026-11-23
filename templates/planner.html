@@ -15,7 +15,7 @@
 <section class="page-hero">
   <span class="eyebrow">{{ tr('MEET THE MAKERS WHERE THEY WORK') }}</span>
   <h1>{{ tr('Odisha Artisan') }} <em>{{ tr('&amp; SHG Map') }}</em></h1>
-  <p>{{ tr('Find makers who have chosen to publish the exact location of their workshop or public business.') }}</p>
+  <p>{{ tr('Find maker profiles with public locations. Approximate sample-area pins are labelled and are not workshop addresses.') }}</p>
 </section>
 
 <section class="content-wrap">
@@ -30,7 +30,7 @@
   </form>
 
   <p class="location-privacy">
-    Map pins are exact and public. Only artisans who add coordinates to their profile appear on the map.
+    {{ tr('Public maker pins are shown only with shared coordinates. Sample SHG markers identify approximate town areas, not real workshops or member addresses.') }}
   </p>
 
   <div class="map-layout">
@@ -63,7 +63,10 @@
         {% for artisan in map_artisans %}
         <li data-lat="{{ artisan.latitude }}" data-lng="{{ artisan.longitude }}">
           <strong>{{ artisan.name }}</strong>
-          <small>{{ tr(artisan.craft) }} · {{ tr(artisan.district) }}</small>
+          <small>{{ tr(artisan.maker_type) }} · {{ tr(artisan.craft) }} · {{ tr(artisan.district) }}</small>
+          {% if artisan.approximate_location %}
+          <small>{{ tr('Approximate sample area') }}</small>
+          {% endif %}
           <small class="artisan-distance"></small>
         </li>
         {% endfor %}
@@ -84,8 +87,10 @@
       <div class="craft-icon green">{{ artisan.emoji }}</div>
       <div class="card-body">
         <h3>{{ artisan.name }}</h3>
-        <p>{{ tr(artisan.craft) }} · {{ tr(artisan.district) }}</p>
-        {% if artisan.latitude is defined and artisan.longitude is defined %}
+        <p>{{ tr(artisan.get('maker_type', 'Artisan')) }} · {{ tr(artisan.craft) }} · {{ tr(artisan.district) }}</p>
+        {% if artisan.latitude is defined and artisan.longitude is defined and artisan.approximate_location %}
+        <small>{{ tr('Approximate sample-area pin; not a workshop address.') }}</small>
+        {% elif artisan.latitude is defined and artisan.longitude is defined %}
         <small>{{ tr('Exact public location is pinned on the map.') }}</small>
         {% else %}
         <small>{{ tr('Location not shared on map.') }}</small>

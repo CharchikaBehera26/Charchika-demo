@@ -123,23 +123,116 @@ if (assistantInput) {
     voiceInput.disabled = true;
     voiceStatus.textContent = voiceStatus.dataset.unsupported;
   } else {
-    voiceInput.addEventListener("click", () => {
-      const recognition = new Recognition();
-      recognition.lang = speechLocale();
-      recognition.continuous = false;
-      recognition.interimResults = false;
-      voiceInput.disabled = true;
-      voiceStatus.textContent = voiceStatus.dataset.listening;
-      recognition.onresult = event => {
-        const transcript = event.results[0][0].transcript.trim();
-        if (transcript) {
-          assistantInput.value = transcript;
-          assistantForm.requestSubmit();
-        } else {
-          voiceStatus.textContent = voiceStatus.dataset.noSpeech;
+    let activeVoiceSession = null;
+
+    function resetVoiceInput() {
+      voiceInput.textContent = voiceInput.dataset.speakLabel;
+      voiceInput.setAttribute("aria-pressed", "false");
+    }
+
+    function clearSilenceTimer(session) {
+      if (session.silenceTimer) {
+        window.clearTimeout(session.silenceTimer);
+        session.silenceTimer = null;
+      }
+    }
+
+    function completeVoiceSession(session, shouldSubmit) {
+      if (session.completed) return;
+      session.completed = true;
+      clearSilenceTimer(session);
+      if (activeVoiceSession === session) activeVoiceSession = null;
+      resetVoiceInput();
+
+      if (shouldSubmit && session.hasSpeech && assistantInput.value.trim()) {
+        assistantForm.requestSubmit();
+      } else if (!session.hasSpeech && !session.failed) {
+        voiceStatus.textContent = voiceStatus.dataset.noSpeech;
+      }
+    }
+
+    function stopVoiceSession(session, shouldSubmit) {
+      if (session.completed) return;
+      session.shouldSubmit = shouldSubmit;
+      clearSilenceTimer(session);
+      if (session.recognitionActive) {
+        try {
+          session.recognition.stop();
+        } catch (error) {
+          console.error("Could not stop browser speech recognition.", error);
+          completeVoiceSession(session, shouldSubmit);
         }
+      } else {
+        completeVoiceSession(session, shouldSubmit);
+      }
+    }
+
+    function cancelVoiceSession() {
+      const session = activeVoiceSession;
+      if (!session) return;
+      session.completed = true;
+      session.shouldSubmit = false;
+      clearSilenceTimer(session);
+      activeVoiceSession = null;
+      resetVoiceInput();
+      if (session.recognitionActive) {
+        try {
+          session.recognition.abort();
+        } catch (error) {
+          console.error("Could not cancel browser speech recognition.", error);
+        }
+      }
+    }
+
+    voiceInput.addEventListener("click", () => {
+      if (activeVoiceSession) {
+        stopVoiceSession(activeVoiceSession, true);
+        return;
+      }
+
+      const recognition = new Recognition();
+      const session = {
+        recognition,
+        recognitionActive: false,
+        shouldSubmit: false,
+        completed: false,
+        failed: false,
+        hasSpeech: false,
+        silenceTimer: null,
+        prefix: assistantInput.value.trim(),
+      };
+      activeVoiceSession = session;
+      recognition.lang = speechLocale();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      voiceInput.textContent = voiceInput.dataset.stopLabel;
+      voiceInput.setAttribute("aria-pressed", "true");
+      voiceStatus.textContent = `${voiceStatus.dataset.listening} ${voiceStatus.dataset.pauseHint}`;
+      recognition.onresult = event => {
+        const finalParts = [];
+        const interimParts = [];
+        for (let index = 0; index < event.results.length; index += 1) {
+          const alternative = event.results[index][0];
+          if (!alternative) continue;
+          const part = alternative.transcript.trim();
+          if (!part) continue;
+          (event.results[index].isFinal ? finalParts : interimParts).push(part);
+        }
+        const transcript = [...finalParts, ...interimParts].join(" ");
+        session.hasSpeech = Boolean(transcript);
+        assistantInput.value = [session.prefix, transcript].filter(Boolean).join(" ");
+        if (!session.hasSpeech) return;
+
+        clearSilenceTimer(session);
+        session.silenceTimer = window.setTimeout(() => {
+          session.silenceTimer = null;
+          stopVoiceSession(session, true);
+        }, 3000);
       };
       recognition.onerror = event => {
+        if (session.completed) return;
+        session.failed = true;
+        clearSilenceTimer(session);
         if (event.error === "not-allowed" || event.error === "service-not-allowed") {
           voiceStatus.textContent = voiceStatus.dataset.denied;
         } else if (event.error === "no-speech") {
@@ -147,17 +240,30 @@ if (assistantInput) {
         } else {
           voiceStatus.textContent = voiceStatus.dataset.service;
         }
+        completeVoiceSession(session, false);
       };
       recognition.onend = () => {
-        voiceInput.disabled = false;
+        session.recognitionActive = false;
+        if (session.completed) return;
+        if (session.shouldSubmit) {
+          completeVoiceSession(session, true);
+        } else if (!session.silenceTimer) {
+          completeVoiceSession(session, false);
+        }
       };
       try {
         recognition.start();
+        session.recognitionActive = true;
       } catch (error) {
         console.error("Could not start browser speech recognition.", error);
-        voiceInput.disabled = false;
+        session.failed = true;
+        completeVoiceSession(session, false);
         voiceStatus.textContent = voiceStatus.dataset.service;
       }
+    });
+
+    assistantForm.addEventListener("submit", () => {
+      cancelVoiceSession();
     });
   }
 
@@ -168,6 +274,96 @@ if (assistantInput) {
       speakAnswer(existingAnswer.textContent);
     });
   }
+}
+
+const sellerAnalyticsElement = document.getElementById("sellerAnalyticsData");
+if (sellerAnalyticsElement && window.Chart) {
+  try {
+    const analytics = JSON.parse(sellerAnalyticsElement.textContent);
+    const chart = document.getElementById("sellerProductChart");
+    if (chart && analytics.labels.length) {
+      new window.Chart(chart, {
+        type: "bar",
+        data: {
+          labels: analytics.labels,
+          datasets: [{
+            label: chart.dataset.unitsLabel,
+            data: analytics.units,
+            backgroundColor: "#4b8a64",
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Could not read seller dashboard analytics.", error);
+  }
+}
+
+const adminAnalyticsElement = document.getElementById("adminAnalyticsData");
+if (adminAnalyticsElement && window.Chart) {
+  try {
+    const analytics = JSON.parse(adminAnalyticsElement.textContent);
+    const sellerChart = document.getElementById("sellerOverviewChart");
+    if (sellerChart) {
+      new window.Chart(sellerChart, {
+        type: "bar",
+        data: {
+          labels: analytics.makers.labels,
+          datasets: [{
+            label: sellerChart.dataset.requestLabel,
+            data: analytics.makers.requests,
+            backgroundColor: "#4b8a64",
+            borderRadius: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+        },
+      });
+    }
+
+    const trendChart = document.getElementById("marketplaceTrendChart");
+    if (trendChart) {
+      new window.Chart(trendChart, {
+        type: "line",
+        data: {
+          labels: analytics.monthly.labels,
+          datasets: [{
+            label: trendChart.dataset.requestLabel,
+            data: analytics.monthly.requests,
+            borderColor: "#d96b32",
+            backgroundColor: "#d96b3233",
+            fill: true,
+            tension: 0.3,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Could not read admin dashboard analytics.", error);
+  }
+}
+
+if ((sellerAnalyticsElement || adminAnalyticsElement) && !window.Chart) {
+  document.querySelectorAll("[data-chart-unavailable]").forEach(message => {
+    message.hidden = false;
+  });
+  console.error("Chart.js is unavailable; dashboard analytics tables remain available.");
 }
 
 const mapElement = document.getElementById("artisanMap");
@@ -204,19 +400,35 @@ if (mapElement) {
       });
 
       artisans.forEach(artisan => {
-        const marker = window.L.marker([artisan.latitude, artisan.longitude]).addTo(map);
+        const isShg = artisan.maker_type === "SHG";
+        const marker = window.L.circleMarker([artisan.latitude, artisan.longitude], {
+          radius: 9,
+          color: isShg ? "#a54b25" : "#1d5b43",
+          weight: 2,
+          fillColor: isShg ? "#e9894d" : "#4b9b70",
+          fillOpacity: 0.9,
+        }).addTo(map);
         const popup = document.createElement("div");
         const name = document.createElement("strong");
+        const type = document.createElement("p");
         const details = document.createElement("p");
+        const summary = document.createElement("p");
         const profileLink = document.createElement("a");
         const distanceText = document.createElement("p");
 
         name.textContent = artisan.name;
+        type.textContent = [
+          artisan.maker_type || "Artisan",
+          artisan.approximate_location ? "Approximate sample area" : "Public maker location",
+        ].join(" · ");
         details.textContent = [artisan.craft, artisan.district].filter(Boolean).join(" · ");
+        summary.textContent = artisan.summary || "";
         distanceText.className = "artisan-distance-popup";
         profileLink.href = `/artisans?q=${encodeURIComponent(artisan.name)}`;
-        profileLink.textContent = "View artisan profile";
-        popup.append(name, details, distanceText, profileLink);
+        profileLink.textContent = "View maker profile";
+        popup.append(name, type, details);
+        if (summary.textContent) popup.appendChild(summary);
+        popup.append(distanceText, profileLink);
         marker.bindPopup(popup);
         markers.push({ marker, artisan, distanceText });
       });

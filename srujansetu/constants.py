@@ -4,6 +4,7 @@ ADMIN_SECTIONS = {
         "singular": "Artisan",
         "fields": [
             ("name", "Name", "text", True),
+            ("maker_type", "Maker type", "select", True),
             ("craft", "Craft", "text", True),
             ("district", "District", "text", True),
             ("bio", "Biography", "textarea", False),

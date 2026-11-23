@@ -35,7 +35,7 @@
         {% endif %}
       </div>
       <div class="card-body">
-        <span class="eyebrow">{{ tr(artisan.craft) }}</span>
+        <span class="eyebrow">{{ tr(artisan.get('maker_type', 'Artisan')) }} · {{ tr(artisan.craft) }}</span>
         <h2>{{ artisan.name }}</h2>
         <p>⌖ {{ tr(artisan.district) }}{% if artisan.experience %} · {{ artisan.experience }}{% endif %}</p>
         <p>{{ artisan.bio }}</p>

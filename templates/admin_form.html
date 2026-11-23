@@ -40,6 +40,13 @@
           {% elif field_type == 'textarea' %}
           {{ tr(label) }}{% if required %} *{% endif %}
           <textarea name="{{ key }}" rows="4" {% if required %}required{% endif %}>{{ item.get(key, '') }}</textarea>
+          {% elif field_type == 'select' %}
+          {{ tr(label) }}{% if required %} *{% endif %}
+          <select name="{{ key }}" {% if required %}required{% endif %}>
+            {% for option in ['Artisan', 'SHG'] %}
+            <option value="{{ option }}" {% if item.get(key, 'Artisan') == option %}selected{% endif %}>{{ tr(option) }}</option>
+            {% endfor %}
+          </select>
           {% else %}
           {{ tr(label) }}{% if required %} *{% endif %}
           <input name="{{ key }}" value="{{ item.get(key, '') }}" {% if required %}required{% endif %}>

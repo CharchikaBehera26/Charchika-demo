@@ -18,6 +18,7 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from ..constants import ADMIN_SECTIONS
 from ..extensions import db
 from ..models import CustomerOrder
+from ..services.analytics import build_marketplace_analytics
 from ..services.accounts import admin_record, save_admin_record
 from ..services.data_store import read_data, write_data
 from ..services.media import save_uploaded_image
@@ -130,6 +131,7 @@ def admin_dashboard():
         order_count=db.session.scalar(
             select(func.count()).select_from(CustomerOrder)
         ),
+        analytics=build_marketplace_analytics(),
     )
 
 
@@ -177,6 +179,15 @@ def admin_new(kind):
             item[key] = key in request.form if field_type == "checkbox" else request.form.get(key, "").strip()
         if kind == "products":
             item["category"] = item.get("category") or item.get("craft", "")
+        if kind == "artisans" and item.get("maker_type") not in {"Artisan", "SHG"}:
+            flash("Choose Artisan or SHG as the maker type.", "error")
+            return render_template(
+                "admin_form.html",
+                kind=kind,
+                config=config,
+                item=item,
+                mode="Add",
+            )
         if kind == "community" and not item.get("date"):
             item["date"] = datetime.now().strftime("%d %b %Y")
 
@@ -256,6 +267,15 @@ def admin_edit(kind, item_id):
             updated[key] = key in request.form if field_type == "checkbox" else request.form.get(key, "").strip()
         if kind == "products":
             updated["category"] = updated.get("category") or updated.get("craft", "")
+        if kind == "artisans" and updated.get("maker_type") not in {"Artisan", "SHG"}:
+            flash("Choose Artisan or SHG as the maker type.", "error")
+            return render_template(
+                "admin_form.html",
+                kind=kind,
+                config=config,
+                item=updated,
+                mode="Edit",
+            )
         try:
             uploaded = (
                 save_uploaded_image(request.files.get("image_file"))

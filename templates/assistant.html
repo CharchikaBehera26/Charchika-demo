@@ -58,7 +58,14 @@
       <button class="btn btn-green" type="submit">{{ copy.send }}</button>
     </form>
     <div class="chat-input-tools">
-      <button class="btn btn-outline" id="voiceInput" type="button">{{ tr('Speak question') }}</button>
+      <button
+        class="btn btn-outline"
+        id="voiceInput"
+        type="button"
+        aria-pressed="false"
+        data-speak-label="{{ tr('Speak question') }}"
+        data-stop-label="{{ tr('Stop listening') }}"
+      >{{ tr('Speak question') }}</button>
     </div>
     <p
       class="voice-status"
@@ -66,6 +73,7 @@
       role="status"
       aria-live="polite"
       data-listening="{{ tr('Listening…') }}"
+      data-pause-hint="{{ tr('Pause for 3 seconds or tap Stop listening to send.') }}"
       data-preparing="{{ tr('Preparing your answer…') }}"
       data-unsupported="{{ tr('Voice input isn\'t available in this browser.') }}"
       data-no-speech="{{ tr('I couldn\'t hear that. Please try again or type your question.') }}"

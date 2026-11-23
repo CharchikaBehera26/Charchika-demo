@@ -39,6 +39,61 @@
       </a>
     </div>
 
+    <section class="admin-analytics">
+      <div class="analytics-heading">
+        <div>
+          <span class="eyebrow">{{ tr('MAKER AND MARKETPLACE ACTIVITY') }}</span>
+          <h2>{{ tr('Seller analytics') }}</h2>
+          <p>{{ tr('Order requests and listed products are tracked for this demonstration; no payment or sale is recorded.') }}</p>
+        </div>
+      </div>
+      <div class="analytics-stat-grid">
+        <article><span>{{ tr('Maker profiles and accounts') }}</span><strong>{{ analytics.summary.maker_count }}</strong></article>
+        <article><span>{{ tr('Product listings') }}</span><strong>{{ analytics.summary.product_count }}</strong></article>
+        <article><span>{{ tr('Customer order requests') }}</span><strong>{{ analytics.summary.request_count }}</strong></article>
+        <article><span>{{ tr('Items requested') }}</span><strong>{{ analytics.summary.units }}</strong></article>
+        <article><span>{{ tr('Demo request value') }}</span><strong>₹{{ "{:,.2f}".format(analytics.summary.request_value) }}</strong></article>
+      </div>
+      <div class="analytics-chart-grid">
+        <article class="analytics-panel">
+          <h3>{{ tr('Order requests by seller') }}</h3>
+          <canvas id="sellerOverviewChart" data-request-label="{{ tr('Demo order requests') }}" aria-label="{{ tr('Demo order requests by maker') }}" role="img"></canvas>
+          <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the tables below.') }}</p>
+        </article>
+        <article class="analytics-panel">
+          <h3>{{ tr('Marketplace request trend') }}</h3>
+          <canvas id="marketplaceTrendChart" data-request-label="{{ tr('Demo order requests') }}" aria-label="{{ tr('Demo order request trend over six months') }}" role="img"></canvas>
+          <p class="chart-unavailable" data-chart-unavailable hidden>{{ tr('The chart could not load; request totals remain available in the tables below.') }}</p>
+        </article>
+      </div>
+      <h3 class="analytics-table-heading">{{ tr('Maker listing and request summary') }}</h3>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>{{ tr('Maker') }}</th><th>{{ tr('Type') }}</th><th>{{ tr('District') }}</th><th>{{ tr('Product listings') }}</th><th>{{ tr('Requests') }}</th><th>{{ tr('Items requested') }}</th><th>{{ tr('Demo request value') }}</th></tr></thead>
+          <tbody>
+            {% for maker in analytics.makers %}
+            <tr><td><strong>{{ maker.name }}</strong></td><td>{{ tr(maker.maker_type) }}</td><td>{{ tr(maker.district) }}</td><td>{{ maker.product_count }}</td><td>{{ maker.request_count }}</td><td>{{ maker.units }}</td><td>₹{{ "{:,.2f}".format(maker.request_value) }}</td></tr>
+            {% else %}
+            <tr><td class="empty-table" colspan="7">{{ tr('No maker activity is available yet.') }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <h3 class="analytics-table-heading">{{ tr('Most requested products') }}</h3>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead><tr><th>{{ tr('Product') }}</th><th>{{ tr('Maker') }}</th><th>{{ tr('Requests') }}</th><th>{{ tr('Items requested') }}</th><th>{{ tr('Demo request value') }}</th></tr></thead>
+          <tbody>
+            {% for product in analytics.top_products %}
+            <tr><td>{{ product.name }}</td><td>{{ product.maker }}</td><td>{{ product.request_count }}</td><td>{{ product.units }}</td><td>₹{{ "{:,.2f}".format(product.request_value) }}</td></tr>
+            {% else %}
+            <tr><td class="empty-table" colspan="5">{{ tr('Product request activity will appear here when customers submit demo orders.') }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+
     <div class="admin-info">
       <h2>{{ tr('Quick start') }}</h2>
       <p>{{ tr('Add records, update information, remove outdated content or upload images. Content is stored in the configured SQL database.') }}</p>
@@ -54,4 +109,12 @@
     </div>
   </section>
 </div>
+{% endblock %}
+
+{% block page_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script id="adminAnalyticsData" type="application/json">{{ {
+  "makers": analytics.maker_chart,
+  "monthly": analytics.monthly_chart
+}|tojson }}</script>
 {% endblock %}

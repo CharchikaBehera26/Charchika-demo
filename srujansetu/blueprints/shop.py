@@ -441,6 +441,8 @@ def checkout():
             order_id = secrets.token_urlsafe(16)
             items = [
                 {
+                    "product_id": line["product"].get("id"),
+                    "owner_id": line["product"].get("owner_id"),
                     "name": line["product"]["name"],
                     "artisan": line["product"].get("artisan", ""),
                     "quantity": line["quantity"],

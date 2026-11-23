@@ -24,6 +24,13 @@
         <input type="email" name="email" required autocomplete="email">
       </label>
       <label>
+        {{ tr('Maker type') }}
+        <select name="maker_type" required>
+          <option value="Artisan">{{ tr('Artisan') }}</option>
+          <option value="SHG">{{ tr('SHG') }}</option>
+        </select>
+      </label>
+      <label>
         {{ tr('Craft / product category') }}
         <input name="craft" required placeholder="{{ tr('e.g. Pattachitra painting') }}">
       </label>

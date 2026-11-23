@@ -8,6 +8,7 @@ from srujansetu.extensions import db
 from srujansetu.models import (
     AppMetadata,
     Artisan,
+    ArtisanAccount,
     CustomerAccount,
     CustomerOrder,
     Product,
@@ -236,6 +237,17 @@ class ShoppingTests(unittest.TestCase):
         self.assertIn(b'data-lat="19.8"', response.data)
         self.assertIn(b"Your location is used only in this browser", response.data)
 
+    def test_seeded_shg_map_markers_are_labeled_as_approximate(self):
+        with self.app.app_context():
+            seed_demo_data()
+
+        response = self.client.get("/planner")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Sample Pipili Appliqu", response.data)
+        self.assertIn(b"Approximate sample area", response.data)
+        self.assertIn(b'"maker_type": "SHG"', response.data)
+        self.assertIn(b'"approximate_location": true', response.data)
+
     def test_admin_can_monitor_customer_order_requests(self):
         with self.app.app_context():
             db.session.add(CustomerOrder(
@@ -263,7 +275,65 @@ class ShoppingTests(unittest.TestCase):
         self.assertIn(b"Customer order requests", response.data)
         self.assertIn(b"Pattachitra Panel", response.data)
         self.assertIn(b"9876543210", response.data)
-        self.assertEqual(self.client.get("/admin/dashboard").status_code, 200)
+        dashboard = self.client.get("/admin/dashboard")
+        self.assertEqual(dashboard.status_code, 200)
+        self.assertIn(b"Seller analytics", dashboard.data)
+        self.assertIn(b"Most requested products", dashboard.data)
+        self.assertIn(b'id="adminAnalyticsData"', dashboard.data)
+
+    def test_maker_dashboard_shows_only_its_demo_order_analytics(self):
+        with self.app.app_context():
+            db.session.add(ArtisanAccount(
+                id="maker-1",
+                name="Sasmita Das",
+                email="maker@example.com",
+                password_hash="unused",
+            ))
+            db.session.add(Artisan(
+                id=1,
+                account_id="maker-1",
+                name="Sasmita Das",
+                craft="Pattachitra",
+                district="Puri",
+            ))
+            db.session.add(Product(
+                id=2,
+                owner_id="maker-1",
+                name="Painted Bookmark",
+                craft="Pattachitra",
+                price="₹500",
+                artisan="Sasmita Das",
+                district="Puri",
+            ))
+            db.session.add(CustomerOrder(
+                id="maker-order-1",
+                customer_id="buyer-1",
+                customer_name="Asha Buyer",
+                phone="9876543210",
+                address="Puri, Odisha",
+                items_json=json.dumps([{
+                    "product_id": 2,
+                    "owner_id": "maker-1",
+                    "name": "Painted Bookmark",
+                    "artisan": "Sasmita Das",
+                    "quantity": 2,
+                    "unit_price": "₹500.00",
+                    "line_total": "₹1,000.00",
+                }]),
+                total_price=Decimal("1000.00"),
+            ))
+            db.session.commit()
+        with self.client.session_transaction() as browser_session:
+            browser_session["role"] = "artisan"
+            browser_session["artisan_user_id"] = "maker-1"
+
+        response = self.client.get("/artisan/dashboard")
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Marketplace activity", response.data)
+        self.assertIn(b"Painted Bookmark", response.data)
+        self.assertIn(b"2</strong>", response.data)
+        self.assertIn(b"1,000.00", response.data)
+        self.assertIn(b'id="sellerAnalyticsData"', response.data)
 
     def test_selected_language_is_used_across_public_customer_and_portal_pages(self):
         with self.client.session_transaction() as browser_session:

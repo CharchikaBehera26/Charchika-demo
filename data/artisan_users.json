@@ -1,1 +1,110 @@
-[]
+[
+  {
+    "id": "maker-sasmita",
+    "name": "Sasmita Das",
+    "email": "sasmita@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "maker-ramesh",
+    "name": "Ramesh Meher",
+    "email": "ramesh@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "maker-priyanka",
+    "name": "Priyanka Sahoo",
+    "email": "priyanka@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "maker-bikash",
+    "name": "Bikash Mohanty",
+    "email": "bikash@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "maker-laxmi",
+    "name": "Laxmi Behera",
+    "email": "laxmi@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "maker-dhaneswar",
+    "name": "Dhaneswar Naik",
+    "email": "dhaneswar@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-pipili",
+    "name": "Sample Pipili Appliqué SHG",
+    "email": "pipili.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-raghurajpur",
+    "name": "Sample Raghurajpur Artisans SHG",
+    "email": "raghurajpur.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-sambalpuri",
+    "name": "Sample Sambalpuri Weavers SHG",
+    "email": "sambalpuri.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-cuttack",
+    "name": "Sample Cuttack Silver Craft SHG",
+    "email": "cuttack.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-dhenkanal",
+    "name": "Sample Dhenkanal Dhokra SHG",
+    "email": "dhokra.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-mayurbhanj",
+    "name": "Mayurbhanj Sabai Grass Producers SHG",
+    "email": "mayurbhanj.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-kendrapara",
+    "name": "Kendrapara Golden Grass Craft SHG",
+    "email": "kendrapara.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-bargarh",
+    "name": "Bargarh Meher Bunakar Handloom SHG",
+    "email": "bargarh.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-koraput",
+    "name": "Koraput Tribal Mirgan Weavers SHG",
+    "email": "koraput.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-konark",
+    "name": "Konark Heritage Stone Carvers SHG",
+    "email": "konark.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-nilgiri",
+    "name": "Nilgiri Terracotta & Clay Artisans SHG",
+    "email": "nilgiri.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  },
+  {
+    "id": "shg-berhampur",
+    "name": "Berhampur Patta Silk Weavers SHG",
+    "email": "berhampur.shg@example.com",
+    "password_hash": "scrypt:32768:8:1$P1fKhQVVqzYNWGKP$0c494b06b4868a46b11f52ca0c99442ffd37dac47d2bb0f6199c72336f33beca828b8e3073d8ae2c45d777585fdd85ea091d71e4553f904fee35d9f3fb1d15d5"
+  }
+]

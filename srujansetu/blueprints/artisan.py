@@ -13,6 +13,7 @@ from flask import (
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..services.accounts import read_artisan_users, write_artisan_users
+from ..services.analytics import build_marketplace_analytics
 from ..services.data_store import read_data, write_data
 from ..services.media import save_uploaded_image
 from ..services.pricing import has_valid_deal
@@ -38,12 +39,13 @@ def artisan_register():
         name = request.form.get("name", "").strip()
         email = request.form.get("email", "").strip().lower()
         craft = request.form.get("craft", "").strip()
+        maker_type = request.form.get("maker_type", "Artisan").strip()
         district = request.form.get("district", "").strip()
         password = request.form.get("password", "")
         confirm = request.form.get("confirm", "")
         users = read_artisan_users()
 
-        if not name or not email or not craft or not district:
+        if not name or not email or not craft or not district or maker_type not in {"Artisan", "SHG"}:
             flash("Please complete all required fields.", "error")
         elif any(user.get("email", "").lower() == email for user in users):
             flash("An account with this email already exists. Please sign in.", "error")
@@ -68,11 +70,13 @@ def artisan_register():
                 "id": next_id(artisans),
                 "account_id": account_id,
                 "name": name,
+                "maker_type": maker_type,
                 "craft": craft,
                 "district": district,
                 "bio": "",
                 "experience": "",
                 "emoji": "🧵",
+                "approximate_location": False,
             })
             write_data("artisans", artisans)
 
@@ -140,6 +144,7 @@ def artisan_dashboard():
         account=account,
         profile=profile,
         products=products,
+        analytics=build_marketplace_analytics(account.get("id")),
     )
 
 
@@ -162,8 +167,11 @@ def artisan_profile_edit():
     if request.method == "POST":
         verify_csrf()
         updated = dict(profile)
-        for key in ("name", "craft", "district", "experience", "bio"):
+        for key in ("name", "maker_type", "craft", "district", "experience", "bio"):
             updated[key] = request.form.get(key, "").strip()
+        if updated["maker_type"] not in {"Artisan", "SHG"}:
+            flash("Choose Artisan or SHG as your maker type.", "error")
+            return render_template("artisan_profile.html", profile=updated)
         latitude = request.form.get("latitude", "").strip()
         longitude = request.form.get("longitude", "").strip()
         updated["latitude"] = latitude
@@ -183,6 +191,7 @@ def artisan_profile_edit():
                 updated.pop("longitude", None)
             else:
                 updated["latitude"], updated["longitude"] = coordinates
+            updated["approximate_location"] = False
 
             try:
                 uploaded = save_uploaded_image(request.files.get("image_file"))

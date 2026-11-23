@@ -19,6 +19,13 @@
         <input name="name" required value="{{ profile.get('name', '') }}">
       </label>
       <label>
+        {{ tr('Maker type') }}
+        <select name="maker_type" required>
+          <option value="Artisan" {% if profile.get('maker_type', 'Artisan') == 'Artisan' %}selected{% endif %}>{{ tr('Artisan') }}</option>
+          <option value="SHG" {% if profile.get('maker_type') == 'SHG' %}selected{% endif %}>{{ tr('SHG') }}</option>
+        </select>
+      </label>
+      <label>
         {{ tr('Craft / skill') }}
         <input name="craft" required value="{{ profile.get('craft', '') }}">
       </label>

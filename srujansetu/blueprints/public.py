@@ -57,7 +57,7 @@ def artisans():
         items = [
             item for item in items
             if query in " ".join(
-                item.get(key, "") for key in ("name", "craft", "district")
+                item.get(key, "") for key in ("name", "maker_type", "craft", "district")
             ).casefold()
         ]
     if district:
@@ -237,8 +237,11 @@ def planner():
         if coordinates is not None:
             map_artisans.append({
                 "name": artisan.get("name", "Artisan"),
+                "maker_type": artisan.get("maker_type", "Artisan"),
                 "craft": artisan.get("craft", ""),
                 "district": artisan.get("district", ""),
+                "summary": artisan.get("bio", ""),
+                "approximate_location": bool(artisan.get("approximate_location")),
                 "latitude": coordinates[0],
                 "longitude": coordinates[1],
             })

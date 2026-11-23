@@ -70,6 +70,44 @@ class FAQTests(unittest.TestCase):
         self.assertIn(b'href="/shop/register"', response.data)
         self.assertIn(b'href="/shop/login"', response.data)
 
+    def test_expanded_questions_return_grounded_answers_and_actions(self):
+        cases = (
+            ("Which crafts are available on this site?", "Pipili Appliqué", "/crafts"),
+            ("Can you deliver to my address?", "Delivery is not enabled", "/marketplace"),
+            ("How do I share a note with the community?", "Community notes are public", "/community"),
+        )
+        for message, answer_fragment, action_path in cases:
+            with self.subTest(message=message):
+                response = self.client.post(
+                    "/assistant",
+                    data={"message": message},
+                    headers={"X-Requested-With": "XMLHttpRequest"},
+                )
+                self.assertEqual(response.status_code, 200)
+                result = response.get_json()
+                self.assertIn(answer_fragment, result["answer"])
+                self.assertIn(action_path, [action["url"] for action in result["actions"]])
+
+    def test_expanded_faq_answers_follow_the_selected_language(self):
+        response = self.client.post(
+            "/assistant",
+            data={"message": "What crafts can I explore?", "lang": "hi"},
+            headers={"X-Requested-With": "XMLHttpRequest"},
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.get_json()
+        self.assertIn("निर्देशिका", result["answer"])
+        self.assertEqual(result["lang"], "hi")
+
+        response = self.client.post(
+            "/assistant",
+            data={"message": "How do I create a customer account?", "lang": "hi"},
+            headers={"X-Requested-With": "XMLHttpRequest"},
+        )
+        self.assertEqual(response.status_code, 200)
+        result = response.get_json()
+        self.assertIn("ग्राहक खाता बनाएँ", [action["label"] for action in result["actions"]])
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -11,6 +11,8 @@ class Artisan(db.Model):
     name = db.Column(db.String(160), nullable=False)
     craft = db.Column(db.String(160), nullable=False)
     district = db.Column(db.String(120), nullable=False, index=True)
+    maker_type = db.Column(db.String(40), nullable=False, default="Artisan")
+    approximate_location = db.Column(db.Boolean, nullable=False, default=False)
     bio = db.Column(db.Text, nullable=False, default="")
     experience = db.Column(db.String(120), nullable=False, default="")
     emoji = db.Column(db.String(32), nullable=False, default="🧵")
