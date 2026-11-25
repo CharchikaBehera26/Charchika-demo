@@ -1,9 +1,10 @@
 import json
+from pathlib import Path
 import re
 from collections import Counter
 from datetime import datetime
 
-from flask import Blueprint, flash, jsonify, redirect, render_template, request, session, url_for
+from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, session, url_for
 from sqlalchemy import select
 
 from ..extensions import db
@@ -512,6 +513,50 @@ def community():
 @public_bp.route("/about")
 def about():
     return render_template("about.html")
+
+
+@public_bp.route("/collaborate", methods=["GET", "POST"])
+def collaborate():
+    if request.method == "POST":
+        company_name = request.form.get("company_name", "").strip()
+        contact_name = request.form.get("contact_name", "").strip()
+        email = request.form.get("email", "").strip()
+        phone = request.form.get("phone", "").strip()
+        collab_type = request.form.get("collab_type", "").strip()
+        scale = request.form.get("scale", "").strip()
+        message = request.form.get("message", "").strip()
+
+        if not company_name or not contact_name or not email or not message:
+            flash("Please provide your company name, contact person, business email, and requirements.", "error")
+        else:
+            collab_file = Path(current_app.root_path).parent / "data" / "collaborations.json"
+            try:
+                if collab_file.exists():
+                    items = json.loads(collab_file.read_text(encoding="utf-8"))
+                else:
+                    items = []
+            except Exception:
+                items = []
+
+            items.insert(0, {
+                "id": len(items) + 1,
+                "company_name": company_name,
+                "contact_name": contact_name,
+                "email": email,
+                "phone": phone,
+                "collab_type": collab_type or "Corporate / Investment",
+                "scale": scale or "Not specified",
+                "message": message,
+                "date": datetime.now().strftime("%d %b %Y, %I:%M %p"),
+            })
+            try:
+                collab_file.write_text(json.dumps(items[:100], indent=2, ensure_ascii=False), encoding="utf-8")
+            except Exception:
+                pass
+            flash("Thank you for your collaboration proposal! Our partnership coordinator will reach out to you within 1-2 business days.", "success")
+            return redirect(url_for("public.collaborate"))
+
+    return render_template("collaborate.html")
 
 
 @public_bp.route("/api/search")

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Noto+Sans+Oriya:wght@400;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261123_04">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=20261125_01">
   {% block page_head %}{% endblock %}
 </head>
 <body{% if request.args.get('panel') == '1' %} class="assistant-panel-page"{% endif %}>
@@ -26,7 +26,7 @@
     <a href="{{ url_for('shop.cart') }}">{{ chrome.cart }}<span data-cart-count>{% if cart_count %} ({{ cart_count }}){% endif %}</span></a>
     <a href="{{ url_for('public.stories') }}">{{ chrome.stories }}</a>
     <a href="{{ url_for('public.schemes') }}">{{ chrome.schemes }}</a>
-    <a class="ai-nav-link assistant-open-link" href="{{ url_for('public.assistant') }}">{{ chrome.guide }}</a>
+    <a class="collab-nav-link" href="{{ url_for('public.collaborate') }}">🤝 {{ chrome.collaborate }}</a>
     <a href="{{ url_for('public.about') }}">{{ chrome.about }}</a>
     <form class="language-picker nav-language-picker" method="post" action="{{ url_for('public.set_language') }}">
       <input type="hidden" name="next" value="{{ request.full_path.rstrip('?') }}">
@@ -180,6 +180,7 @@
         <h2>{{ tr('Information') }}</h2>
         <a href="{{ url_for('public.schemes') }}">{{ tr('Schemes and support') }}</a>
         <a href="{{ url_for('public.community') }}">{{ tr('Community') }}</a>
+        <a href="{{ url_for('public.collaborate') }}">{{ tr('Partner & Collaborate') }}</a>
         <a href="{{ url_for('public.about') }}">{{ tr('About SrujanSetu') }}</a>
       </div>
     </nav>

@@ -63,7 +63,7 @@ class FAQTests(unittest.TestCase):
         self.assertNotIn(b'href="/sell"', response.data)
         self.assertIn(b'id="assistantPopover"', response.data)
         self.assertIn(b'/assistant?panel=1', response.data)
-        self.assertIn(b'class="ai-nav-link assistant-open-link"', response.data)
+        self.assertIn(b'href="/collaborate"', response.data)
 
     def test_unknown_question_has_clear_fallback(self):
         response = self.client.post(

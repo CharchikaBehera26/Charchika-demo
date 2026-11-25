@@ -1,0 +1,165 @@
+{% extends "base.html" %}
+
+{% block title %}Collaborate &amp; Partner — SrujanSetu{% endblock %}
+
+{% block content %}
+<section class="page-hero has-photo" style="--hero-image: url('{{ media('scene', 'collaborate') }}')">
+  <span class="eyebrow">{{ tr('ENTERPRISE & IMPACT PARTNERSHIPS') }}</span>
+  <h1>{{ tr('Collaborate with <em>Odisha Artisans &amp; SHGs</em>')|safe }}</h1>
+  <p>{{ tr('Empower rural women-led Self Help Groups, source authentic GI-tagged crafts at scale, and create measurable social impact for your enterprise.') }}</p>
+</section>
+
+<section class="content-wrap">
+
+  <!-- Overview Pillars -->
+  <div class="collab-pillars-grid">
+    <article class="collab-card">
+      <span class="collab-icon">🎁</span>
+      <h3>{{ tr('Corporate Gifting & Bulk Orders') }}</h3>
+      <p>{{ tr('Bespoke conference mementos, employee festive hampers, executive gifts, and custom-branded Odisha handlooms crafted by verified village SHGs.') }}</p>
+      <ul class="collab-list">
+        <li>{{ tr('Authentic Sambalpuri shawls & stoles') }}</li>
+        <li>{{ tr('Pattachitra framed art & commemorative plaques') }}</li>
+        <li>{{ tr('Hand-cast Dhokra brass desk accessories') }}</li>
+      </ul>
+    </article>
+
+    <article class="collab-card">
+      <span class="collab-icon">🌱</span>
+      <h3>{{ tr('CSR & Cluster Development') }}</h3>
+      <p>{{ tr('Direct your Corporate Social Responsibility (CSR) impact toward cluster infrastructure, modern toolkits, solar looms, and digital literacy for women artisans.') }}</p>
+      <ul class="collab-list">
+        <li>{{ tr('Sponsor artisan training workshops') }}</li>
+        <li>{{ tr('Upgrade handloom & pottery facilities') }}</li>
+        <li>{{ tr('Verified ESG & social impact reporting') }}</li>
+      </ul>
+    </article>
+
+    <article class="collab-card">
+      <span class="collab-icon">📈</span>
+      <h3>{{ tr('Impact Investment & Funding') }}</h3>
+      <p>{{ tr('Partner with SrujanSetu as an impact investor or philanthropic funder to expand raw material banks, working capital micro-facilities, and rural supply chains.') }}</p>
+      <ul class="collab-list">
+        <li>{{ tr('Catalytic micro-credit for SHG production') }}</li>
+        <li>{{ tr('Decentralized packaging & quality hubs') }}</li>
+        <li>{{ tr('Sustainable, tech-enabled rural livelihood scale') }}</li>
+      </ul>
+    </article>
+
+    <article class="collab-card">
+      <span class="collab-icon">🛍️</span>
+      <h3>{{ tr('Retail, Export & Sourcing') }}</h3>
+      <p>{{ tr('Direct procurement for national retail chains, lifestyle brands, ethical fashion designers, and international craft export networks.') }}</p>
+      <ul class="collab-list">
+        <li>{{ tr('Direct producer pricing with no middlemen') }}</li>
+        <li>{{ tr('Batch consistency with handcrafted charm') }}</li>
+        <li>{{ tr('Geographical Indication (GI) heritage assurance') }}</li>
+      </ul>
+    </article>
+  </div>
+
+  <!-- Why Collaborate Banner -->
+  <div class="collab-impact-banner">
+    <div class="collab-banner-copy">
+      <span class="eyebrow light">{{ tr('THE SRUJANSETU ADVANTAGE') }}</span>
+      <h2>{{ tr('Why Enterprise Leaders Partner With Us') }}</h2>
+      <p>{{ tr('We connect your organization directly with grassroots Self Help Groups and master artisans across 15+ districts of Odisha, ensuring fair pay, transparent supply chains, and authentic heritage quality.') }}</p>
+      <div class="collab-stats-row">
+        <div><strong>100%</strong><small>{{ tr('Direct Artisan Livelihood') }}</small></div>
+        <div><strong>15+</strong><small>{{ tr('Districts Covered') }}</small></div>
+        <div><strong>6+</strong><small>{{ tr('Living GI Craft Traditions') }}</small></div>
+      </div>
+    </div>
+    <div class="collab-banner-visual">🤝</div>
+  </div>
+
+  <!-- Proposal / Contact Form -->
+  <div class="split-layout" style="margin-top: 40px;">
+    <div class="form-panel">
+      <span class="eyebrow">{{ tr('START A CONVERSATION') }}</span>
+      <h2>{{ tr('Submit a Collaboration Inquiry') }}</h2>
+      <p>{{ tr('Tell us about your organization and how you would like to collaborate. Our partnership team will respond within 1–2 business days.') }}</p>
+
+      <form method="post" action="{{ url_for('public.collaborate') }}" class="stack-form">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+
+        <div class="collab-form-grid">
+          <label>
+            {{ tr('Organization / Company Name') }} *
+            <input type="text" name="company_name" required placeholder="{{ tr('e.g. Tata Consultancy Services, FabIndia') }}">
+          </label>
+
+          <label>
+            {{ tr('Contact Person & Title') }} *
+            <input type="text" name="contact_name" required placeholder="{{ tr('e.g. Priya Sharma, CSR Director') }}">
+          </label>
+        </div>
+
+        <div class="collab-form-grid">
+          <label>
+            {{ tr('Official Email Address') }} *
+            <input type="email" name="email" required placeholder="{{ tr('priya.sharma@company.com') }}">
+          </label>
+
+          <label>
+            {{ tr('Phone Number') }}
+            <input type="tel" name="phone" placeholder="{{ tr('+91 98765 43210') }}">
+          </label>
+        </div>
+
+        <div class="collab-form-grid">
+          <label>
+            {{ tr('Partnership Type') }} *
+            <select name="collab_type" required>
+              <option value="Corporate Gifting & Bulk Orders">{{ tr('Corporate Gifting & Bulk Orders') }}</option>
+              <option value="CSR & Cluster Sponsorship">{{ tr('CSR & Cluster Sponsorship') }}</option>
+              <option value="Impact Investment & Funding">{{ tr('Impact Investment & Funding') }}</option>
+              <option value="Retail & Export Sourcing">{{ tr('Retail & Export Sourcing') }}</option>
+              <option value="Other Collaboration">{{ tr('Other Collaboration') }}</option>
+            </select>
+          </label>
+
+          <label>
+            {{ tr('Estimated Budget / Quantity') }}
+            <select name="scale">
+              <option value="₹50,000 – ₹2,00,000">{{ tr('₹50,000 – ₹2,00,000 (Small batch / Event)') }}</option>
+              <option value="₹2,00,000 – ₹10,00,000">{{ tr('₹2,00,000 – ₹10,00,000 (Corporate gifting / CSR)') }}</option>
+              <option value="₹10,00,000+">{{ tr('₹10,00,000+ (Enterprise / Cluster project)') }}</option>
+              <option value="To be discussed">{{ tr('To be discussed / Pilot') }}</option>
+            </select>
+          </label>
+        </div>
+
+        <label>
+          {{ tr('Proposal Details & Requirements') }} *
+          <textarea name="message" rows="5" required placeholder="{{ tr('Describe your requirements, timeline, specific craft interests, or collaboration vision...') }}"></textarea>
+        </label>
+
+        <button class="btn btn-green" type="submit">{{ tr('Send Collaboration Proposal →') }}</button>
+      </form>
+    </div>
+
+    <!-- Right Side Sidebar Info -->
+    <div>
+      <article class="panel" style="margin-bottom: 20px;">
+        <span class="eyebrow">{{ tr('COMMUNITY IMPACT') }}</span>
+        <h2>{{ tr('Women-Led SHGs') }}</h2>
+        <p>{{ tr('Every partnership directly funds women micro-entrepreneurs in rural Odisha, providing stable income, dignified wages, and preserving ancestral craft knowledge.') }}</p>
+        <div style="margin-top: 15px;">
+          <a class="text-link" href="{{ url_for('public.artisans') }}">{{ tr('Meet our maker clusters →') }}</a>
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="eyebrow">{{ tr('CATALOG & SAMPLES') }}</span>
+        <h2>{{ tr('Sample Review') }}</h2>
+        <p>{{ tr('Need to inspect samples before placing a corporate order? Our team can dispatch curated sample boxes of Pattachitra, Ikat, and Dhokra crafts upon request.') }}</p>
+        <div style="margin-top: 15px;">
+          <a class="text-link" href="{{ url_for('public.marketplace') }}">{{ tr('Browse sample marketplace →') }}</a>
+        </div>
+      </article>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
